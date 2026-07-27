@@ -281,7 +281,7 @@ def ai_memo(
         visibility=body.visibility,
         group_id=None,
         contributors=contributors,
-        public_symbols=public_symbols if body.visibility == "public" else None,
+        public_symbols=public_symbols,  # toujours gravé — visibility contrôle l'accès
     )
 
     # Déclencher webhooks

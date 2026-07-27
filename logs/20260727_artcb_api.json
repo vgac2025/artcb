@@ -721,3 +721,19 @@
 {"ts": "2026-07-27T19:54:17.680535+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key revoked: kid_b661b83466b602b3"}
 {"ts": "2026-07-27T19:54:18.481369+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #36 graph=ai_memo_32edf03da9a9 agent=agent_anonymous"}
 {"ts": "2026-07-27T19:54:21.455712+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Webhook registered: wh_6b0fa6b1efc64a9d → https://ci.example.com/wh"}
+{"ts": "2026-07-27T21:52:57.185208+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T21:53:01.498474+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T21:53:01.676883+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_d549fc9c6116219a (bob_agent_replay)"}
+{"ts": "2026-07-27T21:53:02.424190+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #37 graph=ai_memo_93688f12dc4e agent=bob_agent_replay"}
+{"ts": "2026-07-27T21:53:02.767905+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #38 graph=ai_memo_b400c5bf4626 agent=bob_agent_replay"}
+{"ts": "2026-07-27T21:53:03.112966+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #39 graph=ai_memo_96d083cba569 agent=bob_agent_replay"}
+{"ts": "2026-07-27T21:53:12.870102+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Webhook registered: wh_782aa45535fcf134 → https://bob-agent.example.com/artcb-events"}
+{"ts": "2026-07-27T21:53:12.896007+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key revoked: kid_d549fc9c6116219a"}
+{"ts": "2026-07-27T21:54:15.263284+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T21:54:19.664858+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T21:54:19.837856+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_7c7b8d691833a290 (bob_agent_replay)"}
+{"ts": "2026-07-27T21:54:20.496626+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #41 graph=ai_memo_f5be40932140 agent=bob_agent_replay"}
+{"ts": "2026-07-27T21:54:20.800746+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #42 graph=ai_memo_e3d9501d120a agent=bob_agent_replay"}
+{"ts": "2026-07-27T21:54:21.109073+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #43 graph=ai_memo_e1c1ad539b87 agent=bob_agent_replay"}
+{"ts": "2026-07-27T21:54:32.446087+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Webhook registered: wh_fdbdccc2c6b881d3 → https://bob-agent.example.com/artcb-events"}
+{"ts": "2026-07-27T21:54:32.470393+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key revoked: kid_7c7b8d691833a290"}
