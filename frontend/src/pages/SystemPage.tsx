@@ -1,11 +1,13 @@
 import { SystemMetrics } from "../components/SystemMetrics";
+import { useTranslation } from "../i18n/useTranslation";
 
 export function SystemPage() {
+  const { t } = useTranslation();
   return (
     <div className="mc-page">
-      <h1 className="dashboard-title">Système · F3 Debug</h1>
+      <h1 className="dashboard-title">{t('system_title')}</h1>
       <div className="mc-f3">
-        <p className="mc-f3-title">[ F3 ] ARTCB DEBUG SCREEN</p>
+        <p className="mc-f3-title">{t('system_f3_title')}</p>
         <SystemMetrics />
       </div>
     </div>

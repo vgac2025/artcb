@@ -5,8 +5,10 @@ import {
   fetchWallets,
   signJoinWithWallet,
 } from "../api/client";
+import { useTranslation } from "../i18n/useTranslation";
 
 export function JoinGroup() {
+  const { t } = useTranslation();
   const [joinCode, setJoinCode] = useState("");
   const [groupInfo, setGroupInfo] = useState<{ name: string; group_id: string } | null>(null);
   const [wallets, setWallets] = useState<Array<{ address: string; name: string }>>([]);
@@ -54,7 +56,7 @@ export function JoinGroup() {
   return (
     <div className="mc-page">
       <h1 className="dashboard-title">
-        Rejoindre un groupe{" "}
+        {t('nav_groups')}{" "}
         <Link to="/groups" className="mc-link-pill">
           ← Groupes
         </Link>
@@ -83,7 +85,7 @@ export function JoinGroup() {
       </div>
 
       <div className="panel">
-        <h2>Votre wallet (signature locale)</h2>
+        <h2>{t('common_wallet')}</h2>
         {wallets.length ? (
           <select value={walletName} onChange={(e) => setWalletName(e.target.value)}>
             {wallets.map((w) => (
@@ -99,7 +101,7 @@ export function JoinGroup() {
         )}
         <div className="toolbar">
           <button className="primary" onClick={submitRequest} disabled={loading || !joinCode}>
-            {loading ? "Signature…" : "Signer et demander à rejoindre"}
+            {loading ? t('memorize_sign_loading') : "Signer et demander à rejoindre"}
           </button>
         </div>
         {message && <p className="mc-muted">{message}</p>}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { CONSOLE_HELP } from "../console/commands";
+import { useTranslation } from "../i18n/useTranslation";
 
 async function apiGet(path: string): Promise<unknown> {
   const r = await fetch(`/api/v1${path}`);
@@ -26,7 +27,8 @@ async function apiPost(path: string, body?: unknown): Promise<unknown> {
 }
 
 export function Console() {
-  const [lines, setLines] = useState<string[]>(["ARTCB Console v0.4 — tapez help", "> "]);
+  const { t } = useTranslation();
+  const [lines, setLines] = useState<string[]>([t('console_welcome'), "> "]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -112,8 +114,8 @@ export function Console() {
       } else if (trimmed === "demo log") {
         out.push(JSON.stringify(await apiGet("/dashboard/logs/demo-live"), null, 2));
       } else {
-        out.push(`Commande inconnue: ${trimmed}`);
-        out.push("Tapez help — ou utilisez: python3 scripts/artcb_cli.py");
+        out.push(`${t('console_unknown_command')}: ${trimmed}`);
+          out.push(`${t('console_type_help')} — ou utilisez: python3 scripts/artcb_cli.py`);
       }
     } catch (e) {
       out.push(`Erreur: ${e instanceof Error ? e.message : String(e)}`);
@@ -125,9 +127,9 @@ export function Console() {
 
   return (
     <div className="mc-page mc-console-page">
-      <h1 className="dashboard-title">Console CLI</h1>
+      <h1 className="dashboard-title">{t('console_title')}</h1>
       <p className="mc-muted">
-        API complète — terminal équivalent : <code>python3 scripts/artcb_cli.py help</code> ·{" "}
+        {t('console_hint')} : <code>python3 scripts/artcb_cli.py help</code> ·{" "}
         <code>API_REFERENCE_ARTCB.md</code>
       </p>
       <div className="mc-console" role="log" aria-live="polite">
@@ -150,11 +152,11 @@ export function Console() {
           className="mc-console-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="help | health | pool status | p2p sync | mining status"
+          placeholder={t('console_placeholder')}
           aria-label="Commande console"
           autoFocus
         />
-        <button type="submit">Exécuter</button>
+        <button type="submit">{t('console_execute')}</button>
       </form>
     </div>
   );

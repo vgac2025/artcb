@@ -22,6 +22,7 @@ ConnectorProvider = Literal[
     "ollama",
     "cursor",
     "watsonx",
+    "google_ai",
     "supabase",
     "postgres",
     "mysql",
@@ -29,15 +30,16 @@ ConnectorProvider = Literal[
     "local_folder",
     "pdf_file",
     "github",
+    "wikipedia",
     "custom_webhook",
 ]
 
-LLM_PROVIDERS: frozenset[str] = frozenset({"openai", "anthropic", "bob", "openrouter", "ollama", "cursor", "watsonx"})
+LLM_PROVIDERS: frozenset[str] = frozenset({"openai", "anthropic", "bob", "openrouter", "ollama", "cursor", "watsonx", "google_ai"})
 DATA_SOURCE_PROVIDERS: frozenset[str] = frozenset({
-    "supabase", "postgres", "mysql", "sqlite", "local_folder", "pdf_file", "github",
+    "supabase", "postgres", "mysql", "sqlite", "local_folder", "pdf_file", "github", "wikipedia",
 })
 # local_folder / pdf_file / sqlite : api_key = placeholder local (min 8 chars)
-LOCAL_SOURCE_PROVIDERS: frozenset[str] = frozenset({"local_folder", "pdf_file", "sqlite"})
+LOCAL_SOURCE_PROVIDERS: frozenset[str] = frozenset({"local_folder", "pdf_file", "sqlite", "wikipedia"})
 
 
 class ConnectorError(Exception):

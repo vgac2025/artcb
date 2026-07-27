@@ -11,8 +11,10 @@ import {
 } from "../api/client";
 import type { GroupData } from "../api/client";
 import { useDashboard } from "../context/DashboardContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 export function Groups() {
+  const { t } = useTranslation();
   const { actorAddress, setActorAddress, setGroupId } = useDashboard();
   const [wallets, setWallets] = useState<Array<{ address: string; name: string }>>([]);
   const [groups, setGroups] = useState<GroupData[]>([]);
@@ -125,14 +127,14 @@ export function Groups() {
   return (
     <div className="mc-page">
       <h1 className="dashboard-title">
-        Groupes · multijoueur{" "}
+        {t('nav_groups')}{" "}
         <Link to="/groups/join" className="mc-link-pill">
           Rejoindre →
         </Link>
       </h1>
 
       <div className="panel">
-        <h2>Wallet actif</h2>
+        <h2>{t('common_wallet')}</h2>
         {wallets.length ? (
           /* BUG-R7: forcer onChange même quand la 1ère option est déjà affichée
              en initialisant actorAddress dès le chargement (fait dans useEffect),
@@ -159,22 +161,22 @@ export function Groups() {
       </div>
 
       <div className="panel mc-groups-panel">
-        <h2>Créer un groupe</h2>
+        <h2>{t('common_create')} {t('common_group')}</h2>
         <div className="toolbar">
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            placeholder="Nom du groupe"
+            placeholder={t('common_group')}
           />
           <button className="primary" onClick={handleCreate} disabled={loading || !actorAddress}>
-            Créer
+            {t('common_create')}
           </button>
         </div>
         {error && <p className="mc-error">{error}</p>}
       </div>
 
       <div className="panel">
-        <h2>Mes groupes ({groups.length})</h2>
+        <h2>{t('common_groups')} ({groups.length})</h2>
         <ul className="mc-checklist-list">
           {groups.map((g) => (
             <li key={g.group_id}>

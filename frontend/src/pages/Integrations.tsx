@@ -6,6 +6,7 @@ import {
   saveConnector,
   testConnector,
 } from "../api/client";
+import { useTranslation } from "../i18n/useTranslation";
 
 type ConnectorItem = {
   connector_id: string;
@@ -21,6 +22,7 @@ type ConnectorItem = {
 const LLM_PROVIDERS = [
   { id: "openai", name: "ChatGPT (OpenAI)", model: "gpt-4o-mini" },
   { id: "anthropic", name: "Claude (Anthropic)", model: "claude-3-5-haiku-20241022" },
+  { id: "google_ai", name: "Google AI (Gemini)", model: "gemini-1.5-flash" },
   { id: "openrouter", name: "OpenRouter (multi-modèles)", model: "anthropic/claude-3.5-haiku" },
   { id: "ollama", name: "Ollama (100 % local)", model: "llama3.2" },
   { id: "bob", name: "IBM Bob", model: "ibm/granite-3-8b-instruct" },
@@ -28,6 +30,7 @@ const LLM_PROVIDERS = [
 
 const DATA_PROVIDERS = [
   { id: "github", name: "GitHub (dépôt complet)" },
+  { id: "wikipedia", name: "Wikipedia (articles par recherche)" },
   { id: "supabase", name: "Supabase (lecture table client)" },
   { id: "sqlite", name: "SQLite (fichier local)" },
   { id: "postgres", name: "PostgreSQL" },
@@ -37,6 +40,7 @@ const DATA_PROVIDERS = [
 ];
 
 export function Integrations() {
+  const { t } = useTranslation();
   const [connectors, setConnectors] = useState<ConnectorItem[]>([]);
   const [llmProviders, setLlmProviders] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +62,9 @@ export function Integrations() {
   const [ghBranch, setGhBranch] = useState("main");
   const [ghPath, setGhPath] = useState("");
   const [ghExtensions, setGhExtensions] = useState("py,ts,tsx,md,txt,js,json,yaml,yml,toml,css");
+  const [wikiQuery, setWikiQuery] = useState("");
+  const [wikiLang, setWikiLang] = useState("fr");
+  const [wikiTitles, setWikiTitles] = useState("");
 
   const reload = async () => {
     const data = await fetchConnectors();
@@ -100,6 +107,11 @@ export function Integrations() {
       }
       if (provider === "pdf_file") {
         config.file_path = pdfPath;
+      }
+      if (provider === "wikipedia") {
+        if (wikiQuery.trim()) config.query = wikiQuery.trim();
+        if (wikiTitles.trim()) config.titles = wikiTitles.trim();
+        config.lang = wikiLang || "fr";
       }
       if (provider === "postgres" || provider === "mysql") {
         config.table = table;
@@ -157,7 +169,7 @@ export function Integrations() {
 
   return (
     <div className="mc-page">
-      <h1 className="dashboard-title">Intégrations · Clés API apprentissage</h1>
+      <h1 className="dashboard-title">{t('nav_integrations')}</h1>
       <p className="mc-hint">
         Connectez <strong>votre</strong> IA (ChatGPT, Claude, OpenRouter, Ollama…) et <strong>vos</strong> sources.
         Les clés restent chiffrées sur <strong>votre machine</strong>.
@@ -273,6 +285,29 @@ export function Integrations() {
             <input value={pdfPath} onChange={(e) => setPdfPath(e.target.value)} placeholder="/chemin/document.pdf" />
           </label>
         )}
+        {provider === "wikipedia" && (
+          <>
+            <label>
+              Requête de recherche (ex: blockchain proof of learning)
+              <input value={wikiQuery} onChange={(e) => setWikiQuery(e.target.value)} placeholder="blockchain ARTCB apprentissage" />
+            </label>
+            <label>
+              Ou titres exacts séparés par | (optionnel)
+              <input value={wikiTitles} onChange={(e) => setWikiTitles(e.target.value)} placeholder="Blockchain|Intelligence artificielle|Cryptographie" />
+            </label>
+            <label>
+              Langue Wikipedia
+              <select value={wikiLang} onChange={(e) => setWikiLang(e.target.value)}>
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="zh">中文</option>
+                <option value="es">Español</option>
+                <option value="de">Deutsch</option>
+                <option value="ja">日本語</option>
+              </select>
+            </label>
+          </>
+        )}
         <label>
           {provider === "postgres" || provider === "mysql"
             ? "Chaîne de connexion (stockée chiffrée localement)"
@@ -292,7 +327,12 @@ export function Integrations() {
         <button
           type="button"
           className="mc-btn"
-          disabled={loading || (provider !== "github" && apiKey.length < 8) || (provider === "github" && !ghRepo.includes("/"))}
+          disabled={
+            loading ||
+            (provider !== "github" && provider !== "wikipedia" && apiKey.length < 8) ||
+            (provider === "github" && !ghRepo.includes("/")) ||
+            (provider === "wikipedia" && !wikiQuery.trim() && !wikiTitles.trim())
+          }
           onClick={handleSave}
         >
           Connecter

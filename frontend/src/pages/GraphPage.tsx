@@ -11,8 +11,10 @@ import { GraphViewer } from "../components/GraphViewer";
 import { PolGauge } from "../components/PolGauge";
 import { Reconstruct } from "../components/Reconstruct";
 import { useDashboard } from "../context/DashboardContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 export function GraphPage() {
+  const { t } = useTranslation();
   const {
     sessionId,
     actorAddress,
@@ -120,10 +122,10 @@ export function GraphPage() {
   if (!graphId) {
     return (
       <div className="mc-page mc-empty">
-        <h1 className="dashboard-title">Graphe</h1>
+        <h1 className="dashboard-title">{t('graph_title')}</h1>
         <div className="panel mc-empty-panel">
           <p className="mc-empty-icon"></p>
-          <p>Aucun graphe — allez sur Mémoriser.</p>
+          <p>{t('graph_no_graph')}</p>
         </div>
       </div>
     );
@@ -131,7 +133,7 @@ export function GraphPage() {
 
   return (
     <div className="mc-page">
-      <h1 className="dashboard-title">Graphe · {graphId.slice(0, 12)}…</h1>
+      <h1 className="dashboard-title">{t('graph_title_with_id')} {graphId.slice(0, 12)}…</h1>
       <div className="demo-grid">
         <div className="panel mc-graph-panel">
           <div className="mc-graph-viewport mc-graph-viewport-tall">
@@ -152,11 +154,11 @@ export function GraphPage() {
               className="mc-search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Rechercher…"
+              placeholder={t('graph_search_placeholder')}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
-            <button onClick={handleSearch}>Search</button>
-            <button onClick={handleReconstruct}>Reconstruire</button>
+            <button onClick={handleSearch}>{t('graph_search_button')}</button>
+            <button onClick={handleReconstruct}>{t('reconstruct_title')}</button>
             <button
               onClick={async () => {
                 if (!nodeDetail) return;
@@ -185,10 +187,10 @@ export function GraphPage() {
               }}
               disabled={!selectedNodeId}
             >
-              Lire
+              {t('graph_tts_button')}
             </button>
             <button className="primary" onClick={handleStore} disabled={loading}>
-              Signer bloc
+              {t('graph_sign_button')}
             </button>
           </div>
           {searchResults.length > 0 && (

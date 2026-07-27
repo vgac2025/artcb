@@ -135,3 +135,39 @@
 
 **Avancement dashboard global : 100 %**  
 **Avancement API/CLI : 100 %**
+
+---
+
+## 9. Tests modules Rapport 071 (2026-07-27)
+
+| ID | Commande / scénario | Attendu | Statut | Dernière exec |
+|----|---------------------|---------|--------|---------------|
+| T-071-01 | `pytest tests/ -q` | **234 passed** | [x] | 2026-07-27 |
+| T-071-02 | `python3 -c "from src.api.ai_routes import router_ai, router_chain_ext, router_webhooks; print('OK')"` | OK | [x] | 2026-07-27 |
+| T-071-03 | `curl -s localhost:8000/api/v1/ai/status` | `{"agent_ready":true,...}` | [ ] | — |
+| T-071-04 | `curl -s -X POST localhost:8000/api/v1/ai/memo -d '{"content":"test"}'` | block gravé | [ ] | — |
+| T-071-05 | `curl -s localhost:8000/api/v1/chain/search?q=test` | results array | [ ] | — |
+| T-071-06 | `curl -s localhost:8000/api/v1/chain/export?format=summary` | summary text | [ ] | — |
+| T-071-07 | `curl -s -X POST localhost:8000/api/v1/api-keys/generate -d '{"label":"test"}'` | token `artcb_xxx` | [ ] | — |
+| T-071-08 | WebSocket `/ws/stream_thought` — start/token/commit | block gravé + committed | [ ] | — |
+| T-071-09 | Frontend build `npm run build` | 0 erreurs TypeScript | [x] | 2026-07-27 |
+| T-071-10 | Page `/agent-memory` accessible dans l'UI | render OK | [ ] | — |
+| T-071-11 | i18n — changer langue → textes changent sur toutes pages | 7 langues | [ ] | — |
+| T-071-12 | Google AI connector — `_google_ai_chat()` | réponse LLM | [ ] | — |
+| T-071-13 | Wikipedia connector — `_fetch_wikipedia_batch()` | articles chargés | [ ] | — |
+
+---
+
+## 4. Avancement % (mis à jour — 2026-07-27)
+
+| Phase | Tâche | % | Tests liés |
+|-------|-------|---|------------|
+| **i18n** | useTranslation × 14 pages, 7 langues, 238+ clés | **100 %** | T-071-11 |
+| **API Keys** | generate/list/me/delete + Bearer middleware | **100 %** | T-071-07 |
+| **AI Routes** | status/memo/think/memory + chain/search/export + webhooks | **100 %** | T-071-03→06 |
+| **stream_thought** | WebSocket token-par-token → bloc PoL | **100 %** | T-071-08 |
+| **AgentMemory UI** | page complète avec 7 onglets | **100 %** | T-071-10 |
+| **Google AI** | Gemini connector dans llm_router.py | **100 %** | T-071-12 |
+| **Wikipedia** | connector dans sources.py | **100 %** | T-071-13 |
+| **Tests totaux** | 234 pytest passent | **100 %** | T-071-01 |
+| **Global Rapport 071** | P0 i18n + P0 API Keys + P1 tests + IA autonome | **~95 %** | tous |

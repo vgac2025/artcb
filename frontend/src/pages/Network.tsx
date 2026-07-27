@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDashboard } from "../context/DashboardContext";
+import { useTranslation } from "../i18n/useTranslation";
 import {
   addP2PPeer,
   createPoolJob,
@@ -15,6 +16,7 @@ import {
 } from "../api/client";
 
 export function Network() {
+  const { t } = useTranslation();
   const { visibility, groupId, useDistributedPool, setUseDistributedPool, encryptTransport } = useDashboard();
   const [status, setStatus] = useState<Record<string, unknown> | null>(null);
   const [peers, setPeers] = useState<Array<Record<string, unknown>>>([]);
@@ -127,7 +129,7 @@ export function Network() {
 
   return (
     <div className="mc-page">
-      <h1 className="dashboard-title">Réseau P2P · Pool E2E</h1>
+      <h1 className="dashboard-title">{t('nav_network')}</h1>
       <p className="mc-hint">
         <strong>Calcul local par défaut</strong> — le <strong>pool opt-in</strong> distribue des morceaux
         chiffrés <strong>ML-KEM-768</strong> (contextes <code>artcb-pool-chunk-v1</code> / <code>artcb-pool-result-v1</code>).

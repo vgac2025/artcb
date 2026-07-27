@@ -5,6 +5,7 @@ import {
   fetchGovernanceProposals,
   fetchWallets,
 } from "../api/client";
+import { useTranslation } from "../i18n/useTranslation";
 
 type Proposal = {
   proposal_id: string;
@@ -22,6 +23,7 @@ type Proposal = {
 };
 
 export function Governance() {
+  const { t } = useTranslation();
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [wallets, setWallets] = useState<Array<{ address: string; name: string }>>([]);
   const [walletAddress, setWalletAddress] = useState("");
@@ -81,11 +83,11 @@ export function Governance() {
 
   return (
     <div className="mc-page" aria-label="Page gouvernance">
-      <h1 className="dashboard-title">Gouvernance · Vote communautaire</h1>
+      <h1 className="dashboard-title">{t('nav_governance')}</h1>
       <p className="mc-hint">
         1 wallet = 1 voix. Les mises à jour majeures VGACTech peuvent être acceptées ou rejetées par la communauté.
       </p>
-      {loading && <p className="mc-muted" aria-live="polite">Chargement des propositions…</p>}
+      {loading && <p className="mc-muted" aria-live="polite">{t('loading')}</p>}
       {error && <p className="mc-error" role="alert">{error}</p>}
       {success && <p className="mc-success" aria-live="polite">{success}</p>}
 

@@ -8,14 +8,14 @@ from pathlib import Path
 
 import pytest
 
-from artcb.agents.pool_manager import AgentPoolManager
-from artcb.io.pdf_loader_async import extract_pdf_text_async
-from artcb.ir.compression import GraphCompressor
-from artcb.ir.models import IRGraph, IRNode, sha256_text
-from artcb.memory.graph_store import GraphStore
-from artcb.memory.node_index import NodeIndex
-from artcb.memory.vector_store_faiss import VectorStoreFAISS
-from artcb.pol.scorer_numpy import PolScorerNumPy
+from src.artcb.agents.pool_manager import AgentPoolManager
+from src.artcb.io.pdf_loader_async import extract_pdf_text_async
+from src.artcb.ir.compression import GraphCompressor
+from src.artcb.ir.models import IRGraph, IRNode, sha256_text
+from src.artcb.memory.graph_store import GraphStore
+from src.artcb.memory.node_index import NodeIndex
+from src.artcb.memory.vector_store_faiss import VectorStoreFAISS
+from src.artcb.pol.scorer_numpy import PolScorerNumPy
 
 # ============================================================================
 # HELPERS

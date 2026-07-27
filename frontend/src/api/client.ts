@@ -483,3 +483,148 @@ export async function saveNotificationChannel(body: {
   const { data } = await api.post("/notifications/channels", body);
   return data;
 }
+
+// --------------------------------------------------------------------------
+// API Keys public
+// --------------------------------------------------------------------------
+export type ApiKeyRecord = {
+  key_id: string;
+  label: string;
+  scopes: string[];
+  created_at: number;
+  expires_at: number | null;
+  last_used_at: number | null;
+  active: boolean;
+  key_preview: string;
+};
+
+export async function listApiKeys(): Promise<{ keys: ApiKeyRecord[]; count: number }> {
+  const { data } = await api.get("/api-keys/list");
+  return data;
+}
+
+export async function generateApiKey(body: {
+  label: string;
+  scopes?: string[];
+  expires_days?: number | null;
+}): Promise<{
+  key_id: string;
+  label: string;
+  token: string;
+  key_preview: string;
+  scopes: string[];
+  created_at: number;
+  expires_at: number | null;
+  message: string;
+}> {
+  const { data } = await api.post("/api-keys/generate", body);
+  return data;
+}
+
+export async function revokeApiKey(keyId: string): Promise<{ revoked: boolean; key_id: string }> {
+  const { data } = await api.delete(`/api-keys/${keyId}`);
+  return data;
+}
+
+export async function getApiKeyMe(token: string): Promise<ApiKeyRecord> {
+  const { data } = await api.get("/api-keys/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return data;
+}
+
+// --------------------------------------------------------------------------
+// AI Agent — mémoire, raisonnement, recherche, export, webhooks
+// --------------------------------------------------------------------------
+
+export type AiMemo = {
+  block_index: number;
+  block_hash: string;
+  graph_id: string;
+  timestamp: string;
+  pol_score: number;
+  memo_type: string;
+  agent_id: string;
+  session_id: string;
+  tags: string[];
+  source: string;
+};
+
+export async function fetchAiStatus(token?: string): Promise<Record<string, unknown>> {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { data } = await api.get("/ai/status", { headers });
+  return data;
+}
+
+export async function postAiMemo(
+  body: {
+    content: string;
+    memo_type?: string;
+    tags?: string[];
+    session_id?: string;
+    wallet_name?: string | null;
+    visibility?: string;
+  },
+  token?: string,
+): Promise<Record<string, unknown>> {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { data } = await api.post("/ai/memo", body, { headers });
+  return data;
+}
+
+export async function fetchAiMemory(
+  opts?: { limit?: number; memo_type?: string },
+  token?: string,
+): Promise<{ memos: AiMemo[]; count: number }> {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { data } = await api.get("/ai/memory", { params: opts, headers });
+  return data;
+}
+
+export async function chainSearch(
+  q: string,
+  opts?: { top_k?: number; visibility?: string },
+  token?: string,
+): Promise<{ query: string; results: Record<string, unknown>[]; count: number }> {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { data } = await api.get("/chain/search", { params: { q, ...opts }, headers });
+  return data;
+}
+
+export async function chainExport(
+  opts?: { format?: string; visibility?: string; include_symbols?: boolean },
+  token?: string,
+): Promise<Record<string, unknown>> {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { data } = await api.get("/chain/export", { params: opts, headers });
+  return data;
+}
+
+export async function fetchWebhooks(token?: string): Promise<{ webhooks: Record<string, unknown>[]; count: number }> {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { data } = await api.get("/webhooks/list", { headers });
+  return data;
+}
+
+export async function registerWebhook(
+  body: { url: string; label: string; events?: string[]; secret?: string },
+  token?: string,
+): Promise<Record<string, unknown>> {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { data } = await api.post("/webhooks/register", body, { headers });
+  return data;
+}
+
+export async function deleteWebhook(hookId: string, token?: string): Promise<{ revoked: boolean }> {
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { data } = await api.delete(`/webhooks/${hookId}`, { headers });
+  return data;
+}

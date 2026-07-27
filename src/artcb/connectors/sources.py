@@ -64,6 +64,8 @@ def fetch_learning_text_batched(
         text, count, has_more = _fetch_pdf_file_batch(record, limit=limit, offset=offset)
     elif record.provider == "github":
         text, count, has_more = _fetch_github_batch(record, limit=limit, offset=offset)
+    elif record.provider == "wikipedia":
+        text, count, has_more = _fetch_wikipedia_batch(record, limit=limit, offset=offset)
     else:
         raise DataSourceError(f"Unsupported data source: {record.provider}")
 
@@ -363,3 +365,69 @@ def test_connector(record: ConnectorRecord) -> tuple[bool, str]:
         return True, f"Source OK — aperçu: {preview}…"
     except Exception as exc:
         return False, str(exc)
+
+
+def _fetch_wikipedia_batch(record: ConnectorRecord, *, limit: int, offset: int) -> tuple[str, int, bool]:
+    """
+    Connecteur Wikipedia — API REST publique, sans clé.
+    config.query  : terme(s) à rechercher (ex: "blockchain proof of learning")
+    config.lang   : code langue (fr, en, zh… — défaut: fr)
+    config.titles : liste de titres séparés par | pour lire directement des articles
+    """
+    lang = record.config.get("lang", "fr")
+    base = f"https://{lang}.wikipedia.org/w/api.php"
+    texts: list[str] = []
+
+    titles_raw = record.config.get("titles", "")
+    query = record.config.get("query", "")
+
+    if titles_raw:
+        # Mode lecture directe d'articles par titre
+        titles = [t.strip() for t in titles_raw.split("|") if t.strip()]
+        page_titles = titles[offset : offset + limit]
+        has_more = (offset + limit) < len(titles)
+    elif query:
+        # Mode recherche
+        with httpx.Client(timeout=30.0) as client:
+            r = client.get(base, params={
+                "action": "query",
+                "list": "search",
+                "srsearch": query,
+                "srlimit": limit,
+                "sroffset": offset,
+                "format": "json",
+            })
+            r.raise_for_status()
+            data = r.json()
+        results = data.get("query", {}).get("search", [])
+        page_titles = [res["title"] for res in results]
+        total = data.get("query", {}).get("searchinfo", {}).get("totalhits", 0)
+        has_more = (offset + limit) < int(total)
+    else:
+        raise DataSourceError("wikipedia connector requires config.query or config.titles")
+
+    # Lire le contenu de chaque article
+    if page_titles:
+        with httpx.Client(timeout=30.0) as client:
+            r = client.get(base, params={
+                "action": "query",
+                "titles": "|".join(page_titles),
+                "prop": "extracts",
+                "exintro": True,
+                "explaintext": True,
+                "exlimit": len(page_titles),
+                "format": "json",
+            })
+            r.raise_for_status()
+            pages = r.json().get("query", {}).get("pages", {})
+        for page in pages.values():
+            title = page.get("title", "")
+            extract = page.get("extract", "").strip()
+            if extract:
+                texts.append(f"=== {title} ===\n{extract[:2000]}")
+
+    text = "\n\n".join(texts)
+    return text, len(texts), has_more
+
+
+# Made with Bob

@@ -11,6 +11,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from src.artcb.logging_config import setup_logging
+from src.api.api_keys_routes import router as api_keys_router
+from src.api.ai_routes import router_ai, router_chain_ext, router_webhooks
 from src.api.connectors_routes import router as connectors_router
 from src.api.dashboard_routes import router as dashboard_router
 from src.api.deps import build_app_state
@@ -39,6 +41,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.state.artcb = build_app_state()
+    app.include_router(api_keys_router)
     app.include_router(api_router)
     app.include_router(devnet_router)
     app.include_router(symbols_router)
@@ -51,6 +54,9 @@ def create_app() -> FastAPI:
     app.include_router(notifications_router)
     app.include_router(dashboard_router)
     app.include_router(ws_router)
+    app.include_router(router_ai)
+    app.include_router(router_chain_ext)
+    app.include_router(router_webhooks)
     logger.debug("ARTCB API started debug=%s", app.state.artcb.settings.debug)
     @app.get("/health")
     async def health_check():

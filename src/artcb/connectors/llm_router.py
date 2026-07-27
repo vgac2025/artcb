@@ -45,6 +45,8 @@ class LLMRouter:
                 raw = self._ollama_chat(api_key, prompt, record, model=model)
             elif record.provider == "watsonx":
                 raw = self._watsonx_chat(api_key, prompt, record, model=model)
+            elif record.provider == "google_ai":
+                raw = self._google_ai_chat(api_key, prompt, record, model=model)
             else:
                 logger.warning("Unsupported LLM provider: %s", record.provider)
                 return None
@@ -250,3 +252,48 @@ class LLMRouter:
         resp.raise_for_status()
         data = resp.json()
         return str(data["results"][0]["generated_text"]).strip()
+
+    def _google_ai_chat(self, api_key: str, prompt: str, record: ConnectorRecord, *, model: str | None) -> str:
+        """Google AI (Gemini) — API REST v1beta generateContent."""
+        model_name = model or record.config.get("model", "gemini-1.5-flash")
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent"
+        with httpx.Client(timeout=60.0) as client:
+            r = client.post(
+                url,
+                params={"key": api_key},
+                headers={"Content-Type": "application/json"},
+                json={
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {"temperature": 0.1, "maxOutputTokens": 4096},
+                },
+            )
+            r.raise_for_status()
+            data = r.json()
+            return str(data["candidates"][0]["content"]["parts"][0]["text"]).strip()
+
+
+def test_connector(record: ConnectorRecord, api_key: str) -> dict:
+    """Test rapide : envoie une phrase courte, vérifie la réponse."""
+    router = LLMRouter()
+    prompt = "Reply with exactly: OK"
+    try:
+        if record.provider == "openai":
+            raw = router._openai_chat(api_key, prompt, model=record.config.get("model", "gpt-4o-mini"))
+        elif record.provider == "anthropic":
+            raw = router._anthropic_chat(api_key, prompt, model=record.config.get("model", "claude-3-5-haiku-20241022"))
+        elif record.provider == "google_ai":
+            raw = router._google_ai_chat(api_key, prompt, record, model=record.config.get("model", "gemini-1.5-flash"))
+        elif record.provider == "openrouter":
+            raw = router._openrouter_chat(api_key, prompt, record, model=record.config.get("model"))
+        elif record.provider == "ollama":
+            raw = router._ollama_chat(api_key, prompt, record, model=record.config.get("model", "llama3.2"))
+        elif record.provider == "cursor":
+            raw = router._cursor_chat(api_key, prompt, record, model=record.config.get("model"))
+        elif record.provider == "watsonx":
+            raw = router._watsonx_chat(api_key, prompt, record, model=record.config.get("model"))
+        else:
+            return {"ok": False, "message": f"Test not supported for provider {record.provider}"}
+        ok = bool(raw) and len(raw) > 0
+        return {"ok": ok, "message": raw[:200] if ok else "Empty response"}
+    except Exception as e:
+        return {"ok": False, "message": str(e)[:300]}

@@ -12,8 +12,10 @@ import { AgentPanel } from "../components/AgentPanel";
 import { GraphViewer } from "../components/GraphViewer";
 import { PolGauge } from "../components/PolGauge";
 import { useDashboard } from "../context/DashboardContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 export function Memorize() {
+  const { t } = useTranslation();
   const {
     sessionId,
     setSessionId,
@@ -182,10 +184,10 @@ export function Memorize() {
 
   return (
     <div className="mc-page">
-      <h1 className="dashboard-title">Mémoriser</h1>
+      <h1 className="dashboard-title">{t('memorize_title')}</h1>
 
       <div className="panel">
-        <h2>Session</h2>
+        <h2>{t('memorize_session')}</h2>
         <div className="toolbar">
           <label>
             session_id:
@@ -238,22 +240,22 @@ export function Memorize() {
       </div>
 
       <div className="panel mc-crafting">
-        <h2>Source — grille crafting</h2>
+        <h2>{t('memorize_source_title')}</h2>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Texte à mémoriser…"
+          placeholder={t('memorize_placeholder')}
           aria-label="Texte source"
           className="mc-crafting-area"
         />
         <div className="toolbar">
           <button className="primary" onClick={handleMemorize} disabled={loading}>
-            {loading ? "Mémorisation…" : "Mémoriser"}
+            {loading ? t('memorize_button_loading') : t('memorize_button')}
           </button>
           <button onClick={() => fetchWaillyExcerpt(3).then(setText)}>Charger Wailly</button>
           {graphId && (
             <button onClick={handleStore} disabled={loading}>
-              Signer bloc
+              {t('memorize_sign_block')}
             </button>
           )}
         </div>
@@ -261,7 +263,7 @@ export function Memorize() {
 
       <div className="demo-grid">
         <div className="panel mc-graph-panel">
-          <h2>Graphe en construction</h2>
+          <h2>{t('memorize_graph_title')}</h2>
           <div className="mc-graph-viewport">
             <GraphViewer graph={graph} selectedNodeId={null} onSelectNode={() => {}} />
           </div>

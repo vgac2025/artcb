@@ -7,8 +7,10 @@ import {
   fetchWallets,
 } from "../api/client";
 import { useDashboard } from "../context/DashboardContext";
+import { useTranslation } from "../i18n/useTranslation";
 
 export function Wallets() {
+  const { t } = useTranslation();
   const { setActorAddress } = useDashboard();
   const [wallets, setWallets] = useState<
     Array<{ address: string; name: string; balance?: number; rewards?: number }>
@@ -77,14 +79,14 @@ export function Wallets() {
 
   return (
     <div className="mc-page">
-      <h1 className="dashboard-title">Wallets · coffre</h1>
+      <h1 className="dashboard-title">{t('wallets_title')}</h1>
 
       <div className="panel">
-        <h2>Créer wallet</h2>
+        <h2>{t('wallets_create_title')}</h2>
         <div className="toolbar">
-          <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Nom wallet" />
+          <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder={t('wallets_create_placeholder')} />
           <button className="primary" onClick={handleCreate} disabled={loading}>
-            Générer
+            {t('wallets_create_button')}
           </button>
         </div>
         {error && <p className="mc-error">{error}</p>}
@@ -116,7 +118,7 @@ export function Wallets() {
 
       {founders.length > 0 && (
         <div className="panel">
-          <h2>Founders allocation</h2>
+          <h2>{t('wallets_founders_title')}</h2>
           <div className="mc-hotbar">
             {founders.map((f) => (
               <div key={f.founder_id} className="mc-slot mc-slot-gold">
@@ -130,14 +132,14 @@ export function Wallets() {
 
       {selected && (
         <div className="panel">
-          <h2>Rewards — {selected.slice(0, 16)}…</h2>
+          <h2>{t('wallets_rewards_title')} — {selected.slice(0, 16)}…</h2>
           <table className="mc-table">
             <thead>
               <tr>
-                <th>Bloc</th>
-                <th>Reward ₳</th>
-                <th>PoL</th>
-                <th>Date</th>
+                <th>{t('wallets_rewards_block')}</th>
+                <th>{t('wallets_rewards_amount')}</th>
+                <th>{t('chain_pol_score')}</th>
+                <th>{t('wallets_rewards_timestamp')}</th>
               </tr>
             </thead>
             <tbody>

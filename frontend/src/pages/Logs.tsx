@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { fetchDemoLiveLog, fetchRtlegEvents } from "../api/client";
+import { useTranslation } from "../i18n/useTranslation";
 
 export function Logs() {
+  const { t } = useTranslation();
   const [events, setEvents] = useState<
     Array<{
       event_id: string;
@@ -25,16 +27,16 @@ export function Logs() {
 
   return (
     <div className="mc-page">
-      <h1 className="dashboard-title">Logs · chat MC</h1>
+      <h1 className="dashboard-title">{t('logs_title')}</h1>
 
       <div className="panel mc-chat-log">
-        <h2>demo_live_latest.txt</h2>
-        {demoLines.length === 0 && <p className="mc-muted">Chargement…</p>}
+        <h2>{t('logs_demo_title')}</h2>
+        {demoLines.length === 0 && <p className="mc-muted">{t('logs_demo_loading')}</p>}
         <pre className="mc-pre">{demoLines.join("\n")}</pre>
       </div>
 
       <div className="panel mc-chat-log">
-        <h2>RT-LEG events</h2>
+        <h2>{t('logs_rtleg_title')}</h2>
         {error && <p className="mc-error">{error}</p>}
         <ul className="mc-chat-list">
           {[...events].reverse().map((ev) => (

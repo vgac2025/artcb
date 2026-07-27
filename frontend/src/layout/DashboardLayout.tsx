@@ -34,6 +34,8 @@ export function DashboardLayout() {
       { to: "/network", label: t('nav_network'), icon: "⇄" },
       { to: "/governance", label: t('nav_governance'), icon: "⚖" },
       { to: "/groups", label: t('nav_groups'), icon: "👥" },
+      { to: "/api-keys", label: t('nav_api_keys'), icon: "🔑" },
+      { to: "/agent-memory", label: t('nav_agent_memory'), icon: "🤖" },
     ]},
   ];
 
