@@ -43,6 +43,8 @@ class LLMRouter:
                 raw = self._cursor_chat(api_key, prompt, record, model=model)
             elif record.provider == "ollama":
                 raw = self._ollama_chat(api_key, prompt, record, model=model)
+            elif record.provider == "watsonx":
+                raw = self._watsonx_chat(api_key, prompt, record, model=model)
             else:
                 logger.warning("Unsupported LLM provider: %s", record.provider)
                 return None
@@ -215,3 +217,36 @@ class LLMRouter:
             )
             r.raise_for_status()
             return str(r.json()["message"]["content"]).strip()
+
+    def _watsonx_chat(self, api_key: str, prompt: str, record: ConnectorRecord, *, model: str | None) -> str:
+        """WatsonX Assistant IBM — échange IAM token puis appel inference."""
+        import httpx
+        # 1. Échanger la clé API contre un token IAM
+        iam_resp = httpx.post(
+            "https://iam.cloud.ibm.com/identity/token",
+            data={"grant_type": "urn:ibm:params:oauth:grant-type:apikey", "apikey": api_key},
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            timeout=15,
+        )
+        iam_resp.raise_for_status()
+        access_token = iam_resp.json()["access_token"]
+
+        # 2. Appel à WatsonX.ai inference (dallas ou au-syd)
+        base = (record.base_url or "https://us-south.ml.cloud.ibm.com").rstrip("/")
+        mdl = model or "ibm/granite-3-8b-instruct"
+        resp = httpx.post(
+            f"{base}/ml/v1/text/generation?version=2023-05-29",
+            headers={
+                "Authorization": f"Bearer {access_token}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model_id": mdl,
+                "input": prompt,
+                "parameters": {"max_new_tokens": 512, "temperature": 0.2},
+            },
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return str(data["results"][0]["generated_text"]).strip()

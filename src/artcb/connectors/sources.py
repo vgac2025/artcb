@@ -323,7 +323,7 @@ def _rows_to_text(rows: list[Any], *, source_label: str) -> str:
 def test_connector(record: ConnectorRecord) -> tuple[bool, str]:
     """Teste la connexion sans stocker de données ARTCB."""
     try:
-        if record.provider in {"openai", "anthropic", "bob", "openrouter", "ollama", "cursor"}:
+        if record.provider in {"openai", "anthropic", "bob", "openrouter", "ollama", "cursor", "watsonx"}:
             from src.artcb.connectors.llm_router import LLMRouter
 
             result = LLMRouter().classify_sentences(
