@@ -268,3 +268,19 @@ Règles inchangées :
 - CDC v1.4 §8, ROADMAP Phase 9, LISTE_TESTS §7–8, INDEX mis à jour
 - Rapport : `rapports/067_audit_api_cli_complet.md`
 - **Avancement global système : ~95 %** (hors libp2p natif, faucet devnet)
+
+## [2026-07-28T01:00:00Z] Rapport 073 — Roadmap Agent IA Autonome
+
+- Rapport `rapports/073_roadmap_agent_ia_autonome_blockchain_2026_07_28.md`
+- Replay IA autonome validé : **74/74 ✅** — script `scripts/replay_ia_autonome.py`
+- Clé admin ARTCB créée : `bob_prod_admin` (kid_81751572a68e4231) — stocker dans `.env` sous `BOB_PROD_TOKEN`
+- **ALERTE SÉCURITÉ** : clé Manus `sk-0s-kIS…` exposée en clair dans le chat — à révoquer immédiatement
+- Bug corrigé : `public_symbols=None` pour blocs privés → `type=unknown` — fix appliqué `ai_routes.py:284`
+- **4 manques P0 identifiés** (bloquants pour l'agent IA autonome) :
+  - P0-1 : `GET /api/v1/ai/context` — contexte inter-sessions auto-injecté (PRIORITÉ 1)
+  - P0-2 : Scopes Bearer non enforced sur routes critiques
+  - P0-3 : Wallet automatique lié à la clé API (signature blocs agents)
+  - P1-1 : `parent_block_index` + `/ai/bugs/open` — relations bug→fix
+- Avancement global : **73 %** | Autonomie IA : **50 %**
+- Tests : **234/234 pytest** | Build frontend : **0 erreur TypeScript**
+- Remote origin : `github.com/vgac2025/lvx` @ `28b4a3a`
