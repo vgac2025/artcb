@@ -47,6 +47,8 @@ class LLMRouter:
                 raw = self._watsonx_chat(api_key, prompt, record, model=model)
             elif record.provider == "google_ai":
                 raw = self._google_ai_chat(api_key, prompt, record, model=model)
+            elif record.provider == "manus":
+                raw = self._manus_chat(api_key, prompt, record, model=model)
             else:
                 logger.warning("Unsupported LLM provider: %s", record.provider)
                 return None
@@ -272,6 +274,29 @@ class LLMRouter:
             return str(data["candidates"][0]["content"]["parts"][0]["text"]).strip()
 
 
+    def _manus_chat(self, api_key: str, prompt: str, record: ConnectorRecord, *, model: str | None) -> str:
+        """Manus AI — API compatible OpenAI (chat/completions)."""
+        base = record.config.get("base_url", "https://api.manus.im/v1")
+        model_name = model or record.config.get("model", "claude-sonnet-4-5")
+        with httpx.Client(timeout=60.0) as client:
+            r = client.post(
+                f"{base}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": model_name,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "temperature": 0.1,
+                    "max_tokens": 4096,
+                },
+            )
+            r.raise_for_status()
+            data = r.json()
+            return str(data["choices"][0]["message"]["content"]).strip()
+
+
 def test_connector(record: ConnectorRecord, api_key: str) -> dict:
     """Test rapide : envoie une phrase courte, vérifie la réponse."""
     router = LLMRouter()
@@ -291,6 +316,8 @@ def test_connector(record: ConnectorRecord, api_key: str) -> dict:
             raw = router._cursor_chat(api_key, prompt, record, model=record.config.get("model"))
         elif record.provider == "watsonx":
             raw = router._watsonx_chat(api_key, prompt, record, model=record.config.get("model"))
+        elif record.provider == "manus":
+            raw = router._manus_chat(api_key, prompt, record, model=record.config.get("model"))
         else:
             return {"ok": False, "message": f"Test not supported for provider {record.provider}"}
         ok = bool(raw) and len(raw) > 0

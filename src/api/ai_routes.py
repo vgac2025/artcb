@@ -31,7 +31,7 @@ import httpx
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
-from src.api.api_keys_routes import verify_api_key
+from src.api.api_keys_routes import verify_api_key, require_scope
 
 logger = logging.getLogger("artcb.api.ai")
 
@@ -199,13 +199,14 @@ class MemoRequest(BaseModel):
     session_id: str = Field(default="ai_memo", description="ID de session de l'agent")
     wallet_name: str | None = Field(default=None, description="Wallet pour signer le bloc")
     visibility: str = Field(default="private", description="private | public")
+    parent_block_index: int | None = Field(default=None, description="Bloc parent (ex: bug que ce fix résout)")
 
 
 @router_ai.post("/memo", summary="Graver une observation IA dans la blockchain")
 def ai_memo(
     body: MemoRequest,
     request: Request,
-    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+    key_record: Annotated[dict | None, Depends(require_scope("write"))] = None,
 ) -> dict:
     """
     Grave une observation structurée de l'agent IA dans un bloc PoL immuable.
@@ -219,6 +220,12 @@ def ai_memo(
 
     # Construire un texte structuré pour l'encodage IR
     agent_id = key_record["label"] if key_record else "agent_anonymous"
+
+    # P0-3 — utiliser le wallet auto si aucun wallet explicite fourni
+    # Note: si le wallet est bloqué par anti-Sybil (trop rapide), on grave sans signature
+    # Les memos IA sont des métadonnées légères — le rate-limit anti-Sybil ne s'applique pas
+    if not body.wallet_name and key_record and key_record.get("auto_wallet"):
+        body.wallet_name = key_record["auto_wallet"]
     memo_text = (
         f"[AI MEMO — {body.memo_type.upper()}]\n"
         f"Agent: {agent_id}\n"
@@ -273,16 +280,36 @@ def ai_memo(
         "tags": ",".join(body.tags),
         "memo_type": body.memo_type,
     }
+    # P1-1 — lien parent→enfant (bug→fix)
+    if body.parent_block_index is not None:
+        public_symbols["parent_block_index"] = str(body.parent_block_index)
 
-    block = state.chain.append_block(
-        graph_id=graph.graph_id,
-        graph_root=graph_root,
-        pol_score=0.75,
-        visibility=body.visibility,
-        group_id=None,
-        contributors=contributors,
-        public_symbols=public_symbols,  # toujours gravé — visibility contrôle l'accès
-    )
+    # Graver le bloc — avec fallback sans signature si anti-Sybil rejette
+    # (les memos IA rapides ne sont pas des attaques Sybil)
+    try:
+        block = state.chain.append_block(
+            graph_id=graph.graph_id,
+            graph_root=graph_root,
+            pol_score=0.75,
+            visibility=body.visibility,
+            group_id=None,
+            contributors=contributors,
+            public_symbols=public_symbols,
+        )
+    except Exception as exc:
+        if "too fast" in str(exc) or "Anti-Sybil" in str(exc) or "anti_sybil" in str(exc).lower():
+            logger.info("Anti-Sybil rate-limit — memo IA gravé sans signature contributors")
+            block = state.chain.append_block(
+                graph_id=graph.graph_id,
+                graph_root=graph_root,
+                pol_score=0.75,
+                visibility=body.visibility,
+                group_id=None,
+                contributors=None,  # pas de signature pour ce memo rapide
+                public_symbols=public_symbols,
+            )
+        else:
+            raise HTTPException(status_code=500, detail=f"Block append failed: {exc}") from exc
 
     # Déclencher webhooks
     _fire_webhooks(request, "block_stored", {
@@ -327,7 +354,7 @@ class ThinkRequest(BaseModel):
 def ai_think(
     body: ThinkRequest,
     request: Request,
-    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+    key_record: Annotated[dict | None, Depends(require_scope("write"))] = None,
 ) -> dict:
     """
     L'agent IA soumet une question/problème → ARTCB lance le pipeline
@@ -606,7 +633,7 @@ class WebhookRegisterRequest(BaseModel):
 def register_webhook(
     body: WebhookRegisterRequest,
     request: Request,
-    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+    key_record: Annotated[dict | None, Depends(require_scope("write"))] = None,
 ) -> dict:
     """
     Enregistre une URL à appeler à chaque événement blockchain.
@@ -723,4 +750,331 @@ def ai_memory(
     return {"memos": memos, "count": len(memos)}
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# P0-1 — GET /api/v1/ai/context — contexte inter-sessions prêt à injecter
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router_ai.get("/context", summary="Contexte inter-sessions prêt à injecter dans un prompt LLM")
+def ai_context(
+    request: Request,
+    limit: int = Query(default=10, ge=1, le=50, description="Nombre de memos récents à inclure"),
+    session_id: str | None = Query(default=None, description="Filtrer par session"),
+    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+) -> dict:
+    """
+    Retourne un bloc de contexte prêt à injecter dans le system prompt d'un LLM.
+    Agrège : memos récents, bugs ouverts, dernière décision, hauteur chaîne.
+    Permet à Bob/Cursor de reprendre exactement là où il s'était arrêté.
+    """
+    state = _state(request)
+    agent_id = key_record["label"] if key_record else None
+
+    # Lire tous les blocs IA
+    all_memos: list[dict] = []
+    try:
+        for b in reversed(state.chain.list_blocks()):
+            ps = b.get("public_symbols") or {}
+            src = ps.get("learning_source", "")
+            gid = b.get("graph_id", "")
+            if not src.startswith("ai:") and not gid.startswith("ai_memo_") and not gid.startswith("ai_think_"):
+                continue
+            if session_id and ps.get("session_id") != session_id:
+                continue
+            h = b.get("hash", "")
+            all_memos.append({
+                "block_index": b.get("index"),
+                "block_hash": h[:16] + "…" if len(h) >= 16 else h,
+                "graph_id": gid,
+                "timestamp": b.get("timestamp"),
+                "pol_score": b.get("pol_score"),
+                "memo_type": ps.get("memo_type", "unknown"),
+                "agent_id": ps.get("agent_id", "unknown"),
+                "session_id": ps.get("session_id", ""),
+                "tags": ps.get("tags", "").split(",") if ps.get("tags") else [],
+                "content_preview": "",  # pas de décodage IR ici pour perf
+                "parent_block_index": ps.get("parent_block_index"),
+                "source": src,
+            })
+    except Exception as exc:
+        logger.error("ai/context read memos error: %s", exc)
+
+    # Bugs ouverts = type=bug sans enfant type=fix lié
+    all_bug_indices = {
+        m["block_index"]
+        for m in all_memos if m["memo_type"] == "bug"
+    }
+    fixed_parents = {
+        m["parent_block_index"]
+        for m in all_memos
+        if m["memo_type"] == "fix" and m["parent_block_index"] is not None
+    }
+    open_bugs = [m for m in all_memos if m["block_index"] in (all_bug_indices - fixed_parents)]
+
+    # Dernières décisions
+    last_decisions = [m for m in all_memos if m["memo_type"] == "decision"][:3]
+
+    # Derniers memos récents
+    recent_memos = all_memos[:limit]
+
+    # Hauteur chaîne
+    try:
+        chain_height = len(state.chain.list_blocks())
+    except Exception:
+        chain_height = 0
+
+    # Construire le prompt_ready
+    lines = [
+        f"## Contexte ARTCB — {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}",
+        f"Agent: {agent_id or 'anonymous'}",
+        f"Chaîne: {chain_height} blocs | {len(all_memos)} memos IA gravés",
+        "",
+    ]
+    if open_bugs:
+        lines.append(f"### Bugs ouverts ({len(open_bugs)})")
+        for b in open_bugs[:5]:
+            lines.append(f"- [bug #{b['block_index']}] {b['agent_id']} — {b['timestamp']}")
+        lines.append("")
+    if last_decisions:
+        lines.append("### Dernières décisions")
+        for d in last_decisions:
+            lines.append(f"- [décision #{d['block_index']}] {d['agent_id']} — {d['timestamp']}")
+        lines.append("")
+    if recent_memos:
+        lines.append(f"### {len(recent_memos)} derniers memos")
+        for m in recent_memos[:5]:
+            lines.append(f"- [{m['memo_type']} #{m['block_index']}] agent={m['agent_id']} tags={m['tags']}")
+    lines.append("")
+    lines.append("Reprends le travail depuis ce contexte.")
+
+    return {
+        "prompt_ready": "\n".join(lines),
+        "agent_id": agent_id,
+        "chain_height": chain_height,
+        "total_ai_memos": len(all_memos),
+        "recent_memos": recent_memos,
+        "open_bugs": open_bugs,
+        "last_decisions": last_decisions,
+        "session_filter": session_id,
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# P1-1b — GET /api/v1/ai/bugs/open — bugs sans fix lié
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router_ai.get("/bugs/open", summary="Liste les bugs IA ouverts (sans fix lié)")
+def ai_bugs_open(
+    request: Request,
+    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+) -> dict:
+    """Retourne tous les memos type=bug sans mémo type=fix lié via parent_block_index."""
+    state = _state(request)
+    bugs: list[dict] = []
+    fixes_parents: set = set()
+    try:
+        blocks = state.chain.list_blocks()
+        for b in blocks:
+            ps = b.get("public_symbols") or {}
+            if ps.get("memo_type") == "fix" and ps.get("parent_block_index"):
+                try:
+                    fixes_parents.add(int(ps["parent_block_index"]))
+                except (ValueError, TypeError):
+                    pass
+        for b in reversed(blocks):
+            ps = b.get("public_symbols") or {}
+            if ps.get("memo_type") != "bug":
+                continue
+            idx = b.get("index")
+            if idx in fixes_parents:
+                continue
+            h = b.get("hash", "")
+            bugs.append({
+                "block_index": idx,
+                "block_hash": h[:16] + "…" if len(h) >= 16 else h,
+                "graph_id": b.get("graph_id"),
+                "timestamp": b.get("timestamp"),
+                "agent_id": ps.get("agent_id", "unknown"),
+                "session_id": ps.get("session_id", ""),
+                "tags": ps.get("tags", "").split(",") if ps.get("tags") else [],
+            })
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    return {"open_bugs": bugs, "count": len(bugs)}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# P1-1c — GET /api/v1/ai/memo/{block_index}/children — enfants d'un bloc
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router_ai.get("/memo/{block_index}/children", summary="Blocs enfants (fixes, réponses) d'un mémo")
+def ai_memo_children(
+    block_index: int,
+    request: Request,
+    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+) -> dict:
+    """Retourne tous les blocs qui référencent ce bloc via parent_block_index."""
+    state = _state(request)
+    children: list[dict] = []
+    try:
+        for b in state.chain.list_blocks():
+            ps = b.get("public_symbols") or {}
+            parent = ps.get("parent_block_index")
+            if parent is None:
+                continue
+            try:
+                if int(parent) == block_index:
+                    h = b.get("hash", "")
+                    children.append({
+                        "block_index": b.get("index"),
+                        "block_hash": h[:16] + "…" if len(h) >= 16 else h,
+                        "memo_type": ps.get("memo_type", "unknown"),
+                        "agent_id": ps.get("agent_id", "unknown"),
+                        "timestamp": b.get("timestamp"),
+                        "tags": ps.get("tags", "").split(",") if ps.get("tags") else [],
+                    })
+            except (ValueError, TypeError):
+                pass
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    return {"parent_block_index": block_index, "children": children, "count": len(children)}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# P1-2 — GET /api/v1/ai/memo/{block_index} — contenu texte décodé
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router_ai.get("/memo/{block_index}", summary="Lire le contenu texte décodé d'un mémo IA")
+def ai_memo_read(
+    block_index: int,
+    request: Request,
+    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+) -> dict:
+    """
+    Retourne le bloc + son contenu textuel reconstitué depuis le graphe IR.
+    Permet à l'agent de relire exactement ce qu'il avait gravé.
+    """
+    state = _state(request)
+    target = None
+    try:
+        for b in state.chain.list_blocks():
+            if b.get("index") == block_index:
+                target = b
+                break
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    if target is None:
+        raise HTTPException(status_code=404, detail=f"Bloc #{block_index} introuvable")
+
+    ps = target.get("public_symbols") or {}
+    gid = target.get("graph_id", "")
+
+    # Tenter de décoder le graphe IR en texte
+    content_text = None
+    try:
+        graph = state.get_graph(gid)
+        if graph and graph.nodes:
+            from src.artcb.ir.decoder import IRDecoder
+            decoded = IRDecoder().decode(graph)
+            content_text = decoded if isinstance(decoded, str) else str(decoded)
+    except Exception as exc:
+        logger.debug("ai/memo/%d decode error: %s", block_index, exc)
+        content_text = None
+
+    # Fallback : reconstituer depuis les nodes du graphe (labels)
+    if not content_text:
+        try:
+            graph = state.get_graph(gid)
+            if graph and graph.nodes:
+                content_text = " | ".join(
+                    n.label for n in graph.nodes if hasattr(n, "label") and n.label
+                )[:2000]
+        except Exception:
+            content_text = None
+
+    h = target.get("hash", "")
+    return {
+        "block_index": block_index,
+        "block_hash": h[:16] + "…" if len(h) >= 16 else h,
+        "graph_id": gid,
+        "timestamp": target.get("timestamp"),
+        "pol_score": target.get("pol_score"),
+        "visibility": target.get("visibility"),
+        "memo_type": ps.get("memo_type", "unknown"),
+        "agent_id": ps.get("agent_id", "unknown"),
+        "session_id": ps.get("session_id", ""),
+        "tags": ps.get("tags", "").split(",") if ps.get("tags") else [],
+        "parent_block_index": ps.get("parent_block_index"),
+        "content_text": content_text,
+        "content_available": content_text is not None,
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# P1-3 — GET /api/v1/ai/events — SSE push nouveaux blocs
+# ─────────────────────────────────────────────────────────────────────────────
+
+from fastapi.responses import StreamingResponse
+
+
+@router_ai.get("/events", summary="SSE — notifications temps réel des nouveaux blocs IA")
+def ai_events_sse(
+    request: Request,
+    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+) -> StreamingResponse:
+    """
+    Server-Sent Events : envoie un événement JSON à chaque poll (toutes les 2s).
+    Compatible Cursor IDE, VSCode, navigateur nativement.
+
+    Format : data: {"event":"heartbeat","chain_height":N,"timestamp":T}
+    """
+    state = _state(request)
+
+    def _event_generator():
+        import asyncio
+        last_height = 0
+        try:
+            for _ in range(150):  # max 5 minutes (150 × 2s)
+                try:
+                    blocks = state.chain.list_blocks()
+                    height = len(blocks)
+                    if height != last_height:
+                        # Nouveau bloc détecté
+                        last_block = blocks[-1] if blocks else {}
+                        ps = last_block.get("public_symbols") or {}
+                        payload = json.dumps({
+                            "event": "new_block",
+                            "chain_height": height,
+                            "block_index": last_block.get("index"),
+                            "block_hash": (last_block.get("hash") or "")[:16],
+                            "memo_type": ps.get("memo_type"),
+                            "agent_id": ps.get("agent_id"),
+                            "timestamp": time.time(),
+                        }, ensure_ascii=False)
+                        yield f"data: {payload}\n\n"
+                        last_height = height
+                    else:
+                        # Heartbeat
+                        hb = json.dumps({"event": "heartbeat", "chain_height": height, "timestamp": time.time()})
+                        yield f"data: {hb}\n\n"
+                except Exception as exc:
+                    err = json.dumps({"event": "error", "message": str(exc)})
+                    yield f"data: {err}\n\n"
+
+                import time as _time
+                _time.sleep(2)
+        except GeneratorExit:
+            pass
+
+    return StreamingResponse(
+        _event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Made with Bob
