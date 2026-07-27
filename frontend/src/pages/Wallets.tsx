@@ -54,8 +54,14 @@ export function Wallets() {
       setActorAddress(w.address);
       setNewName("");
       await reload();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    } catch (err: unknown) {
+      // Axios wraps HTTP errors — extraire le detail lisible
+      const axErr = err as { response?: { data?: { detail?: string }; status?: number } };
+      if (axErr?.response?.status === 409) {
+        setError(`Wallet "${newName.trim()}" existe déjà — choisissez un autre nom.`);
+      } else {
+        setError(axErr?.response?.data?.detail ?? (err instanceof Error ? err.message : String(err)));
+      }
     } finally {
       setLoading(false);
     }

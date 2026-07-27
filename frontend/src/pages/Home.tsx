@@ -84,11 +84,11 @@ export function Home() {
             </li>
           ))}
         </ul>
-        {/* BUG-R5: espace réservé (min-height) pour éviter layout shift quand demo_live charge */}
-        <p className="mc-muted" style={{ minHeight: "1.5em" }}>
+        {/* BUG-R5: hauteur fixe pour éviter layout shift quand demo_live charge */}
+        <p className="mc-muted" style={{ height: "1.5em", overflow: "hidden", margin: 0 }}>
           {demoOk !== null
             ? <>Dernière demo_live : {demoOk ? "OK OK" : "non trouvée"} — <Link to="/logs">Logs</Link></>
-            : null}
+            : "\u00a0"}
         </p>
       </div>
 
