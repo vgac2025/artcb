@@ -287,7 +287,7 @@ class ChainManager:
             group_id=group_id,
             block_reward=block_reward,
             contributors=final_contributors,
-            public_symbols=dict(public_symbols) if public_symbols and visibility == "public" else {},
+            public_symbols=dict(public_symbols) if public_symbols else {},
         )
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(block.to_json_line() + "\n")

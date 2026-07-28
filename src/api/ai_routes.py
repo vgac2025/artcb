@@ -1031,10 +1031,20 @@ def ai_events_sse(
     state = _state(request)
 
     def _event_generator():
-        import asyncio
         last_height = 0
+        # Heartbeat immédiat au démarrage — permet au client de confirmer l'ouverture
+        try:
+            blocks = state.chain.list_blocks()
+            last_height = len(blocks)
+        except Exception:
+            last_height = 0
+        hb0 = json.dumps({"event": "connected", "chain_height": last_height, "timestamp": time.time()})
+        yield f"data: {hb0}\n\n"
+
         try:
             for _ in range(150):  # max 5 minutes (150 × 2s)
+                import time as _time
+                _time.sleep(2)
                 try:
                     blocks = state.chain.list_blocks()
                     height = len(blocks)
@@ -1060,9 +1070,6 @@ def ai_events_sse(
                 except Exception as exc:
                     err = json.dumps({"event": "error", "message": str(exc)})
                     yield f"data: {err}\n\n"
-
-                import time as _time
-                _time.sleep(2)
         except GeneratorExit:
             pass
 
