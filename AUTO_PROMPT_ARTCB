@@ -307,3 +307,28 @@ Règles inchangées :
 - **Anti-Sybil (dette technique restante)** : les blocs rapides (< 60s) utilisent un fallback sans contributors — à résoudre via wallet dédié par session (P2 backlog)
 - **Avancement global : 74 %** | Autonomie IA : **65 %**
 
+
+## [2026-07-28T02:50:00Z] Rapport 076 — Anti-Sybil bypass IA + métriques calibrage
+
+- **Commit :** `2639237` — branche `main`
+- **Stratégie :** désactiver (pas supprimer) le rate-limit pour les blocs IA pendant la phase d'étude
+- **Architecture 3 modes :**
+  - `ARTCB_ANTI_SYBIL_AI_BYPASS=true` → blocs IA (ai:memo, ai:think) libres, métriques collectées
+  - `ARTCB_ANTI_SYBIL_STUDY_MODE=true` → rien rejeté pour rate-limit (tous wallets)
+  - Mode normal → rate-limit 60s actif pour tout le monde
+- **Invariants sécurité (toujours actifs) :** PoL min 0.6, max 10 contributors/bloc, blacklist, doublons
+- **Fallback sans contributors supprimé** de `ai_routes.py` → tous les blocs IA sont désormais signés
+- **`source` passé à `append_block()`** → `chain/manager.py` peut distinguer blocs IA vs minage
+- **Slashing désactivé pour blocs IA bypassés** (pas une vraie attaque Sybil)
+- **Nouveaux endpoints :**
+  - `GET /api/v1/security/anti-sybil/config` — config actuelle
+  - `POST /api/v1/security/anti-sybil/config` — modifier à chaud (en mémoire)
+  - `GET /api/v1/security/anti-sybil/metrics` — distribution intervalles + recommandation calibrage
+- **Algorithme recommandation :** p5 des intervalles observés, arrondi au multiple de 5s → calibrage data-driven
+- **Données collectées (1ère run) :** intervalles ~0.5s (l'IA grave ~2 blocs/seconde dans les replays)
+- **Procédure calibrage :** laisser tourner 24–48h → consulter metrics → appliquer limite suggérée → désactiver bypass
+- **Replay :** 40/40 ✅ 0 ❌ 0 SLASH
+- **Rapport :** `rapports/076_anti_sybil_bypass_ia_metriques_calibrage_2026_07_28.md`
+- **`.env` actuel :** `ARTCB_ANTI_SYBIL_AI_BYPASS=true` (mode étude IA actif)
+- **Avancement global : 75 %** | Autonomie IA : **70 %**
+
