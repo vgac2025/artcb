@@ -284,8 +284,8 @@ def ai_memo(
     if body.parent_block_index is not None:
         public_symbols["parent_block_index"] = str(body.parent_block_index)
 
-    # Graver le bloc — avec fallback sans signature si anti-Sybil rejette
-    # (les memos IA rapides ne sont pas des attaques Sybil)
+    # Graver le bloc — source="ai:memo" → bypass anti-Sybil si ARTCB_ANTI_SYBIL_AI_BYPASS=true
+    # Plus de fallback sans contributors : tous les blocs IA sont signés normalement
     try:
         block = state.chain.append_block(
             graph_id=graph.graph_id,
@@ -295,21 +295,10 @@ def ai_memo(
             group_id=None,
             contributors=contributors,
             public_symbols=public_symbols,
+            source=f"ai:memo:{body.memo_type}",
         )
     except Exception as exc:
-        if "too fast" in str(exc) or "Anti-Sybil" in str(exc) or "anti_sybil" in str(exc).lower():
-            logger.info("Anti-Sybil rate-limit — memo IA gravé sans signature contributors")
-            block = state.chain.append_block(
-                graph_id=graph.graph_id,
-                graph_root=graph_root,
-                pol_score=0.75,
-                visibility=body.visibility,
-                group_id=None,
-                contributors=None,  # pas de signature pour ce memo rapide
-                public_symbols=public_symbols,
-            )
-        else:
-            raise HTTPException(status_code=500, detail=f"Block append failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=f"Block append failed: {exc}") from exc
 
     # Déclencher webhooks
     _fire_webhooks(request, "block_stored", {
