@@ -720,24 +720,28 @@ def chain_block_sizes(
     - **graph_root / merkle_root** : hash SHA-256 du graphe IR encodé (taille fixe 64 chars)
 
     ### La taille affecte-t-elle la quantité de coins disponibles ?
-    **NON** — le reward est calculé uniquement depuis l'**index** du bloc (halving Bitcoin-style) :
+    **NON** — le reward est calculé depuis l'**index** (halving fixe) ET la **vitesse actuelle** (halving dynamique) :
     ```
-    halvings = block_index // 210_000
-    reward = 1 ARTCB >> halvings   (division par 2 à chaque halving)
+    epoch_fixe  = block_index // 105_000          # halving tous les 105 000 blocs
+    epoch_dyn   = floor(log2(max(1, velocity_24h / 144)))  # vitesse vs référence Bitcoin
+    epoch_total = epoch_fixe + epoch_dyn
+    reward      = 1 ARTCB >> epoch_total
     ```
-    Un bloc de 1 octet et un bloc de 1 Mo reçoivent le même reward à index égal.
+    Un bloc de 1 octet et un bloc de 1 Mo reçoivent le même reward à index et vitesse égaux.
 
     ### Ce qui affecte RÉELLEMENT les coins disponibles :
-    1. **Index du bloc** → détermine l'époque (halving)
-    2. **Nombre de contributors** → split du reward entre participants
-    3. **PoL score** → poids dans la distribution du reward (split proportionnel)
+    1. **Index du bloc** → détermine l'epoch fixe (halving)
+    2. **Vitesse de minage (24h)** → détermine l'epoch dynamique (halving adaptatif)
+    3. **Nombre de contributors** → split du reward entre participants
+    4. **PoL score** → poids dans la distribution du reward (split proportionnel)
 
-    ### Réponse rapide :
-    - Bloc #0 à #209 999 → 1 ARTCB/bloc
-    - Bloc #210 000 à #419 999 → 0.5 ARTCB/bloc
-    - Bloc #420 000 à #629 999 → 0.25 ARTCB/bloc
+    ### Réponse rapide (sans accélération dynamique) :
+    - Bloc #0 à #104 999 → 1 ARTCB/bloc (epoch 0)
+    - Bloc #105 000 à #209 999 → 0.5 ARTCB/bloc (epoch 1)
+    - Bloc #210 000 à #314 999 → 0.25 ARTCB/bloc (epoch 2)
     - … jusqu'au halving #64 (reward = 0)
-    - Supply max = 21 000 000 ARTCB (identique à Bitcoin par design)
+    - Supply max = 21 000 000 ARTCB (hard cap immuable — D-014)
+    - À forte adoption (1M blocs/j) : epoch_dyn ≈ 13 → reward divisé par 8 192 automatiquement
     """
     import math
 
@@ -849,14 +853,16 @@ def chain_block_sizes(
         "mined_artcb": round(mined_artcb, 8),
         "mined_pct": round(mined_pct, 6),
         "remaining_artcb": round(supply_max - mined_artcb, 8),
-        "current_epoch": current_epoch,
+        "current_epoch_fixe": current_epoch_fixe,
+        "current_epoch_dynamique": current_epoch_dyn,
+        "current_epoch_total": current_epoch,
         "current_reward_artcb": round(current_reward, 8),
         "next_halving_at_block": next_halving_at,
         "blocks_until_halving": blocks_until_halving,
         "halving_interval": HALVING_INTERVAL,
         "max_halvings": MAX_HALVINGS,
         "size_does_NOT_affect_reward": True,
-        "reward_formula": "reward = 1 ARTCB >> (block_index // 210_000)  [halvings]",
+        "reward_formula": "reward = 1 ARTCB >> (epoch_fixe + epoch_dyn)  [halving fixe 105K + dyn]",
         "what_affects_reward": [
             "block_index (epoch/halving)",
             "contributors count (split du reward)",

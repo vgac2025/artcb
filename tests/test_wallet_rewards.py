@@ -146,25 +146,26 @@ class TestBlockRewards:
         assert reward == 1 * 100_000_000  # 1 ARTCB in satoshi
 
     def test_calculate_block_reward_halving(self, tmp_path):
-        """Reward halves every 210,000 blocks."""
+        """Reward halves every 105,000 blocks (halving interval réduit — décision D-014 rev.)."""
         chain = ChainManager(blocks_path=tmp_path / "blocks.jsonl")
 
-        # Before first halving
+        # epoch_dyn = 0 sur chaîne vide (< 2 blocs), seul halving fixe compte
+        # Before first halving (105 000 blocs)
         assert chain._calculate_block_reward(0) == 1 * 100_000_000
-        assert chain._calculate_block_reward(209_999) == 1 * 100_000_000
+        assert chain._calculate_block_reward(104_999) == 1 * 100_000_000
 
         # After first halving
-        assert chain._calculate_block_reward(210_000) == 50_000_000  # 0.5 ARTCB
-        assert chain._calculate_block_reward(419_999) == 50_000_000
+        assert chain._calculate_block_reward(105_000) == 50_000_000  # 0.5 ARTCB
+        assert chain._calculate_block_reward(209_999) == 50_000_000
 
         # After second halving
-        assert chain._calculate_block_reward(420_000) == 25_000_000  # 0.25 ARTCB
+        assert chain._calculate_block_reward(210_000) == 25_000_000  # 0.25 ARTCB
 
     def test_calculate_block_reward_max_halvings(self, tmp_path):
-        """After 64 halvings, reward is 0."""
+        """After 64 halvings (×105 000 blocs), reward is 0."""
         chain = ChainManager(blocks_path=tmp_path / "blocks.jsonl")
 
-        reward = chain._calculate_block_reward(64 * 210_000)
+        reward = chain._calculate_block_reward(64 * 105_000)
 
         assert reward == 0
 

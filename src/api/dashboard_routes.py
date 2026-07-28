@@ -57,8 +57,10 @@ def mining_status(request: Request) -> dict:
     state = request.app.state.artcb
     blocks = state.chain._read_all_blocks()
     block_count = len(blocks)
-    halvings = block_count // HALVING_INTERVAL if block_count else 0
-    current_reward_satoshi = 0 if halvings >= MAX_HALVINGS else INITIAL_BLOCK_REWARD_SATOSHI >> halvings
+    epoch_fixe = block_count // HALVING_INTERVAL if block_count else 0
+    epoch_dyn  = state.chain._compute_dynamic_epoch(144, 86_400)
+    epoch_total = epoch_fixe + epoch_dyn
+    current_reward_satoshi = 0 if epoch_total >= MAX_HALVINGS else INITIAL_BLOCK_REWARD_SATOSHI >> epoch_total
     blocks_until_halving = HALVING_INTERVAL - (block_count % HALVING_INTERVAL) if block_count else HALVING_INTERVAL
     total_rewards = sum(b.get("block_reward", 0) for b in blocks)
     return {
@@ -70,6 +72,9 @@ def mining_status(request: Request) -> dict:
         "next_halving_at": ((block_count // HALVING_INTERVAL) + 1) * HALVING_INTERVAL,
         "total_rewards_artcb": total_rewards / 1e8,
         "pol_score": state.pol_state.get("pol_score"),
+        "epoch_fixe": epoch_fixe,
+        "epoch_dynamique": epoch_dyn,
+        "epoch_total": epoch_total,
     }
 
 

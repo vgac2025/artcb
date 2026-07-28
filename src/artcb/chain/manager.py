@@ -310,12 +310,81 @@ class ChainManager:
         return block
 
     def _calculate_block_reward(self, block_index: int) -> int:
-        from src.artcb.tokenomics import HALVING_INTERVAL, INITIAL_BLOCK_REWARD_SATOSHI, MAX_HALVINGS
+        """
+        Calcule le reward du bloc avec halving fixe (tous les 105 000 blocs)
+        ET halving dynamique basé sur la vitesse de minage observée sur 24h.
 
-        halvings = block_index // HALVING_INTERVAL
-        if halvings >= MAX_HALVINGS:
+        Formule :
+            epoch_fixe  = block_index // HALVING_INTERVAL
+            epoch_dyn   = floor(log2(max(1, velocity_24h / VELOCITY_REFERENCE)))
+            epoch_total = epoch_fixe + epoch_dyn
+            reward      = INITIAL_REWARD >> min(epoch_total, MAX_HALVINGS - 1)
+
+        La vitesse est mesurée depuis les blocs existants (fenêtre glissante 24h).
+        À faible adoption (devnet) : epoch_dyn = 0, comportement identique au halving fixe.
+        À forte adoption (1M+ users/j) : epoch_dyn augmente → reward divisé automatiquement.
+        """
+        import math
+        from src.artcb.tokenomics import (
+            HALVING_INTERVAL, INITIAL_BLOCK_REWARD_SATOSHI, MAX_HALVINGS,
+            VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS,
+        )
+
+        # ── Halving fixe ────────────────────────────────────────────────────
+        epoch_fixe = block_index // HALVING_INTERVAL
+
+        # ── Halving dynamique : mesure de la vitesse sur 24h ───────────────
+        epoch_dyn = self._compute_dynamic_epoch(VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS)
+
+        # ── Epoch total et reward ───────────────────────────────────────────
+        epoch_total = epoch_fixe + epoch_dyn
+        if epoch_total >= MAX_HALVINGS:
             return 0
-        return INITIAL_BLOCK_REWARD_SATOSHI >> halvings
+        return INITIAL_BLOCK_REWARD_SATOSHI >> epoch_total
+
+    def _compute_dynamic_epoch(self, velocity_ref: int, window_sec: int) -> int:
+        """
+        Mesure la vitesse de minage sur la fenêtre window_sec et retourne
+        l'epoch dynamique supplémentaire (entier ≥ 0).
+
+        velocity_24h = nombre de blocs créés dans les dernières window_sec secondes
+        epoch_dyn    = floor(log2(max(1, velocity_24h / velocity_ref)))
+
+        Exemples (velocity_ref = 144 blocs/jour) :
+          velocity = 22   blocs/j → epoch_dyn = floor(log2(0.15)) = 0 (pas d'effet)
+          velocity = 144  blocs/j → epoch_dyn = floor(log2(1))    = 0 (référence)
+          velocity = 288  blocs/j → epoch_dyn = floor(log2(2))    = 1
+          velocity = 1440 blocs/j → epoch_dyn = floor(log2(10))   = 3
+          velocity = 14400 blocs/j → epoch_dyn = floor(log2(100)) = 6
+          velocity = 1M   blocs/j → epoch_dyn = floor(log2(6944)) = 12
+          velocity = 1B   blocs/j → epoch_dyn = floor(log2(6.9M)) = 22
+        """
+        import math
+        from datetime import UTC, datetime, timedelta
+
+        try:
+            all_blocks = self._read_all_blocks()
+            if len(all_blocks) < 2:
+                return 0
+
+            cutoff = datetime.now(UTC) - timedelta(seconds=window_sec)
+            count_recent = 0
+            for b in all_blocks:
+                ts_raw = b.get("timestamp", "")
+                try:
+                    ts = datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
+                    if ts >= cutoff:
+                        count_recent += 1
+                except (ValueError, AttributeError):
+                    pass
+
+            # Normaliser en blocs/jour
+            velocity_day = count_recent * (86_400 / window_sec)
+            ratio = max(1.0, velocity_day / velocity_ref)
+            return int(math.log2(ratio))
+        except Exception:
+            # Si erreur de lecture, comportement conservateur : pas d'epoch dynamique
+            return 0
 
     def verify(self) -> dict:
         try:
