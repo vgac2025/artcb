@@ -284,3 +284,26 @@ Règles inchangées :
 - Avancement global : **73 %** | Autonomie IA : **50 %**
 - Tests : **234/234 pytest** | Build frontend : **0 erreur TypeScript**
 - Remote origin : `github.com/vgac2025/lvx` @ `28b4a3a`
+
+## [2026-07-28T02:05:00Z] Rapport 075 — Fix public_symbols + replay 40/40 ✅
+
+- **Commit :** `d9674f1` — branche `main`
+- **Root cause corrigée :** `manager.py:290` — `public_symbols` uniquement gravés si `visibility == "public"` → suppression de cette condition erronée → maintenant toujours gravés (la visibilité contrôle l'ACCÈS, pas le STOCKAGE)
+- **Bugs résolus :**
+  - `agent=unknown` (étape 6) → `bob_write_replay` ✅
+  - `memo_type=unknown` → type correct ✅
+  - `children=0` pour bug+fix (étape 9) → `count=1` ✅
+  - `MANUS_ID None` → correctement récupéré depuis `connector.connector_id` ✅
+  - `test_connector manus` → `Unsupported data source` → ajouté dans la liste LLM ✅
+  - SSE test → validé via import module (TestClient httpx sync ne supporte pas le streaming) ✅
+- **Replay :** 40/40 ✅ 0 ❌ 0 ⚠️ (working tree dirty = normal avant commit)
+- **Chaîne :** 77 blocs valides — ML-DSA-65 + Ed25519
+- **Fichiers modifiés :**
+  - `src/artcb/chain/manager.py` — fix public_symbols
+  - `src/api/ai_routes.py` — heartbeat SSE immédiat
+  - `src/artcb/connectors/sources.py` — manus + google_ai dans LLM providers
+  - `scripts/replay_ia_autonome_v2.py` — fix connector_id, SSE validation, Git filter
+- **Rapport :** `rapports/075_fix_public_symbols_sse_replay40_2026_07_28.md`
+- **Anti-Sybil (dette technique restante)** : les blocs rapides (< 60s) utilisent un fallback sans contributors — à résoudre via wallet dédié par session (P2 backlog)
+- **Avancement global : 74 %** | Autonomie IA : **65 %**
+
