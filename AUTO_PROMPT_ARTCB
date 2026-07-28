@@ -412,3 +412,53 @@ Règles inchangées :
 ### Backlog P2/P3 restant
 - IR v0.2 grammaire formelle, libp2p natif, WatsonX project_id, LISTE_TESTS 234 sync
 - **Décision tokenomics ouverte :** garder 420K ARTCB ou redéfinir supply 21M ?
+
+## [2026-07-28T20:00:00Z] Rapport 080 — Halving dynamique + tokenomics mondiale 3.4B users
+
+- **Commit :** `8769751` — branche `main`
+- **Avancement global : 91 %** | Tests 234/234 ✅
+- **Étude économique (rapports 079b + 080) basée sur données TechCrunch/Gartner juin 2026**
+
+### Décisions D-014 révisées (immuables à partir de maintenant)
+
+| Paramètre | Valeur | Fichier |
+|-----------|--------|---------|
+| Supply max | 21 000 000 ARTCB (hard cap) | `tokenomics.py` |
+| Reward initial | 1 ARTCB/bloc | `tokenomics.py` |
+| **Halving fixe** | **105 000 blocs** (−50% vs Bitcoin 210K) | `tokenomics.py` |
+| **Halving dynamique** | **epoch_dyn = floor(log2(velocity_24h / 144))** | `manager.py` |
+| Rate-limit global | **REJETÉ** — IA temps réel obligatoire | N/A |
+| Anti-Sybil | Conservé (sécurité anti-malveillants uniquement) | `anti_sybil.py` |
+
+### Architecture halving dynamique
+
+```
+epoch_fixe  = block_index // 105_000
+epoch_dyn   = floor(log2(max(1, velocity_24h / 144)))
+epoch_total = epoch_fixe + epoch_dyn
+reward      = 1 ARTCB >> epoch_total
+```
+- devnet (22 blocs/j) → epoch_dyn=0 → reward inchangé 1 ARTCB
+- 100K users (100K blocs/j) → epoch_dyn=9 → reward/512
+- 1M users (1M blocs/j) → epoch_dyn=12 → reward/4096
+- 1B users (1B blocs/j) → epoch_dyn=22 → reward/4M
+→ La supply dure ~400 ans quelle que soit la population mondiale
+
+### Contexte IA mondial (TechCrunch/Gartner juin 2026)
+
+- 3,4 milliards d'utilisateurs IA propriétaires (ChatGPT 1.1B, Gemini 950M, Meta AI 600M…)
+- Marché IA 2026 : USD 2,5 trillions | 2030 : USD 1 800 milliards
+- 3 milliards+ utilisateurs IA actifs quotidiens attendus en 2030
+- ARTCB vise la totalité de ces utilisateurs comme couche mémoire universelle des IA
+
+### Rappel : sans halving dynamique
+
+- 0.001% adoption (34K users) → supply épuisée en 247 jours
+- 0.1% adoption (3.4M users) → supply épuisée en 2 jours
+- 1% (34M users) → 6 heures
+- 100% (3.4B users) → 4 minutes
+
+### WatsonX
+
+- project_id manquant — **utilisateur bloqué sur plateforme IBM**
+- Suspendu jusqu'à nouvel ordre
