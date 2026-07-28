@@ -349,3 +349,66 @@ Règles inchangées :
 - **WatsonX project_id documenté** dans `.env.example`
 - **Avancement global : 78 %** | Ce qui reste : IR v0.2, Whitepaper, libp2p, Faucet, Gradium TTS/STT (tous P2/P3 backlog)
 
+
+## [2026-07-28T15:30:00Z] Rapport 078 — inject_context chaque prompt + block-sizes tokenomics
+
+- **Commit :** `562fd84` — branche `main`
+- **Replay :** 48/48 ✅ (était 40/40 → +8 validations)
+- **inject_context=True (défaut) :** contexte injecté à CHAQUE prompt (pas seulement début de session)
+  - `_build_context_snippet()` : fonction helper dans `ai_routes.py`
+  - Injecté dans `POST /ai/memo` ET `POST /ai/think` automatiquement
+  - Contenu : hauteur chaîne, bugs ouverts, 5 derniers memos de l'agent
+  - Non bloquant : si erreur → snippet vide, prompt passe quand même
+  - `inject_context=False` disponible pour tests unitaires sans historique
+- **GET /api/v1/chain/block-sizes :** analyse complète taille + tokenomics
+  - Taille moyenne : 28 Ko | min : 622 B | max : 665 Ko
+  - `block_size_bytes` gravé dans chaque nouveau bloc (`to_json_line()`)
+- **RÉPONSE tokenomics :** la taille du bloc N'affecte PAS le reward
+  - Reward = 1 ARTCB >> (block_index // 210_000) — uniquement l'index compte
+  - Ce qui affecte : index (halving), nb contributors (split), pol_score (pondération)
+  - État actuel : 520 blocs, 814 ARTCB minés, epoch 0, 209 480 blocs avant 1er halving
+- **Avancement global : 80 %**
+
+
+## [2026-07-28T18:00:00Z] Rapport 079 — Étude économique + correction tokenomics + état réel 89%
+
+- **Commit :** à venir (ce rapport)
+- **Avancement global : 89 %**
+- **Tests :** 234/234 ✅ — TOUS passent (y compris test_pool_manager_explore_batch)
+- **Endpoints API :** 100 routes (GET/POST/DELETE/WebSocket)
+- **Chaîne :** 520 blocs valides | 814 ARTCB minés | epoch 0 | 10 wallets uniques
+
+### 🔴 CORRECTION CRITIQUE — SUPPLY MAX ARTCB
+
+- **Erreur documentée :** supply max affichée = 21 000 000 ARTCB (héritage Bitcoin)
+- **Réalité mathématique :** `1.0 × 210_000 × 2 = 420 000 ARTCB` (série géométrique convergente)
+- **Cause :** rapport 045 a réduit reward 50→1 sans recalculer ; Bitcoin = 50 BTC × 210000 × 2 = 21M
+- **Correction appliquée :**
+  - `src/artcb/tokenomics.py` : `MAX_SUPPLY_ARTCB = 420_000.0` documenté
+  - `src/api/ai_routes.py` : utilise `MAX_SUPPLY_ARTCB` (plus `21_000_000` hardcodé)
+- **% supply consommé corrigé :** 814 / 420 000 = **0.194 %** (était 0.004% vs 21M faux)
+
+### Données réelles blockchain au 2026-07-28
+
+- Période : 2026-07-05 → 2026-07-28 (23.29 jours)
+- Vitesse : **22.28 blocs/jour** (~65 min/bloc)
+- Blocs avant 1er halving : **209 481**
+- À vitesse actuelle : **~25.8 ans** avant 1er halving
+- Consommation énergétique : **~200 kWh/an** (vs 150 TWh/an Bitcoin = 750 000× plus efficace)
+
+### État i18n / API Keys / Connecteurs (tout opérationnel)
+- **16/16 pages** utilisent `useTranslation()` — 7 langues × 238 clés = 1 666 traductions
+- **API Keys Bearer** : `api_keys_routes.py` complet + enregistré `main.py`
+- **Google AI (Gemini)** : `_google_ai_chat()` → `gemini-1.5-flash` REST API
+- **Wikipedia** : `_fetch_wikipedia_batch()` confirmé opérationnel
+- **Replay QA :** 48/48 ✅ + 74/74 ✅
+
+### Utilisation API depuis Cursor (intégration agent)
+- Générer clé : `POST /api/v1/api-keys/generate` → token `artcb_xxx`
+- Header : `Authorization: Bearer artcb_xxx`
+- Mining via clé : `POST /api/v1/mining/pipeline` + token Bearer
+- Wallet auto-créé à la génération de clé → signature blocs liée à l'agent
+
+### Backlog P2/P3 restant
+- IR v0.2 grammaire formelle, libp2p natif, WatsonX project_id, LISTE_TESTS 234 sync
+- **Décision tokenomics ouverte :** garder 420K ARTCB ou redéfinir supply 21M ?

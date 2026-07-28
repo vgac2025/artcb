@@ -832,7 +832,7 @@ def chain_block_sizes(
     # ── Tokenomics — impact coins ────────────────────────────────────────────
     from src.artcb.tokenomics import (
         HALVING_INTERVAL, INITIAL_BLOCK_REWARD_ARTCB,
-        MAX_HALVINGS, SATOSHI_PER_ARTCB
+        MAX_HALVINGS, SATOSHI_PER_ARTCB, MAX_SUPPLY_ARTCB
     )
     current_epoch = (len(raw_blocks) - 1) // HALVING_INTERVAL
     current_reward = INITIAL_BLOCK_REWARD_ARTCB / (2 ** min(current_epoch, MAX_HALVINGS - 1))
@@ -841,7 +841,7 @@ def chain_block_sizes(
 
     # Coins minés jusqu'ici
     mined_artcb = total_reward_satoshi / SATOSHI_PER_ARTCB
-    supply_max = 21_000_000.0
+    supply_max = MAX_SUPPLY_ARTCB  # 420_000 ARTCB (1 ARTCB/bloc × 210_000 × 2)
     mined_pct = mined_artcb / supply_max * 100
 
     tokenomics = {
