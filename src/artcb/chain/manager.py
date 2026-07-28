@@ -74,6 +74,10 @@ class ChainBlock:
             payload["public_symbols"] = self.public_symbols
         if self.hash_sha3:
             payload["hash_sha3"] = self.hash_sha3
+        line = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        # Stocker la taille réelle du bloc (en octets UTF-8) dans le payload lui-même
+        # Utile pour les analyses tokenomics et l'audit de la chaîne
+        payload["block_size_bytes"] = len(line.encode("utf-8"))
         return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
 
 
@@ -219,6 +223,7 @@ class ChainManager:
         contributors: list[dict] | None = None,
         block_reward: int | None = None,
         public_symbols: dict[str, str] | None = None,
+        source: str = "unknown",  # "ai_memo" | "ai_think" | "mining" — pour bypass AI
     ) -> ChainBlock:
         all_blocks = self._read_all_blocks()
         index = len(all_blocks)
@@ -227,10 +232,13 @@ class ChainManager:
         merkle = merkle_root or graph_root
 
         if self.enable_security and self.anti_sybil and contributors:
-            valid, reason = self.anti_sybil.validate_block(contributors, pol_score, index)
+            valid, reason = self.anti_sybil.validate_block(contributors, pol_score, index, source=source)
             if not valid:
                 logger.error("Block %d rejected by Anti-Sybil: %s", index, reason)
-                if self.slashing:
+                # Slashing uniquement si ce n'est pas un bloc IA bypassé
+                is_ai = source.startswith("ai:")
+                bypass_active = (self.anti_sybil.ai_bypass and is_ai) or self.anti_sybil.study_mode
+                if self.slashing and not bypass_active:
                     for contributor in contributors:
                         self.slashing.slash(
                             address=contributor["address"],

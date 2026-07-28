@@ -41,6 +41,81 @@ router_webhooks = APIRouter(prefix="/api/v1/webhooks", tags=["webhooks"])
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Helpers — contexte automatique à chaque prompt
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _build_context_snippet(state, agent_id: str | None, limit: int = 5) -> str:
+    """
+    Construit un snippet de contexte compact à injecter dans CHAQUE prompt IA.
+    Appelé automatiquement sur POST /ai/think et POST /ai/memo si inject_context=True.
+
+    Contenu :
+    - Hauteur de chaîne actuelle
+    - N derniers memos de cet agent (titres + types)
+    - Bugs ouverts non résolus
+    - Dernière décision gravée
+
+    Compact par design : 5 memos max, 80 chars/memo — ne pollue pas le prompt.
+    """
+    try:
+        blocks = state.chain.list_blocks()
+        chain_height = len(blocks)
+
+        # Collecter memos IA (les plus récents d'abord)
+        memos: list[dict] = []
+        fixes_parents: set = set()
+        for b in reversed(blocks):
+            ps = b.get("public_symbols") or {}
+            src = ps.get("learning_source", "")
+            gid = b.get("graph_id", "")
+            if not src.startswith("ai:") and not gid.startswith("ai_memo_") and not gid.startswith("ai_think_"):
+                continue
+            memo_type = ps.get("memo_type", "")
+            if memo_type == "fix" and ps.get("parent_block_index"):
+                try:
+                    fixes_parents.add(int(ps["parent_block_index"]))
+                except (ValueError, TypeError):
+                    pass
+            memos.append({
+                "index": b.get("index"),
+                "type": memo_type,
+                "agent": ps.get("agent_id", "?"),
+                "ts": (b.get("timestamp") or "")[:10],
+                "tags": ps.get("tags", ""),
+                "parent": ps.get("parent_block_index"),
+            })
+
+        # Bugs ouverts
+        open_bugs = [
+            m for m in memos
+            if m["type"] == "bug" and m["index"] not in fixes_parents
+        ][:3]
+
+        # Memos récents de cet agent
+        recent = [
+            m for m in memos
+            if agent_id is None or m["agent"] == agent_id
+        ][:limit]
+
+        lines = [
+            f"[ARTCB CONTEXT — {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}]",
+            f"Chain: {chain_height} blocs | {len(memos)} memos IA",
+        ]
+        if open_bugs:
+            lines.append(f"Bugs ouverts: " + ", ".join(f"#{b['index']}" for b in open_bugs))
+        if recent:
+            lines.append(f"Tes {len(recent)} derniers memos:")
+            for m in recent:
+                tags = f" [{m['tags']}]" if m["tags"] else ""
+                lines.append(f"  [{m['type']} #{m['index']}] {m['ts']}{tags}")
+        lines.append("[FIN CONTEXTE — continue depuis ici]")
+        return "\n".join(lines)
+    except Exception as exc:
+        logger.debug("_build_context_snippet error (non bloquant): %s", exc)
+        return ""
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -200,6 +275,13 @@ class MemoRequest(BaseModel):
     wallet_name: str | None = Field(default=None, description="Wallet pour signer le bloc")
     visibility: str = Field(default="private", description="private | public")
     parent_block_index: int | None = Field(default=None, description="Bloc parent (ex: bug que ce fix résout)")
+    inject_context: bool = Field(
+        default=True,
+        description=(
+            "Injecter le contexte blockchain dans le mémo avant gravure. "
+            "Permet à l'agent de savoir ce qu'il faisait quand il a gravé cette observation."
+        ),
+    )
 
 
 @router_ai.post("/memo", summary="Graver une observation IA dans la blockchain")
@@ -222,17 +304,24 @@ def ai_memo(
     agent_id = key_record["label"] if key_record else "agent_anonymous"
 
     # P0-3 — utiliser le wallet auto si aucun wallet explicite fourni
-    # Note: si le wallet est bloqué par anti-Sybil (trop rapide), on grave sans signature
-    # Les memos IA sont des métadonnées légères — le rate-limit anti-Sybil ne s'applique pas
     if not body.wallet_name and key_record and key_record.get("auto_wallet"):
         body.wallet_name = key_record["auto_wallet"]
+
+    # ── Injection contexte automatique — même logique que /ai/think ──
+    # Chaque mémo gravé contient le snapshot de contexte au moment de la gravure.
+    # Permet de retrouver exactement dans quel état l'agent était quand il a observé ça.
+    context_snippet = ""
+    if body.inject_context:
+        context_snippet = _build_context_snippet(state, agent_id=agent_id)
+
     memo_text = (
         f"[AI MEMO — {body.memo_type.upper()}]\n"
         f"Agent: {agent_id}\n"
         f"Session: {body.session_id}\n"
         f"Timestamp: {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}\n"
         f"Tags: {', '.join(body.tags) if body.tags else 'none'}\n\n"
-        f"{body.content}"
+        + (f"{context_snippet}\n\n" if context_snippet else "")
+        + body.content
     )
 
     # Encoder en graphe IR
@@ -602,6 +691,202 @@ def chain_export(
             "block_count": len(data),
             "data": data,
         }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GET /api/v1/chain/block-sizes — Analyse taille blocs + impact tokenomics
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router_chain_ext.get(
+    "/block-sizes",
+    summary="Analyse taille des blocs et impact sur les tokenomics ARTCB",
+)
+def chain_block_sizes(
+    request: Request,
+    top_n: int = Query(default=10, ge=1, le=100, description="N plus gros + N plus petits blocs"),
+    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+) -> dict:
+    """
+    ## Taille des blocs et tokenomics ARTCB
+
+    ### Comment la taille d'un bloc est-elle calculée ?
+    Un bloc ARTCB est une ligne JSON dans `data/chain/blocks.jsonl`.
+    Sa taille = len(json_line.encode('utf-8')) en octets.
+
+    Contenu variable d'un bloc :
+    - **Champs fixes** (~400 octets) : index, timestamp, prev_hash, hash, signature, pol_score…
+    - **contributors[]** (~200–800 octets/contributeur) : adresse, signature Ed25519/ML-DSA-65, pol_score, reward
+    - **public_symbols** (0–N Ko) : métadonnées IA (agent_id, tags, memo_type, contenu texte court)
+    - **graph_root / merkle_root** : hash SHA-256 du graphe IR encodé (taille fixe 64 chars)
+
+    ### La taille affecte-t-elle la quantité de coins disponibles ?
+    **NON** — le reward est calculé uniquement depuis l'**index** du bloc (halving Bitcoin-style) :
+    ```
+    halvings = block_index // 210_000
+    reward = 1 ARTCB >> halvings   (division par 2 à chaque halving)
+    ```
+    Un bloc de 1 octet et un bloc de 1 Mo reçoivent le même reward à index égal.
+
+    ### Ce qui affecte RÉELLEMENT les coins disponibles :
+    1. **Index du bloc** → détermine l'époque (halving)
+    2. **Nombre de contributors** → split du reward entre participants
+    3. **PoL score** → poids dans la distribution du reward (split proportionnel)
+
+    ### Réponse rapide :
+    - Bloc #0 à #209 999 → 1 ARTCB/bloc
+    - Bloc #210 000 à #419 999 → 0.5 ARTCB/bloc
+    - Bloc #420 000 à #629 999 → 0.25 ARTCB/bloc
+    - … jusqu'au halving #64 (reward = 0)
+    - Supply max = 21 000 000 ARTCB (identique à Bitcoin par design)
+    """
+    import math
+
+    state = _state(request)
+
+    try:
+        raw_blocks = state.chain.list_blocks()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    if not raw_blocks:
+        return {"block_count": 0, "message": "Chaîne vide"}
+
+    # ── Calcul taille par bloc ──────────────────────────────────────────────
+    sizes: list[dict] = []
+    total_bytes = 0
+    total_reward_satoshi = 0
+
+    for b in raw_blocks:
+        # Taille réelle : le champ block_size_bytes si présent (nouveaux blocs)
+        # sinon recalcul depuis la sérialisation JSON
+        raw_size = b.get("block_size_bytes")
+        if raw_size is None:
+            import json as _json
+            raw_size = len(_json.dumps(b, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+
+        idx = b.get("index", 0)
+        reward_satoshi = b.get("block_reward", 0)
+        reward_artcb = reward_satoshi / 100_000_000
+        n_contrib = len(b.get("contributors") or [])
+        pol = b.get("pol_score", 0.0)
+
+        # Décomposition taille estimée
+        contrib_bytes = sum(
+            len(str(c).encode("utf-8")) for c in (b.get("contributors") or [])
+        )
+        symbols_bytes = len(
+            str(b.get("public_symbols", {})).encode("utf-8")
+        )
+        header_bytes = raw_size - contrib_bytes - symbols_bytes
+
+        sizes.append({
+            "index": idx,
+            "size_bytes": raw_size,
+            "size_kb": round(raw_size / 1024, 2),
+            "reward_artcb": round(reward_artcb, 8),
+            "reward_satoshi": reward_satoshi,
+            "contributors": n_contrib,
+            "pol_score": pol,
+            "visibility": b.get("visibility"),
+            "breakdown": {
+                "header_bytes": max(0, header_bytes),
+                "contributors_bytes": contrib_bytes,
+                "public_symbols_bytes": symbols_bytes,
+            },
+        })
+        total_bytes += raw_size
+        total_reward_satoshi += reward_satoshi
+
+    # ── Statistiques globales ────────────────────────────────────────────────
+    all_sizes = [s["size_bytes"] for s in sizes]
+    sorted_sizes = sorted(all_sizes)
+    n = len(sorted_sizes)
+
+    def percentile(lst: list, p: float) -> float:
+        idx_f = p / 100 * (len(lst) - 1)
+        lo, hi = int(idx_f), min(int(idx_f) + 1, len(lst) - 1)
+        return lst[lo] + (idx_f - lo) * (lst[hi] - lst[lo])
+
+    distribution = {
+        "min_bytes": sorted_sizes[0],
+        "p25_bytes": int(percentile(sorted_sizes, 25)),
+        "p50_bytes": int(percentile(sorted_sizes, 50)),
+        "p75_bytes": int(percentile(sorted_sizes, 75)),
+        "p90_bytes": int(percentile(sorted_sizes, 90)),
+        "p99_bytes": int(percentile(sorted_sizes, 99)),
+        "max_bytes": sorted_sizes[-1],
+        "avg_bytes": int(total_bytes / n),
+        "total_kb": round(total_bytes / 1024, 1),
+        "total_mb": round(total_bytes / (1024 * 1024), 3),
+    }
+
+    # ── Buckets par tranche de taille ────────────────────────────────────────
+    buckets = {"<1KB": 0, "1-10KB": 0, "10-100KB": 0, "100KB-1MB": 0, ">1MB": 0}
+    for s in all_sizes:
+        if s < 1_024:               buckets["<1KB"] += 1
+        elif s < 10_240:            buckets["1-10KB"] += 1
+        elif s < 102_400:           buckets["10-100KB"] += 1
+        elif s < 1_048_576:         buckets["100KB-1MB"] += 1
+        else:                       buckets[">1MB"] += 1
+
+    # ── Tokenomics — impact coins ────────────────────────────────────────────
+    from src.artcb.tokenomics import (
+        HALVING_INTERVAL, INITIAL_BLOCK_REWARD_ARTCB,
+        MAX_HALVINGS, SATOSHI_PER_ARTCB
+    )
+    current_epoch = (len(raw_blocks) - 1) // HALVING_INTERVAL
+    current_reward = INITIAL_BLOCK_REWARD_ARTCB / (2 ** min(current_epoch, MAX_HALVINGS - 1))
+    next_halving_at = (current_epoch + 1) * HALVING_INTERVAL
+    blocks_until_halving = next_halving_at - len(raw_blocks)
+
+    # Coins minés jusqu'ici
+    mined_artcb = total_reward_satoshi / SATOSHI_PER_ARTCB
+    supply_max = 21_000_000.0
+    mined_pct = mined_artcb / supply_max * 100
+
+    tokenomics = {
+        "supply_max_artcb": supply_max,
+        "mined_artcb": round(mined_artcb, 8),
+        "mined_pct": round(mined_pct, 6),
+        "remaining_artcb": round(supply_max - mined_artcb, 8),
+        "current_epoch": current_epoch,
+        "current_reward_artcb": round(current_reward, 8),
+        "next_halving_at_block": next_halving_at,
+        "blocks_until_halving": blocks_until_halving,
+        "halving_interval": HALVING_INTERVAL,
+        "max_halvings": MAX_HALVINGS,
+        "size_does_NOT_affect_reward": True,
+        "reward_formula": "reward = 1 ARTCB >> (block_index // 210_000)  [halvings]",
+        "what_affects_reward": [
+            "block_index (epoch/halving)",
+            "contributors count (split du reward)",
+            "pol_score (pondération du split entre contributors)",
+        ],
+        "what_does_NOT_affect_reward": [
+            "block_size_bytes",
+            "content volume",
+            "visibility (private/public)",
+            "graph complexity",
+        ],
+    }
+
+    # ── Top N grands + petits ────────────────────────────────────────────────
+    sorted_by_size = sorted(sizes, key=lambda x: x["size_bytes"], reverse=True)
+    top_largest = sorted_by_size[:top_n]
+    top_smallest = sorted_by_size[-top_n:]
+
+    return {
+        "block_count": n,
+        "distribution": distribution,
+        "buckets": buckets,
+        "tokenomics": tokenomics,
+        "top_largest": top_largest,
+        "top_smallest": top_smallest,
+        "note": (
+            "block_size_bytes dans chaque bloc = taille réelle de la ligne JSONL en octets UTF-8. "
+            "Les blocs antérieurs au Rapport 078 n'ont pas ce champ — taille recalculée à la volée."
+        ),
+    }
 
 
 # ─────────────────────────────────────────────────────────────────────────────

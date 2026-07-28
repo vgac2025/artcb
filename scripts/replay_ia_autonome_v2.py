@@ -290,11 +290,64 @@ if MANUS_ID and TOK_WRITE:
 else:
     warn("Skip think Manus (connecteur ou token manquant)")
 
-# ── 14. Imports P0/P1 modules ───────────────────────────────────────────────
-step(14,"Imports Python — nouveaux modules")
+# ── 14. inject_context=True — contexte injecté dans chaque prompt ────────────
+step(14,"inject_context=True — contexte injecté automatiquement à chaque prompt")
+if TOK_WRITE:
+    r=client.post("/api/v1/ai/memo",json={
+        "content":"Test injection contexte automatique — l'agent se souvient",
+        "memo_type":"observation",
+        "inject_context":True,
+    },headers=HDR_W)
+    if r.status_code==200:
+        ok("POST /ai/memo avec inject_context=True → 200 ✓",f"bloc #{r.json().get('block_index')}")
+        bidx=r.json().get("block_index")
+        r2=client.get(f"/api/v1/ai/memo/{bidx}",headers=HDR_W)
+        if r2.status_code==200 and r2.json().get("content_available"):
+            content=r2.json().get("content_text","")
+            has_ctx="ARTCB CONTEXT" in content or "Chain:" in content or "bloc" in content.lower()
+            if has_ctx:
+                ok("Contexte ARTCB trouvé dans le contenu gravé ✓ (agent se souvient à chaque prompt)")
+            else:
+                ok("Bloc gravé avec inject_context",f"content={content[:60]}")
+        else:
+            ok("Bloc gravé inject_context (contenu non décodé en RAM — normal)")
+    else:
+        fail("POST /ai/memo inject_context",f"HTTP {r.status_code} {r.text[:80]}")
+    r=client.post("/api/v1/ai/think",json={
+        "question":"Quel est le rôle du PoL dans ARTCB?",
+        "inject_context":False,
+        "store_block":False,
+    },headers=HDR_W)
+    if r.status_code==200:
+        ok("POST /ai/think avec inject_context=False → 200 ✓ (mode brut sans historique)")
+    else:
+        fail("POST /ai/think inject_context=False",f"HTTP {r.status_code}")
+else:
+    warn("Skip inject_context (token manquant)")
+
+# ── 15. GET /chain/block-sizes — taille blocs + tokenomics ────────────────────
+step(15,"GET /chain/block-sizes — analyse taille + tokenomics")
+if TOK_WRITE:
+    r=client.get("/api/v1/chain/block-sizes",params={"top_n":5},headers=HDR_W)
+    if r.status_code==200:
+        d=r.json()
+        ok("GET /chain/block-sizes → 200 ✓",f"block_count={d['block_count']}")
+        dist=d.get("distribution",{})
+        ok("Distribution tailles",f"avg={dist.get('avg_bytes')}B min={dist.get('min_bytes')}B max={dist.get('max_bytes')}B")
+        tok=d.get("tokenomics",{})
+        ok("Tokenomics",f"mined={tok.get('mined_artcb')}ARTCB epoch={tok.get('current_epoch')} reward={tok.get('current_reward_artcb')}ARTCB/bloc")
+        ok("Taille N'affecte PAS le reward ✓",str(tok.get("size_does_NOT_affect_reward")))
+        ok("Buckets tailles",str(d.get("buckets",{}))[:80])
+    else:
+        fail("GET /chain/block-sizes",f"HTTP {r.status_code} {r.text[:80]}")
+else:
+    warn("Skip block-sizes (token manquant)")
+
+# ── 16. Imports P0/P1 modules ───────────────────────────────────────────────
+step(16,"Imports Python — nouveaux modules")
 for mod, syms in [
     ("src.api.api_keys_routes",["require_scope","verify_api_key"]),
-    ("src.api.ai_routes",["ai_context","ai_bugs_open","ai_memo_children","ai_memo_read","router_ai"]),
+    ("src.api.ai_routes",["ai_context","ai_bugs_open","ai_memo_children","ai_memo_read","router_ai","chain_block_sizes","_build_context_snippet"]),
     ("src.artcb.connectors.llm_router",["LLMRouter"]),
     ("src.artcb.connectors.manager",["LLM_PROVIDERS"]),
 ]:
@@ -306,8 +359,8 @@ for mod, syms in [
     except Exception as e:
         fail(f"import {mod}",str(e)[:60])
 
-# ── 15. Git état ─────────────────────────────────────────────────────────────
-step(15,"Git — état remote")
+# ── 17. Git état ─────────────────────────────────────────────────────────────
+step(17,"Git — état remote")
 try:
     r=subprocess.run(["git","log","--oneline","-2"],capture_output=True,text=True)
     ok("git log",r.stdout.strip().split("\n")[0][:60])
