@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { generateApiKey, listApiKeys, revokeApiKey, type ApiKeyRecord } from "../api/client";
+import { useTranslation } from "../i18n/useTranslation";
 
 const SCOPE_OPTIONS = ["read", "write", "mining", "admin"];
 
@@ -8,6 +9,7 @@ function ts(epoch: number) {
 }
 
 export function ApiKeys() {
+  const { t } = useTranslation();
   const [keys, setKeys] = useState<ApiKeyRecord[]>([]);
   const [label, setLabel] = useState("");
   const [scopes, setScopes] = useState<string[]>(["read", "write"]);
@@ -75,7 +77,7 @@ export function ApiKeys() {
 
   return (
     <div className="mc-page">
-      <h1 className="dashboard-title">Clés API · Accès externe</h1>
+      <h1 className="dashboard-title">{t('api_keys_title')}</h1>
       <p className="mc-hint">
         Générez un token <code>artcb_…</code> pour connecter <strong>Cursor</strong>,{" "}
         <strong>ChatGPT Custom GPT</strong>, <strong>LangChain</strong> ou tout outil externe.{" "}
@@ -87,7 +89,7 @@ export function ApiKeys() {
       {/* Alerte token — affiché UNE seule fois */}
       {newToken && (
         <div className="panel" style={{ border: "2px solid var(--mc-gold)" }}>
-          <h2 className="mc-gold-text">⚠ Copiez ce token maintenant — il ne sera plus affiché</h2>
+          <h2 className="mc-gold-text">⚠ {t('api_keys_token_warning')}</h2>
           <p className="mc-mono" style={{ wordBreak: "break-all", fontSize: "0.85rem" }}>
             {newToken}
           </p>
@@ -116,7 +118,7 @@ export function ApiKeys() {
 
       {/* Formulaire génération */}
       <section className="mc-card">
-        <h2>Nouvelle clé API</h2>
+        <h2>{t('api_keys_new_key')}</h2>
         <label>
           Nom de la clé
           <input
@@ -167,7 +169,7 @@ export function ApiKeys() {
 
       {/* Liste des clés */}
       <section className="mc-card">
-        <h2>Clés actives ({keys.filter((k) => k.active).length})</h2>
+        <h2>{t('api_keys_active')} ({keys.filter((k) => k.active).length})</h2>
         {keys.length === 0 && (
           <p className="mc-muted">Aucune clé — créez-en une pour connecter vos outils.</p>
         )}
@@ -204,7 +206,7 @@ export function ApiKeys() {
       </section>
 
       <section className="mc-card">
-        <h2>Comment utiliser dans Cursor</h2>
+        <h2>{t('api_keys_cursor_usage')}</h2>
         <ol style={{ lineHeight: "2" }}>
           <li>Générez une clé avec scopes <code>read,write,mining</code></li>
           <li>Dans Cursor → Settings → API → Custom endpoint : <code>https://votre-ngrok.app/api/v1</code></li>

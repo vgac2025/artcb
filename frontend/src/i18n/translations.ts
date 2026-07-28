@@ -275,6 +275,23 @@ export interface Translations {
   reconstruct_reconstructed: string;
   reconstruct_ok: string;
   block_row_no_blocks: string;
+
+  // API Keys Page
+  api_keys_title: string;
+  api_keys_token_warning: string;
+  api_keys_new_key: string;
+  api_keys_active: string;
+  api_keys_cursor_usage: string;
+
+  // Agent Memory Page
+  agent_memory_title: string;
+  agent_memory_tab_status: string;
+  agent_memory_tab_memos: string;
+  agent_memory_tab_new: string;
+  agent_memory_tab_search: string;
+  agent_memory_tab_export: string;
+  agent_memory_tab_webhooks: string;
+  agent_memory_tab_stream: string;
 }
 
 export const translations: Record<Language, Partial<Translations> & Pick<Translations, 'nav_dashboard'>> = {
@@ -531,6 +548,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_reconstructed: 'Reconstruit',
     reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Aucun bloc',
+    api_keys_title: 'Clés API · Accès externe', api_keys_token_warning: 'Copiez ce token maintenant — il ne sera plus affiché', api_keys_new_key: 'Nouvelle clé API', api_keys_active: 'Clés actives', api_keys_cursor_usage: 'Comment utiliser dans Cursor',
+    agent_memory_title: 'Agent Memory — ARTCB IA', agent_memory_tab_status: 'Statut', agent_memory_tab_memos: 'Memos', agent_memory_tab_new: 'Nouveau mémo', agent_memory_tab_search: 'Recherche', agent_memory_tab_export: 'Export', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
   },
   
   en: {
@@ -641,6 +660,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_title: 'Reconstruction', reconstruct_original: 'Original',
     reconstruct_reconstructed: 'Reconstructed', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'No blocks',
+    api_keys_title: 'API Keys · External access', api_keys_token_warning: 'Copy this token now — it will not be shown again', api_keys_new_key: 'New API key', api_keys_active: 'Active keys', api_keys_cursor_usage: 'How to use in Cursor',
+    agent_memory_title: 'Agent Memory — ARTCB AI', agent_memory_tab_status: 'Status', agent_memory_tab_memos: 'Memos', agent_memory_tab_new: 'New memo', agent_memory_tab_search: 'Search', agent_memory_tab_export: 'Export', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
   },
   
   zh: {
@@ -749,6 +770,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_title: '重建', reconstruct_original: '原文',
     reconstruct_reconstructed: '重建', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: '无区块',
+    api_keys_title: 'API密钥·外部访问', api_keys_token_warning: '立即复制此令牌——不会再次显示', api_keys_new_key: '新API密钥', api_keys_active: '活跃密钥', api_keys_cursor_usage: '如何在Cursor中使用',
+    agent_memory_title: '代理记忆 — ARTCB AI', agent_memory_tab_status: '状态', agent_memory_tab_memos: '备忘', agent_memory_tab_new: '新备忘', agent_memory_tab_search: '搜索', agent_memory_tab_export: '导出', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: '流',
   },
   
   es: {
@@ -858,6 +881,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_title: 'Reconstrucción', reconstruct_original: 'Original',
     reconstruct_reconstructed: 'Reconstruido', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Sin bloques',
+    api_keys_title: 'Claves API · Acceso externo', api_keys_token_warning: 'Copia este token ahora — no se mostrará de nuevo', api_keys_new_key: 'Nueva clave API', api_keys_active: 'Claves activas', api_keys_cursor_usage: 'Cómo usar en Cursor',
+    agent_memory_title: 'Memoria de Agente — ARTCB IA', agent_memory_tab_status: 'Estado', agent_memory_tab_memos: 'Memos', agent_memory_tab_new: 'Nuevo memo', agent_memory_tab_search: 'Buscar', agent_memory_tab_export: 'Exportar', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
   },
   
   pt: {
@@ -967,6 +992,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_title: 'Reconstrução', reconstruct_original: 'Original',
     reconstruct_reconstructed: 'Reconstruído', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Sem blocos',
+    api_keys_title: 'Chaves API · Acesso externo', api_keys_token_warning: 'Copie este token agora — não será exibido novamente', api_keys_new_key: 'Nova chave API', api_keys_active: 'Chaves ativas', api_keys_cursor_usage: 'Como usar no Cursor',
+    agent_memory_title: 'Memória de Agente — ARTCB IA', agent_memory_tab_status: 'Estado', agent_memory_tab_memos: 'Memos', agent_memory_tab_new: 'Novo memo', agent_memory_tab_search: 'Pesquisa', agent_memory_tab_export: 'Exportar', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
   },
 
   it: {
@@ -1076,6 +1103,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_title: 'Ricostruzione', reconstruct_original: 'Originale',
     reconstruct_reconstructed: 'Ricostruito', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Nessun blocco',
+    api_keys_title: 'Chiavi API · Accesso esterno', api_keys_token_warning: 'Copia questo token ora — non verrà mostrato di nuovo', api_keys_new_key: 'Nuova chiave API', api_keys_active: 'Chiavi attive', api_keys_cursor_usage: 'Come usare in Cursor',
+    agent_memory_title: 'Memoria Agente — ARTCB IA', agent_memory_tab_status: 'Stato', agent_memory_tab_memos: 'Memo', agent_memory_tab_new: 'Nuovo memo', agent_memory_tab_search: 'Cerca', agent_memory_tab_export: 'Esporta', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
   },
 
   ru: {
@@ -1185,6 +1214,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_title: 'Реконструкция', reconstruct_original: 'Оригинал',
     reconstruct_reconstructed: 'Реконструировано', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Нет блоков',
+    api_keys_title: 'API ключи · Внешний доступ', api_keys_token_warning: 'Скопируйте этот токен сейчас — он не будет показан снова', api_keys_new_key: 'Новый API ключ', api_keys_active: 'Активные ключи', api_keys_cursor_usage: 'Как использовать в Cursor',
+    agent_memory_title: 'Память агента — ARTCB ИИ', agent_memory_tab_status: 'Статус', agent_memory_tab_memos: 'Заметки', agent_memory_tab_new: 'Новая заметка', agent_memory_tab_search: 'Поиск', agent_memory_tab_export: 'Экспорт', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Поток',
   },
 };
 

@@ -10,6 +10,7 @@ import {
   deleteWebhook,
   type AiMemo,
 } from "../api/client";
+import { useTranslation } from "../i18n/useTranslation";
 
 type Tab = "status" | "memos" | "memo_new" | "search" | "export" | "webhooks" | "stream";
 
@@ -32,6 +33,7 @@ function badge(text: string, color: string) {
 }
 
 export function AgentMemory() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>("status");
   const [token, setToken] = useState("");
   const [status, setStatus] = useState<Record<string, unknown> | null>(null);
@@ -198,13 +200,13 @@ export function AgentMemory() {
   };
 
   const tabs: { id: Tab; label: string }[] = [
-    { id: "status", label: "🤖 Status IA" },
-    { id: "memos", label: "🧠 Mémoire" },
-    { id: "memo_new", label: "✍️ Nouveau mémo" },
-    { id: "search", label: "🔍 Recherche" },
-    { id: "export", label: "📦 Export" },
-    { id: "webhooks", label: "🪝 Webhooks" },
-    { id: "stream", label: "🌊 Stream Thought" },
+    { id: "status", label: `🤖 ${t('agent_memory_tab_status')}` },
+    { id: "memos", label: `🧠 ${t('agent_memory_tab_memos')}` },
+    { id: "memo_new", label: `✍️ ${t('agent_memory_tab_new')}` },
+    { id: "search", label: `🔍 ${t('agent_memory_tab_search')}` },
+    { id: "export", label: `📦 ${t('agent_memory_tab_export')}` },
+    { id: "webhooks", label: `🪝 ${t('agent_memory_tab_webhooks')}` },
+    { id: "stream", label: `🌊 ${t('agent_memory_tab_stream')}` },
   ];
 
   const inp: React.CSSProperties = {
@@ -218,7 +220,7 @@ export function AgentMemory() {
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: "0 auto", fontFamily: "system-ui, sans-serif" }}>
-      <h2 style={{ marginBottom: 4 }}>🤖 Agent Memory — ARTCB IA</h2>
+      <h2 style={{ marginBottom: 4 }}>🤖 {t('agent_memory_title')}</h2>
       <p style={{ color: "#57606a", fontSize: 14, marginBottom: 16 }}>
         Interface complète pour que Bob/Cursor/ChatGPT utilise ARTCB comme mémoire persistante
       </p>

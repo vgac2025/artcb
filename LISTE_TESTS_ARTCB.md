@@ -12,7 +12,7 @@
 
 | ID | Commande | Attendu | Statut | Dernière exec |
 |----|----------|---------|--------|---------------|
-| T-B01 | `python3 -m pytest tests/ -q` | 205+ passed | [x] | 2026-07-09 (210) |
+| T-B01 | `python3 -m pytest tests/ -q` | 205+ passed | [x] | 2026-07-28 (234) |
 | T-B02 | `python3 -m pytest tests/test_wallet_rewards.py -q` | all pass, reward 1 ARTCB | [x] | 2026-07-07 |
 | T-B03 | `python3 -m pytest tests/test_pol.py -q` | split 1.0 ARTCB | [x] | 2026-07-07 |
 | T-B04 | `python3 -m pytest tests/test_api.py -q` | API OK | [x] | 2026-07-07 |
@@ -131,7 +131,7 @@
 | Phase | Tâche | % | Tests liés |
 |-------|-------|---|------------|
 | **9** | Pool E2E + API/CLI audit | **100 %** | T-P*, T-C* |
-| **Global** | Système MVP + réseau + pool | **~95 %** | 210 pytest |
+| **Global** | Système MVP + réseau + pool | **~95 %** | 234 pytest |
 
 **Avancement dashboard global : 100 %**  
 **Avancement API/CLI : 100 %**

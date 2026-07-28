@@ -265,12 +265,12 @@ Suite à la demande de l'utilisateur, une clé admin a été générée via l'AP
 ```
 Label   : bob_prod_admin
 key_id  : kid_81751572a68e4231
-Token   : artcb_334631c33f701a43cca72a13f09dfa2c5eef63df8b37bd6b7c6e397aa9e976bd
+Token   : artcb_334631c33f701a43**REDACTED_BEFORE_BLOCKCHAIN_INGESTION**
 Scopes  : read, write, mining, admin
 Expires : 365 jours
 ```
 
-**⚠️ Important :** Stocker ce token dans `.env` sous `BOB_PROD_TOKEN=artcb_334631...` — ne jamais le reposer en clair dans un message.
+**⚠️ Important :** Token redacté pour l'ingestion blockchain. Stocker dans `.env` sous `BOB_PROD_TOKEN=artcb_334631...` — ne jamais exposer en clair.
 
 **La clé transmise dans le message (`bob_prod_bob-admin_56QdWDi…`) n'est PAS une clé ARTCB valide** — c'est un format non reconnu par le système. La clé `artcb_xxx` ci-dessus est la vraie clé opérationnelle.
 
