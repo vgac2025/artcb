@@ -2,382 +2,230 @@
 
 **Mémoire persistante pour agents IA** : chaque pensée devient un nœud signé dans un graphe, compressible sans perte, retrouvable à l'identique.
 
-[![Tests](https://img.shields.io/badge/tests-210%2F210%20passing-brightgreen)](tests/)
-[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://python.org)
+[![Tests](https://img.shields.io/badge/tests-303%2F303%20passing-brightgreen)](tests/)
+[![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
 
 ---
 
-## 🚀 Démarrage Rapide (5 lignes)
+## Problème résolu
+
+> *« Quand je travaille longtemps avec une IA, elle oublie tout. Je dois réexpliquer l'historique à chaque session. »*
+
+ARTCB résout la perte de contexte des LLM via :
+- **IR réversible** : Texte → Graphe → Texte (100 % identique)
+- **Blockchain post-quantique** : ML-DSA-65 + Ed25519, 520 blocs actifs
+- **Proof-of-Learning (PoL)** : récompense = Δ compression + validation sémantique
+- **Dual-agent** : Explorer (génère) + Critic (valide) à chaque bloc
+- **API Keys** : connecter Cursor, ChatGPT, LangChain via `Bearer artcb_xxx`
+- **Multi-LLM** : OpenAI, Anthropic, Google AI (Gemini), Ollama, Cursor
+
+---
+
+## Démarrage rapide
 
 ```bash
 git clone https://github.com/vgac2025/lvx.git && cd lvx
 pip install -r requirements.txt && make chain
-python -m uvicorn src.api.main:app --reload &
+uvicorn src.api.main:create_app --factory --port 8000 --reload
 cd frontend && npm install && npm run dev
 ```
 
-**Accès** : http://localhost:5173 (frontend) + http://localhost:8000/docs (API)
+- Frontend : http://localhost:5173
+- API docs : http://localhost:8000/docs
 
 ---
 
-## 🎯 Problème Résolu
-
-> *« Quand je travaille longtemps avec une IA, elle oublie ce qu'on s'est dit. Je dois tout réexpliquer. »*
-
-**ARTCB** résout la perte de contexte des LLM via :
-- **IR réversible** : Texte → Graphe → Texte (100% identique)
-- **Blockchain signée** : Intégrité cryptographique Ed25519
-- **Proof-of-Learning** : Récompense = Δ compression + validation
-- **Dual-agent** : Explorateur (génère) + Critique (valide)
-
----
-
-## 📊 Démo Interactive (9 étapes)
-
-1. **Encoder** : Collez un texte → graphe IR construit en temps réel
-2. **Dual-agent** : Explorateur (bleu) et Critique (vert) commentent
-3. **Explorer** : Cliquez un nœud → détails + connexions surlignées
-4. **Rechercher** : "Retrouve la décision" → nœud exact surligné
-5. **Reconstruire** : Texte original affiché côte à côte (diff vert)
-6. **PoL** : Jauge affiche compression 68%, validation 100%, PoL 0.60
-7. **Wallet** : Créez wallet, minez blocs, consultez balance
-8. **Blockchain** : Footer "Bloc #7 signé ✓ — hash abc123..."
-9. **Rewards** : Distribution collective proportionnelle au PoL
-
-### 🖥️ CLI API complète (Linux / macOS / Windows)
-
-```bash
-# Démarrer l'API puis :
-export ARTCB_API_BASE=http://127.0.0.1:8000
-
-python3 scripts/artcb_cli.py health
-python3 scripts/artcb_cli.py wallet create --name mon_wallet
-python3 scripts/artcb_cli.py agents --text "Décision ARTCB importante."
-python3 scripts/artcb_cli.py mining pipeline --text "..." --visibility public --wallet mon_wallet
-python3 scripts/artcb_cli.py pool run --text "..." --distributed --visibility private --auto-finalize
-python3 scripts/artcb_cli.py p2p status
-```
-
-Référence complète : `API_REFERENCE_ARTCB.md` · Console web : `/console`
-
-### 🎮 CLI Minage d'Apprentissage
-
-```bash
-# Miner des livres PDF et gagner des ARTCB
-python3 scripts/mine_learning_simple.py
-
-# Résultats : 2 livres minés, 100 ARTCB gagnés, réversibilité 100%
-```
-
-**Comparaison avec systèmes existants** :
-- ✅ **Bitcoin** : Winner-takes-all → **ARTCB** : Distribution collective
-- ✅ **Travail utile** : Compression + validation (vs hash compétitif)
-- ✅ **Gaspillage minimal** : ~100x moins d'énergie que Bitcoin
-
----
-
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Frontend React + Vite                     │
-│  GraphViewer (Cytoscape) │ AgentPanel │ PolGauge │ Wallet   │
+│  GraphViewer │ AgentPanel │ PolGauge │ Wallet │ API Keys    │
 └──────────────────────────────┬──────────────────────────────┘
                                │ REST + WebSocket
 ┌──────────────────────────────▼──────────────────────────────┐
-│                    API FastAPI (~70 endpoints)                 │
+│               API FastAPI (93 endpoints)                     │
+│  /ai/think  /ai/memo  /ir/rules  /pol/nft  /pol/transfer    │
 └──┬──────────┬──────────┬──────────┬──────────┬──────────────┘
    │          │          │          │          │
    ▼          ▼          ▼          ▼          ▼
 ┌──────┐ ┌────────┐ ┌─────────┐ ┌────────┐ ┌──────────────┐
 │ IR   │ │ RT-LEG │ │ Dual    │ │ PoL    │ │ Blockchain C │
-│Engine│ │ Engine │ │ Agents  │ │ Scorer │ │ + Wallet     │
+│Engine│ │ Engine │ │ Agents  │ │ Scorer │ │ ML-DSA-65    │
 └──────┘ └────────┘ └─────────┘ └────────┘ └──────────────┘
 ```
 
 ---
 
-## 🔧 Stack Technique
+## Stack technique
 
 | Composant | Technologie | Rôle |
 |-----------|-------------|------|
-| **Backend** | Python 3.11 + FastAPI | API REST + WebSocket |
-| **Blockchain** | C (libartcb_chain.so) | Hash SHA-256 + signatures Ed25519 |
-| **IR Engine** | Python + spaCy | Encodage texte → graphe réversible |
-| **Agents** | Python asyncio | Explorateur + Critique dual-agent |
-| **PoL** | NumPy | Calcul compression + validation |
-| **Wallet** | Ed25519 + Bech32 | Adresses `artcb1q...` + balance |
-| **Frontend** | React + Vite + Cytoscape | Visualisation graphe interactive |
-| **Tests** | pytest | 210 tests (100% passent) |
+| Backend | Python 3.12 + FastAPI | 93 endpoints REST + WebSocket |
+| Blockchain | C + ML-DSA-65 + Ed25519 | Post-quantique NIST 2024 |
+| IR Engine | Python + spaCy | Texte → graphe réversible |
+| Agents | Python asyncio | Explorer + Critic dual-agent |
+| PoL | NumPy | Compression + validation + retrieval |
+| Wallet | Ed25519 + Bech32 | Adresses `artcb1q…` + balance |
+| Memory | FAISS | Recherche vectorielle sémantique |
+| Smart contracts | IR v0.2 Rules | Règles SI…ALORS déclaratives |
+| Frontend | React + Vite + Cytoscape | Graphe interactif, 7 langues |
+| Tests | pytest | 303/303 passent |
 
 ---
 
-## 📦 Installation Complète
+## Installation
 
 ### Prérequis
 
-- Python 3.11+
+- Python 3.12+
 - Node.js 18+
 - GCC (compilation lib C)
-- Git
 
 ### Backend
 
 ```bash
-# Clone
-git clone https://github.com/vgac2025/lvx.git
-cd lvx
-
-# Environnement Python
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# Dépendances
+git clone https://github.com/vgac2025/lvx.git && cd lvx
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-
-# Compilation blockchain C
 make chain
-
-# Variables d'environnement (optionnel)
-cp .env.example .env
-# Éditez .env pour ajouter vos clés API (Bob, Gradium) si besoin
-
-# Lancer API
-python -m uvicorn src.api.main:app --reload
-# API disponible sur http://localhost:8000
-# Documentation interactive : http://localhost:8000/docs
+cp .env.example .env   # optionnel — ajouter clés API LLM
+uvicorn src.api.main:create_app --factory --port 8000 --reload
 ```
 
 ### Frontend
 
 ```bash
-cd frontend
-npm install
-npm run dev
-# Interface disponible sur http://localhost:5173
+cd frontend && npm install && npm run dev
 ```
 
 ---
 
-## 🧪 Tests
+## Fonctionnalités disponibles
+
+| Fonctionnalité | Endpoint | État |
+|----------------|----------|------|
+| Mémoriser un texte | `POST /api/v1/store` | ✅ |
+| Explorer le graphe | `GET /api/v1/graph/{id}` | ✅ |
+| Poser une question (IA pense) | `POST /api/v1/ai/think` | ✅ |
+| Graver une observation | `POST /api/v1/ai/memo` | ✅ |
+| Recherche sémantique | `GET /api/v1/chain/search` | ✅ |
+| Vérifier la chaîne | `GET /api/v1/chain/verify` | ✅ |
+| Wallet + rewards | `GET /api/v1/wallets` | ✅ |
+| Générer une clé API | `POST /api/v1/api-keys/generate` | ✅ |
+| Smart contracts PoL | `POST /api/v1/ir/rules` | ✅ |
+| NFT sémantiques | `POST /api/v1/pol/nft/mint` | ✅ |
+| Transactions PoL | `POST /api/v1/pol/transfer` | ✅ |
+| Webhooks | `POST /api/v1/webhooks/register` | ✅ |
+| Interface 7 langues | FR/EN/ZH/ES/PT/IT/RU | ✅ |
+
+---
+
+## Connexion via clé API (Cursor, ChatGPT, LangChain)
 
 ```bash
-# Tous les tests (96 tests)
-pytest tests/ -v
+# 1. Générer une clé
+curl -X POST http://localhost:8000/api/v1/api-keys/generate \
+  -H "Content-Type: application/json" \
+  -d '{"label": "mon-agent", "scopes": ["read","write","mining"]}'
+# → {"token": "artcb_xxxx…"}  — copier UNE SEULE FOIS
 
-# Tests spécifiques
-pytest tests/test_wallet_rewards.py -v  # 25 tests wallet + rewards
-pytest tests/test_ir_reversibility.py -v  # 18 tests réversibilité
-pytest tests/test_chain.py -v  # 4 tests blockchain
-
-# Avec couverture
-pytest tests/ --cov=src --cov-report=html
+# 2. Utiliser
+curl -H "Authorization: Bearer artcb_xxxx" \
+  http://localhost:8000/api/v1/ai/think \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Comment corriger ce bug ?", "inject_context": true}'
 ```
 
-**Résultats** : 96/96 tests passent (0 erreur, 0 warning)
+Dans **Cursor** : Settings → Features → Rules for AI → ajouter l'endpoint et le header.
 
 ---
 
-## 🎮 Utilisation
-
-### API REST
+## Tests
 
 ```bash
-# Encoder un texte
-curl -X POST http://localhost:8000/api/v1/encode \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Nous avons décidé d'utiliser FastAPI.", "use_llm": false}'
-
-# Créer un wallet
-curl -X POST http://localhost:8000/api/v1/wallet/create \
-  -H "Content-Type: application/json" \
-  -d '{"name": "mon-wallet"}'
-
-# Consulter balance
-curl http://localhost:8000/api/v1/wallet/balance/artcb1q...
-
-# Vérifier blockchain
-curl http://localhost:8000/api/v1/chain/verify
-```
-
-### Python SDK
-
-```python
-from src.artcb.ir.encoder import IREncoder
-from src.artcb.chain.manager import ChainManager
-from src.artcb.wallet.manager import WalletManager
-
-# Encoder texte
-encoder = IREncoder()
-graph = encoder.encode("Texte à mémoriser")
-
-# Créer wallet
-wallet_mgr = WalletManager()
-wallet = wallet_mgr.create_wallet("alice")
-print(f"Adresse: {wallet['address']}")
-
-# Miner bloc avec rewards
-chain = ChainManager()
-contributors = [{"address": wallet['address'], "pol_score": 0.85}]
-block = chain.append_block(graph_root="abc123", pol_score=0.85, contributors=contributors)
-print(f"Reward: {block.block_reward / 1e8} ARTCB")
-
-# Consulter balance
-balance = wallet_mgr.get_balance(wallet['address'], chain.blocks_path)
-print(f"Balance: {balance['balance_artcb']} ARTCB")
+python3 -m pytest tests/ -q         # 303/303 PASS
+python3 -m pytest tests/ --tb=short # avec détail erreurs
 ```
 
 ---
 
-## 🔐 Sécurité
-
-| Mesure | Implémentation |
-|--------|----------------|
-| **Signatures** | Ed25519 (blocs + événements RT-LEG) |
-| **Adresses** | Bech32-like avec checksum (format `artcb1q...`) |
-| **Clés privées** | Permissions 0o600 (lecture propriétaire uniquement) |
-| **Blockchain** | Hash chaîné SHA-256, détection tampering |
-| **Rewards** | Distribution collective PoL (anti-Sybil) |
-| **Logs** | Mode DEBUG activé, aucun secret en clair |
-
----
-
-## 💰 Tokenomics
+## Tokenomics
 
 | Paramètre | Valeur |
 |-----------|--------|
-| **Supply max** | 21,000,000 ARTCB |
-| **Block reward initial** | 1 ARTCB |
-| **Halving** | Tous les 210,000 blocs |
-| **Distribution** | Collective proportionnelle au PoL |
-| **Seuil bloc** | PoL ≥ 0.6 + signature Critique |
-| **Unité** | 1 ARTCB = 10⁸ satoshi |
-| **Founders allocation** | 5 founders × 210,000 ARTCB (1% chacun) |
-
-**Formule reward individuel** :
-```
-reward_i = block_reward × (PoL_score_i / Σ PoL_score_j)
-```
-
-### 🔑 Wallets Founders
-
-5 wallets créés avec allocation initiale de **1% de la supply** chacun (210,000 ARTCB).
-
-**Génération** :
-```bash
-python3 scripts/create_founders_wallets.py
-```
-
-**Fichiers** :
-- `data/founders/founders_wallets.json` (⚠️ clés privées — gitignoré)
-- `data/founders/founders_allocation.json` (balances publiques)
-- `data/founders/founders_guide.md` (guide complet)
-
-**Sécurité** : Les clés privées ne sont **jamais** commitées sur GitHub.
+| Supply max | 21 000 000 ARTCB |
+| Récompense initiale | 1 ARTCB / bloc |
+| Halving fixe | tous les 105 000 blocs |
+| Halving dynamique | selon velocity IA (anti-inflation) |
+| Seuil bloc | PoL ≥ 0.60 |
+| Fondateurs | 5 wallets × 210 000 ARTCB |
 
 ---
 
-## 📈 Métriques
+## Sécurité
 
-### Code
-- **Lignes Python** : 9,612
-- **Lignes C** : 423
-- **Lignes TypeScript** : 1,204
-- **Lignes tests** : 2,534
-- **Total** : 13,773 lignes
-
-### Tests
-- **Tests totaux** : 210
-- **Tests réussis** : 210 (100%)
-- **Couverture** : ~87%
-- **Temps exécution** : 2min09s
-
-### Performance
-- **Encodage (cache)** : +263% (10.42s → 2.87s)
-- **PDF 20 pages** : +203% (8.5s → 2.8s)
-- **Recherche vectorielle** : +900% (450ms → 45ms)
-- **Moyenne** : **+250%** (3.5x plus rapide)
+| Mesure | Implémentation |
+|--------|----------------|
+| Signature bloc | ML-DSA-65 (post-quantique NIST 2024) + Ed25519 |
+| Clés API | Stockées hash SHA-256 uniquement |
+| Wallets | AES-256-GCM chiffré |
+| Anti-Sybil | Validator + Slashing |
+| Blockchain | Hash chaîné SHA-256, détection tampering |
 
 ---
 
-## 📚 Documentation
+## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [`CAHIER_DES_CHARGES_ARTCB`](CAHIER_DES_CHARGES_ARTCB) | Spécification complète MVP v1.2 |
-| [`PROTOCOLE_ARTCB`](PROTOCOLE_ARTCB) | Règles de développement |
-| [`TOKENOMICS_ARTCB`](TOKENOMICS_ARTCB) | Supply, halving, distribution PoL |
-| [`FAQ_NON_EXPERTS_ARTCB.md`](FAQ_NON_EXPERTS_ARTCB.md) | **37 questions pour non-experts** |
-| [`INDEX_ARTCB`](INDEX_ARTCB) | Cartographie projet |
-| [`rapports/`](rapports/) | 37 rapports d'audit (18,586 lignes) |
-| [`data/founders/founders_guide.md`](data/founders/founders_guide.md) | **Guide wallets founders** |
-
----
-
-## 🎯 Roadmap
-
-- [x] **Phase 1** : IR Engine + réversibilité 100%
-- [x] **Phase 2** : Backend API + RT-LEG + Dual-agent
-- [x] **Phase 3** : Blockchain C + Wallet + Rewards
-- [x] **Phase 4** : Frontend React + visualisation
-- [x] **Phase 5** : Optimisations (+250% performance)
-- [x] **Phase 6** : CLI minage + comparaison systèmes
-- [x] **Phase 7** : Wallets founders + FAQ non-experts
-- [x] **Phase 8** : Correction métriques PoL interface
-- [ ] **Phase 9** : Réseau P2P artcb-devnet
-- [ ] **Phase 10** : Anti-Sybil + slashing (implémenté, à activer)
+| Fichier | Description |
+|---------|-------------|
+| [CAHIER_DES_CHARGES_ARTCB](CAHIER_DES_CHARGES_ARTCB) | Spécification complète |
+| [PROTOCOLE_ARTCB](PROTOCOLE_ARTCB) | Règles de développement |
+| [TOKENOMICS_ARTCB](TOKENOMICS_ARTCB) | Supply, halving, PoL |
+| [ROADMAP_GENERAL_ARTCB](ROADMAP_GENERAL_ARTCB) | Phases 0–11 |
+| [API_REFERENCE_ARTCB.md](API_REFERENCE_ARTCB.md) | 93 endpoints documentés |
+| [FAQ_NON_EXPERTS_ARTCB.md](FAQ_NON_EXPERTS_ARTCB.md) | Questions non-techniques |
+| [INDEX_ARTCB](INDEX_ARTCB) | Cartographie complète du projet |
+| [CONFIGURATION_ARTCB](CONFIGURATION_ARTCB) | Variables d'environnement |
+| [LICENCE_ARTCB.md](LICENCE_ARTCB.md) | Politique de licence |
+| [GOUVERNANCE_ARTCB.md](GOUVERNANCE_ARTCB.md) | Gouvernance et vote |
+| [rapports/](rapports/) | 98 rapports d'audit |
 
 ---
 
-## 🤝 Contribution
+## Roadmap
 
-Ce projet est développé pour le **RAISE Summit Hackathon 2026** (Cerebral Valley).
-
-**Critères hackathon** :
-- ✅ Problème réel quotidien (perte contexte IA)
-- ✅ UX interactive (graphe + dual-agent)
-- ✅ Démo fonctionnelle (9 étapes)
-- ✅ Innovation (IR réversible + PoL + blockchain)
-- ✅ Repo public, travail neuf
+- [x] Phase 0–4 : IR Engine, Backend, Blockchain C, Frontend
+- [x] Phase 5 : Optimisations (+250% performance)
+- [x] Phase 6 : Connecteurs LLM (OpenAI, Anthropic, Google AI, Ollama…)
+- [x] Phase 7 : Pipeline minage apprentissage
+- [x] Phase 8 : P2P ML-KEM + gouvernance + Anti-Sybil
+- [x] Phase 9 : Pool E2E + CLI + API complet
+- [x] Phase 10 : Tokenomics halving dynamique (21M / 3.4B users)
+- [x] Phase 11 : IR v0.2 smart contracts + PoL NFT + PoL Transfer
+- [ ] Phase 12 : libp2p natif
+- [ ] Phase 13 : Wikipedia connector
 
 ---
 
-## 📄 Licence
+## Licence
 
-**Titulaire : VGACTech (Société)** — hackathon RAISE terminé.
+**Titulaire : VGACTech (Société)**
 
 | Réseau | Licence |
 |--------|---------|
-| **Privé** + **Groupe** | [Propriétaire](LICENSE-PROPRIETAIRE.md) — tous droits réservés |
-| **Public** | [BSL 1.1](LICENSE-PUBLIC-BSL.md) — usage non-production / R&D ; SSPL possible sur décision VGACTech |
-| **Dépôt (défaut)** | [LICENSE](LICENSE) |
+| Privé + Groupe | [Propriétaire](LICENSE-PROPRIETAIRE.md) — tous droits réservés |
+| Public | [BSL 1.1](LICENSE-PUBLIC-BSL.md) — R&D, non-production |
+| Dépôt (défaut) | [LICENSE](LICENSE) |
 
 Politique complète : [LICENCE_ARTCB.md](LICENCE_ARTCB.md)  
-Gouvernance code (modif libre + vote majorité) : [GOUVERNANCE_ARTCB.md](GOUVERNANCE_ARTCB.md)
-
-Contact : **vgacofficiel@gmail.com**
-
-Modification des licences : **uniquement par décision écrite de VGACTech**.  
-Modification du code : **VGACTech à tout moment** — rollback si **majorité rejette** une mise à jour majeure.
+Contact : vgacofficiel@gmail.com
 
 ---
 
-## 🔗 Liens
+## Liens
 
-- **Dépôt** : https://github.com/vgac2025/lvx
-- **API Docs** : http://localhost:8000/docs (après lancement)
-- **Frontend** : http://localhost:5173 (après lancement)
-- **Hackathon** : RAISE Summit 2026 — Cerebral Valley
-
----
-
-## 🙏 Remerciements
-
-- **Gradium** : TTS/STT API (partenaire hackathon)
-- **Cursor** : IDE IA (piste hackathon)
-- **Cerebral Valley** : Organisation RAISE Summit
-
----
-
-**ARTCB** — La mémoire que l'IA ne peut plus perdre.
+- Dépôt : https://github.com/vgac2025/lvx
+- API Docs : http://localhost:8000/docs
+- Frontend : http://localhost:5173

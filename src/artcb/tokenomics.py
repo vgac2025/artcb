@@ -69,4 +69,3 @@ VELOCITY_REFERENCE = 144  # blocs/jour — référence Bitcoin (ajustable par go
 # Fenêtre temporelle pour mesurer la vitesse actuelle (en secondes)
 VELOCITY_WINDOW_SECONDS = 86_400  # 24 heures
 
-# Made with Bob

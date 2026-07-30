@@ -408,4 +408,3 @@ class RulesRegistry:
         return rule.evaluate(context)
 
 
-# Made with Bob

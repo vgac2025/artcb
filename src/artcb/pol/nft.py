@@ -176,4 +176,3 @@ class NFTRegistry:
         return self._load()
 
 
-# Made with Bob

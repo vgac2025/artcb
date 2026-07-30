@@ -3,7 +3,7 @@
 **Titulaire :** VGACTech (Société)  
 **Contact :** vgacofficiel@gmail.com  
 **Horodatage :** 2026-07-08T22:00:00Z  
-**Décision :** ordre utilisateur — hackathon RAISE terminé, passage licences fermées  
+**Décision :** ordre utilisateur — , passage licences fermées  
 **Autorité licence :** **VGACTech uniquement**, par décision écrite  
 **Autorité code :** VGACTech modifie à tout moment — **rollback si majorité rejette** une MAJ majeure (voir `GOUVERNANCE_ARTCB.md`)
 

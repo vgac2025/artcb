@@ -20,4 +20,3 @@ export function useTranslation() {
   return { t, language };
 }
 
-// Made with Bob

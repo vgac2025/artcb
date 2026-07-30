@@ -17,7 +17,7 @@ SAMPLE_TEXTS = [
     "L'objectif est de mémoriser chaque raisonnement sans perte.",
     "Hier, nous avons discuté de l'architecture. Aujourd'hui, nous implémentons l'IR Engine.",
     "La preuve est dans le checksum sha256.",
-    "Contexte: session hackathon RAISE Summit 2026.",
+    "Contexte: session de développement ARTCB.",
     "A\n\nB\n\nC",
     (
         "Nous avons décidé d'utiliser FastAPI pour le backend. "

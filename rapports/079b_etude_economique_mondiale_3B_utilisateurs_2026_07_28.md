@@ -289,4 +289,4 @@ Merci de valider l'une des options avant implémentation :
 ---
 **Script de calcul :** `scripts/etude_eco_complete.py`  
 **Rapport généré le :** 2026-07-28T19:00:00Z  
-**Made with Bob (IBM)**
+

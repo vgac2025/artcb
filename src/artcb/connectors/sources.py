@@ -430,4 +430,3 @@ def _fetch_wikipedia_batch(record: ConnectorRecord, *, limit: int, offset: int) 
     return text, len(texts), has_more
 
 
-# Made with Bob

@@ -372,4 +372,4 @@ Bob peut utiliser directement l'API ARTCB pour :
 **Rapport généré le :** 2026-07-28T18:30:00Z  
 **Commit précédent :** `dad9f9e` — sera mis à jour dans le commit suivant  
 **Script de calcul :** `scripts/_tmp_etude_eco.py`  
-**Made with Bob (IBM)**
+

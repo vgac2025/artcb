@@ -348,4 +348,4 @@ C'est : **"dans quel ordre le construit-on ?"**
 ---
 **Rapport généré le :** 2026-07-28T21:00:00Z  
 **Script de calcul :** aucun — analyse pure basée sur le code existant  
-**Made with Bob (IBM)**
+

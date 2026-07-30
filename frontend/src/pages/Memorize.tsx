@@ -195,7 +195,7 @@ export function Memorize() {
             <input
               value={sessionId}
               onChange={(e) => setSessionId(e.target.value)}
-              placeholder="demo_hackathon"
+              placeholder="demo_session"
             />
           </label>
           <label>

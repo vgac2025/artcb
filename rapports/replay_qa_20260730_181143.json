@@ -1,0 +1,11 @@
+{
+  "passed": 0,
+  "failed": 0,
+  "errors": 0,
+  "elapsed_s": 0.68,
+  "status": "pass",
+  "summary": "",
+  "pytest_report": {},
+  "stdout_tail": "",
+  "timestamp": "2026-07-30T18:11:43.782042+00:00"
+}

@@ -58,7 +58,7 @@ def _state(request: Request):
 
 @router.get("/demo/wailly-excerpt")
 def wailly_excerpt(request: Request, max_pages: int = 3) -> dict:
-    """Load Wailly book excerpt for hackathon demo (D-010)."""
+    """Load Wailly book excerpt for demo (D-010)."""
     from src.artcb.io.pdf_loader import extract_pdf_text, resolve_book_path
 
     path = resolve_book_path()

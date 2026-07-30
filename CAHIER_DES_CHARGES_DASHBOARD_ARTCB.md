@@ -11,7 +11,7 @@
 | Avant (CDC §9.3) | Après (demande utilisateur 2026-07-07) |
 |------------------|----------------------------------------|
 | « Pas de dashboard administratif » — parcours narratif 60 s | **Vrai dashboard** remplaçant `Demo.tsx` |
-| 1 page linéaire hackathon | Console multi-vues (monitoring, chain, wallets, minage, graphe) |
+| 1 page linéaire démo | Console multi-vues (monitoring, chain, wallets, minage, graphe) |
 
 **⚠️ Contradiction documentaire :** le CDC §9.3 dit éviter un panel de stats. Ce cahier propose un **dashboard opérationnel** (pas un mock) aligné sur l’API réelle. Validation requise avant code.
 
@@ -19,7 +19,7 @@
 
 ## 1. Objectif produit
 
-Remplacer la démo hackathon actuelle (`frontend/src/pages/Demo.tsx`) par un **dashboard ARTCB** professionnel qui :
+Remplacer la démo technique actuelle (`frontend/src/pages/Demo.tsx`) par un **dashboard ARTCB** professionnel qui :
 
 1. Expose **toutes** les capacités backend déjà codées (API réelle, pas mock).
 2. S’inspire de **3 dashboards de référence** (65 captures analysées — §3).
@@ -49,7 +49,7 @@ Remplacer la démo hackathon actuelle (`frontend/src/pages/Demo.tsx`) par un **d
 - Pas de vue chaîne (explorateur blocs).
 - Pas de vue minage CLI intégrée.
 - Pas de layout dashboard (sidebar, header, multi-panneaux).
-- UX « hackathon demo », pas « produit ».
+- UX « démo technique », pas « produit ».
 
 ### 2.2 Backend déjà disponible (à brancher)
 

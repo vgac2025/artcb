@@ -1242,4 +1242,3 @@ export function setLanguage(lang: Language): void {
   window.dispatchEvent(new Event('languagechange'));
 }
 
-// Made with Bob

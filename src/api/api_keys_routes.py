@@ -268,4 +268,3 @@ def revoke_key(key_id: str, request: Request) -> dict:
             return {"revoked": True, "key_id": key_id}
     raise HTTPException(status_code=404, detail=f"Clé {key_id} introuvable")
 
-# Made with Bob

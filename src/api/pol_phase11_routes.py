@@ -499,4 +499,3 @@ def pol_balance(address: str, request: Request) -> dict:
     balance = ledger.balance_of(address)
     return {"address": address, "pol_transfer_balance_artcb": balance}
 
-# Made with Bob
