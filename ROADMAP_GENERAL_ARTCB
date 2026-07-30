@@ -200,7 +200,7 @@
 
 | Module | Description | Priorité |
 |--------|-------------|---------|
-| SDK Python/JS | Client officiel ARTCB | P1 |
+| SDK Python/JS | Client officiel ARTCB | P1 — **✅ FAIT** (`src/artcb/sdk/`, 28 tests) |
 | PoL Value Index | Valeur informationnelle d'un bloc | P2 |
 | Oracle Bridge | Données off-chain → on-chain | P2 |
 | Consensus multi-agents | Validation distribuée IR | P2 |

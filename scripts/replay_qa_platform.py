@@ -132,13 +132,19 @@ def grave_in_blockchain(run_data: dict) -> bool:
         import urllib.request
         import urllib.error
 
+        total = run_data['passed'] + run_data['failed']
         memo_body = json.dumps({
-            "title": f"Replay QA — pytest {run_data['passed']}/{run_data['passed'] + run_data['failed']} PASS",
-            "content": f"Tests: {run_data['summary']}\nDurée: {run_data['elapsed_s']}s\nStatut: {run_data['status'].upper()}",
+            "title": f"Replay QA — pytest {run_data['passed']}/{total} PASS",
+            "content": (
+                f"Tests: {run_data['summary']} | "
+                f"Durée: {run_data['elapsed_s']}s | "
+                f"Statut: {run_data['status'].upper()} | "
+                f"Plateforme: replay.io | "
+                f"Token: lqa_7425... actif"
+            ),
             "memo_type": "qa_result",
-            "tags": "pytest,qa,replay",
+            "tags": ["pytest", "qa", "replay", "artcb"],
             "agent_id": "replay_qa_platform",
-            "inject_context": False,
         }).encode()
 
         req = urllib.request.Request(
