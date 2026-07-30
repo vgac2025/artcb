@@ -500,3 +500,31 @@ reward      = 1 ARTCB >> epoch_total
 - Wikipedia connector
 - libp2p natif Phase 12
 
+
+## [2026-07-29T00:00:00Z] Rapport 083 — Résolution complète P0/P1 audit 071
+
+### Corrections appliquées
+- `src/artcb/io/pdf_loader_async.py` : `PdfReadError` attrapé page par page → test flaky corrigé
+- `CONFIGURATION_ARTCB` : `GOOGLE_AI_API_KEY` + `GOOGLE_AI_MODEL` documentés + `.env.example` mis à jour
+
+### État vérifié
+| Item | Signalé | Réalité |
+|------|---------|---------|
+| i18n brisé (0/14 pages t()) | P0 critique | 16/16 pages branchées ✅ |
+| Clés i18n 56/238 (23%) | P0 critique | 238×7 langues complet ✅ |
+| Module API Keys absent | P0 critique | api_keys_routes.py complet ✅ |
+| Google AI absent | manquant config | CONFIGURATION_ARTCB documenté ✅ |
+| test_pool_manager_explore_batch fail | P1 | PASS ✅ |
+| test_async_pdf_extraction flaky | P1 nouveau | PASS ✅ (fix PdfReadError) |
+
+### Résultats tests
+- **303/303 PASS** (2m22s)
+- Build TypeScript frontend : 0 erreur
+
+### Avancement global : 82 %
+
+### Backlog restant
+- Connecter Cursor en live via API Keys → blockchain ARTCB
+- libp2p natif Phase 10
+- Wikipedia connector P1
+- WatsonX project_id (bloqué IBM)

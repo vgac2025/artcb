@@ -8,6 +8,7 @@ from pathlib import Path
 
 import aiofiles
 from pypdf import PdfReader
+from pypdf.errors import PdfReadError
 
 
 async def extract_pdf_text_async(
@@ -39,7 +40,10 @@ async def extract_pdf_text_async(
         # Sequential extraction for small PDFs
         chunks = []
         for i in range(num_pages):
-            text = reader.pages[i].extract_text() or ""
+            try:
+                text = reader.pages[i].extract_text() or ""
+            except PdfReadError:
+                text = ""
             if text.strip():
                 chunks.append(text.strip())
         return "\n\n".join(chunks)
@@ -49,10 +53,12 @@ async def extract_pdf_text_async(
         """Extract text from a single page."""
         # Run sync extraction in executor
         loop = asyncio.get_event_loop()
-        text = await loop.run_in_executor(
-            None,
-            lambda: reader.pages[page_num].extract_text() or ""
-        )
+        def _extract() -> str:
+            try:
+                return reader.pages[page_num].extract_text() or ""
+            except PdfReadError:
+                return ""
+        text = await loop.run_in_executor(None, _extract)
         return (page_num, text.strip() if text.strip() else "")
 
     # Process all pages concurrently

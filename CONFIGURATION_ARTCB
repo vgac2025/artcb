@@ -34,8 +34,11 @@
 | `ARTCB_LLM_ENABLED` | Non | `false` | Activer path B si clé Bob présente |
 | `GRADIUM_API_KEY` | Non | — | TTS voix (Q-004 = oui) |
 | `GRADIUM_API_URL` | Non | `https://api.gradium.ai` | Base URL Gradium |
+| `GOOGLE_AI_API_KEY` | Non* | — | **Google AI (Gemini)** — provider `google_ai` dans Intégrations |
+| `GOOGLE_AI_MODEL` | Non | `gemini-1.5-flash` | Modèle Gemini par défaut (gemini-1.5-flash / gemini-1.5-pro / gemini-2.0-flash) |
 
 \* Path B : `BOB_API_KEY` **ou** `OPENROUTER_API_KEY` (même clé). Rule-based (path A) fonctionne **sans** clé.
+\*\* Google AI : aucun package pip requis — API REST v1beta `generativelanguage.googleapis.com`. Obtenir une clé sur https://aistudio.google.com/app/apikey
 
 ---
 
@@ -59,6 +62,12 @@ ARTCB_POL_THRESHOLD=0.6
 # Optionnel — encodage LLM
 # OPENROUTER_API_KEY=sk-or-v1-...
 # OPENROUTER_MODEL=anthropic/claude-3.5-sonnet
+
+# Optionnel — Google AI (Gemini) — aucun pip requis
+# GOOGLE_AI_API_KEY=AIza...
+# GOOGLE_AI_MODEL=gemini-1.5-flash
+# → Obtenir clé : https://aistudio.google.com/app/apikey
+# → Dans Intégrations frontend : provider = google_ai, api_key = valeur ci-dessus
 
 # Optionnel — voix P1
 # GRADIUM_API_KEY=...
