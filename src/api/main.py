@@ -14,6 +14,7 @@ from src.artcb.logging_config import setup_logging
 from src.api.api_keys_routes import router as api_keys_router
 from src.api.ai_routes import router_ai, router_chain_ext, router_webhooks
 from src.api.security_routes import router_security
+from src.api.pol_phase11_routes import router as pol_phase11_router
 from src.api.connectors_routes import router as connectors_router
 from src.api.dashboard_routes import router as dashboard_router
 from src.api.deps import build_app_state
@@ -59,6 +60,7 @@ def create_app() -> FastAPI:
     app.include_router(router_chain_ext)
     app.include_router(router_webhooks)
     app.include_router(router_security)
+    app.include_router(pol_phase11_router)
     logger.debug("ARTCB API started debug=%s", app.state.artcb.settings.debug)
     @app.get("/health")
     async def health_check():

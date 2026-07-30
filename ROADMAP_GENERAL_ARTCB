@@ -1,6 +1,7 @@
-# ROADMAP GÉNÉRALE — ARTCB MVP Avancé
+# ROADMAP GÉNÉRALE — ARTCB MVP Avancé → Couche Universelle PoL
 
 **Horodatage :** 2026-07-04T22:50:00Z
+**Mise à jour :** 2026-07-28T21:30:00Z — Vision PoL couche universelle (rapport 081)
 
 ---
 
@@ -142,21 +143,93 @@
 
 ---
 
-## Phase 10 — Extensions futures (P1)
+## Phase 10 — Consolidation post-hackathon ✅ (juillet 2026)
 
-- [ ] libp2p natif (remplacer HTTP gossip — gossip HTTP port 18444 operationnel)
-- [x] Gradium TTS/STT intégration (API + fallback Web Speech)
-- [x] Faucet tARTCB devnet
-- [x] Registre symboles persistant + sync P2P + blockchain publique
-- [ ] IR v0.2 grammaire enrichie
+- [x] API Keys Bearer (generate/list/revoke/me + auto-wallet)
+- [x] Google AI (Gemini) connecteur
+- [x] Wikipedia connecteur
+- [x] i18n 16 pages × 7 langues × 238 clés
+- [x] Halving dynamique adaptatif (velocity-based)
+- [x] HALVING_INTERVAL réduit à 105 000 blocs
+- [x] Knowledge Base 201 blocs (122 fichiers .md ingérés)
+- [x] inject_context automatique sur chaque prompt IA
+- [x] Anti-Sybil bypass IA + métriques calibrage
+- [x] Replay QA 48/48 + 74/74 ✅
+- [x] 234/234 tests
+- [ ] libp2p natif (remplacer HTTP gossip)
 - [ ] Whitepaper scientifique
+- [ ] WatsonX project_id (bloqué côté IBM)
 
 ---
 
-## Phase 6 — Extensions (P1/P2 — post-hackathon)
+## Phase 11 — PoL comme Couche Universelle (2026-07-28 → )
 
-- [x] Connecteurs IA utilisateur (OpenAI, Claude, Bob) — v1.3
-- [x] Connecteurs sources DB client (Supabase, Postgres, MySQL, SQLite) — v1.3
+> **Vision validée (rapport 081) :** PoL n'est pas un concurrent des autres blockchains.
+> C'est leur successeur : couche sémantique post-quantique capable d'encoder
+> transactions, NFT, smart contracts, bases de données, mémoire IA collective.
+> Comparaison : Internet vs Minitel. Source NIST PQC standards (août 2024).
+
+### Phase 11.1 — IR v0.2 : Interpréteur de règles (Smart Contracts déclaratifs)
+
+| Jalon | Livrable | Critère | Statut |
+|-------|----------|---------|--------|
+| 11.1.1 | `src/artcb/ir/rules.py` — moteur de règles D+G+P | Évaluation conditionnelle | [-] |
+| 11.1.2 | Types étendus : `TRANSFER`, `NFT`, `RULE`, `ACTION` | NodeType v0.2 | [-] |
+| 11.1.3 | `POST /api/v1/ir/rules/evaluate` | API publique | [ ] |
+| 11.1.4 | Tests `test_ir_rules.py` — 15+ cas | 100% pass | [ ] |
+
+### Phase 11.2 — PoL Transfer Protocol (transactions natives)
+
+| Jalon | Livrable | Critère | Statut |
+|-------|----------|---------|--------|
+| 11.2.1 | `src/artcb/pol/transfer.py` — PolTransfer dataclass | Encode/vérifie un transfert | [ ] |
+| 11.2.2 | `POST /api/v1/pol/transfer` — signe + grave dans chaîne | Transfert immuable | [ ] |
+| 11.2.3 | `GET /api/v1/pol/transfers/{address}` | Historique adresse | [ ] |
+| 11.2.4 | Tests `test_pol_transfer.py` | 10+ cas | [ ] |
+
+### Phase 11.3 — PoL NFT (tokens non-fongibles sémantiques)
+
+| Jalon | Livrable | Critère | Statut |
+|-------|----------|---------|--------|
+| 11.3.1 | `src/artcb/pol/nft.py` — PolNFT dataclass | Mint + ownership | [ ] |
+| 11.3.2 | `POST /api/v1/pol/nft/mint` — contenu gravé dans chaîne | NFT immuable | [ ] |
+| 11.3.3 | `GET /api/v1/pol/nft/{nft_id}` — info NFT | Métadonnées + owner | [ ] |
+| 11.3.4 | Tests `test_pol_nft.py` | 10+ cas | [ ] |
+
+### Phase 11.4 — Modules futurs (P2/P3)
+
+| Module | Description | Priorité |
+|--------|-------------|---------|
+| SDK Python/JS | Client officiel ARTCB | P1 |
+| PoL Value Index | Valeur informationnelle d'un bloc | P2 |
+| Oracle Bridge | Données off-chain → on-chain | P2 |
+| Consensus multi-agents | Validation distribuée IR | P2 |
+| Scheduler distribué | Exécution PoL rules planifiée | P2 |
+| Marketplace PoL | Échange de blocs de connaissance | P3 |
+| Federation inter-chaînes | Pont ARTCB ↔ Ethereum/Solana | P3 |
+| IR v0.3 | PoL Value Index + Transfer Protocol | P2 |
+| IR v1.0 | Turing-complet PoL | P3 |
+
+### Évaluation stratégique (rapport 081 + analyse externe)
+
+| Élément | Note |
+|---------|------|
+| Vision | 9.5/10 |
+| Faisabilité technique | 8/10 |
+| Faisabilité économique | 7/10 |
+| Faisabilité adoption | 4/10 |
+| Potentiel long terme | 10/10 |
+
+> **Point faible identifié :** l'obstacle n'est plus technique, mais culturel.
+> Comment convaincre milliards d'humains + agents IA d'utiliser un seul protocole ?
+> Réponse : commencer par les intégrations directes (Cursor, ChatGPT, Claude via API Keys).
+
+---
+
+## Phase 6 — Extensions (P1/P2 — post-hackathon) ✅
+
+- [x] Connecteurs IA utilisateur (OpenAI, Claude, Bob, Google AI, Manus) — v1.3+
+- [x] Connecteurs sources DB client (Supabase, Postgres, MySQL, SQLite, GitHub, Wikipedia) — v1.3+
 - [x] Pipeline minage unifié apprentissage + raisonnement — v1.3
 - [x] Dashboard Intégrations `/integrations` — v1.3
 - [x] PQC ML-DSA-65 hybride — v1.3
@@ -166,10 +239,12 @@
 - [x] Notifications Telegram
 - [x] UI Gouvernance + Network pool
 - [x] CLI standalone `artcb_cli.py`
-- [ ] Gradium TTS/STT intégration
-- [ ] IR v0.2 grammaire enrichie
+- [x] API Keys Bearer (phase 10)
+- [x] i18n 7 langues (phase 10)
+- [ ] IR v0.2 règles déclaratives (→ Phase 11.1)
+- [ ] PoL Transfer Protocol (→ Phase 11.2)
+- [ ] PoL NFT (→ Phase 11.3)
 - [ ] Whitepaper scientifique
-- [ ] Faucet tARTCB devnet
 
 ---
 

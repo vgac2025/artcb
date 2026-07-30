@@ -1,0 +1,821 @@
+{"ts": "2026-07-28T00:00:51.679698+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:00:56.432727+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:00:58.817213+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_986357403fdf6e86 (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T00:00:58.833065+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_67f6efb549c16d7a (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T00:00:59.481905+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #69 graph=ai_memo_b649d45f7416 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:00:59.967995+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-28T00:01:00.337148+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #70 graph=ai_memo_7df04eea1aa6 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:01:01.034039+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-28T00:01:01.336455+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #71 graph=ai_memo_de51b3913221 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:01:01.807736+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-28T00:01:02.107735+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #72 graph=ai_memo_fb327c1523eb agent=bob_write_replay"}
+{"ts": "2026-07-28T00:01:41.367143+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:01:47.073891+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:02:21.366761+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:02:26.747365+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:03:23.125945+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:03:28.636824+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:03:31.533835+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_ca9ba8dff46346cb (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T00:03:31.551459+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_1f3dcb797ac3bc4c (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T00:03:32.460795+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #73 graph=ai_memo_c1ee482961b3 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:03:33.030764+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-28T00:03:33.390001+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #74 graph=ai_memo_f959b514eaba agent=bob_write_replay"}
+{"ts": "2026-07-28T00:03:34.105299+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-28T00:03:34.444048+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #75 graph=ai_memo_a389d0bd5549 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:03:34.972877+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-28T00:03:35.307122+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #76 graph=ai_memo_11fe32e04f74 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:38:58.049297+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:39:03.431150+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:39:06.484070+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_debca76673433d1d (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T00:39:06.502074+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_c21cf5d63df6fe8f (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T00:39:07.288246+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #77 graph=ai_memo_577fab583881 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:39:07.791094+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #78 graph=ai_memo_3cc0451cef78 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:39:08.486358+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #79 graph=ai_memo_505128e4631b agent=bob_write_replay"}
+{"ts": "2026-07-28T00:39:08.990702+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #80 graph=ai_memo_1dd994b45bf2 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:39:34.284494+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:39:40.086304+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:39:43.143206+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_f937d94343bd8d34 (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T00:39:43.159714+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_045ef33e2eebf1b8 (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T00:39:43.852393+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #81 graph=ai_memo_a3d56360775c agent=bob_write_replay"}
+{"ts": "2026-07-28T00:39:44.402693+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #82 graph=ai_memo_9d8edd4dab2b agent=bob_write_replay"}
+{"ts": "2026-07-28T00:39:45.079866+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #83 graph=ai_memo_10b5d85c9f1b agent=bob_write_replay"}
+{"ts": "2026-07-28T00:39:45.579270+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #84 graph=ai_memo_9ba2d220ac41 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:40:17.265519+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:40:22.783130+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:40:23.088100+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "Auto-wallet created for key kid_bb2fe1a633c00708: agent_security_test"}
+{"ts": "2026-07-28T00:40:23.089704+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_bb2fe1a633c00708 (security_test) wallet=agent_security_test"}
+{"ts": "2026-07-28T00:40:23.768210+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #85 graph=ai_memo_99e3802033c2 agent=security_test"}
+{"ts": "2026-07-28T00:40:24.285959+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #86 graph=ai_memo_cbdb23040aec agent=security_test"}
+{"ts": "2026-07-28T00:40:24.841026+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #87 graph=ai_memo_16a49ed768c1 agent=security_test"}
+{"ts": "2026-07-28T00:40:25.349728+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #88 graph=ai_memo_b126c7d53e51 agent=security_test"}
+{"ts": "2026-07-28T00:40:25.395790+00:00", "level": "INFO", "module": "artcb.api.security", "message": "Anti-Sybil min_block_interval mis à 5s par security_test"}
+{"ts": "2026-07-28T00:40:51.397943+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:40:56.851386+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:41:00.288350+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_8ff0f74afb77fe5e (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T00:41:00.306469+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_03c34c4ed9a30b1f (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T00:41:00.985610+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #89 graph=ai_memo_79524295dfe1 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:41:01.546453+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #90 graph=ai_memo_229e5dc9dda1 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:41:02.225717+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #91 graph=ai_memo_73886fcd61ad agent=bob_write_replay"}
+{"ts": "2026-07-28T00:41:02.735053+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #92 graph=ai_memo_1f5aef24a327 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:56:30.003289+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:56:35.815109+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:56:36.258654+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "Auto-wallet created for key kid_11a6a7a22287c0ca: agent_bob_agent_replay"}
+{"ts": "2026-07-28T00:56:36.259963+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_11a6a7a22287c0ca (bob_agent_replay) wallet=agent_bob_agent_replay"}
+{"ts": "2026-07-28T00:56:37.112820+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #93 graph=ai_memo_2a65d1f8817c agent=bob_agent_replay"}
+{"ts": "2026-07-28T00:56:37.615761+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #94 graph=ai_memo_489005e62552 agent=bob_agent_replay"}
+{"ts": "2026-07-28T00:56:38.116274+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #95 graph=ai_memo_a475b65d91b7 agent=bob_agent_replay"}
+{"ts": "2026-07-28T00:56:49.070921+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Webhook registered: wh_1fca736a9b0e12ab → https://bob-agent.example.com/artcb-events"}
+{"ts": "2026-07-28T00:56:49.091757+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key revoked: kid_11a6a7a22287c0ca"}
+{"ts": "2026-07-28T00:57:17.632460+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:57:22.979167+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:57:26.692702+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_dd0abdccaa27374b (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T00:57:26.712064+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_11249c40c26c4359 (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T00:57:27.439021+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #97 graph=ai_memo_aac8c5af12a4 agent=bob_write_replay"}
+{"ts": "2026-07-28T00:57:27.949109+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #98 graph=ai_memo_b20acec86efa agent=bob_write_replay"}
+{"ts": "2026-07-28T00:57:28.627780+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #99 graph=ai_memo_e66b4633299a agent=bob_write_replay"}
+{"ts": "2026-07-28T00:57:29.179059+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #100 graph=ai_memo_5c772b53188e agent=bob_write_replay"}
+{"ts": "2026-07-28T00:57:55.315056+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:58:01.387748+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T00:58:01.592741+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_eec74614805ad569 (bob_agent_replay) wallet=agent_bob_agent_replay"}
+{"ts": "2026-07-28T00:58:02.603259+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #101 graph=ai_memo_45cca17ff4b4 agent=bob_agent_replay"}
+{"ts": "2026-07-28T00:58:03.133627+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #102 graph=ai_memo_0dc2f303730e agent=bob_agent_replay"}
+{"ts": "2026-07-28T00:58:03.683770+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #103 graph=ai_memo_f47b24ad034c agent=bob_agent_replay"}
+{"ts": "2026-07-28T00:58:16.610370+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Webhook registered: wh_d3f004b050aece08 → https://bob-agent.example.com/artcb-events"}
+{"ts": "2026-07-28T00:58:16.634566+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key revoked: kid_eec74614805ad569"}
+{"ts": "2026-07-28T01:00:21.552025+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:00:27.280404+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:00:27.594538+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "Auto-wallet created for key kid_87c6d8d0d1399306: agent_knowledge_ingest"}
+{"ts": "2026-07-28T01:00:27.596578+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_87c6d8d0d1399306 (knowledge_ingest) wallet=agent_knowledge_ingest"}
+{"ts": "2026-07-28T01:00:30.266780+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #105 graph=ai_memo_60abe32c4ac2 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:31.030843+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #106 graph=ai_memo_9aff82e210cb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:31.729328+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #107 graph=ai_memo_d399643a4458 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:32.432031+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #108 graph=ai_memo_ca6ebb91d772 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:33.152278+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #109 graph=ai_memo_5ed9e16a9b6e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:33.850683+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #110 graph=ai_memo_77b78007fb35 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:34.566828+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #111 graph=ai_memo_22844b98d547 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:35.274242+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #112 graph=ai_memo_f81f58984771 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:35.938139+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #113 graph=ai_memo_48542f899a4d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:36.800198+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #114 graph=ai_memo_221107089b45 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:37.641772+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #115 graph=ai_memo_91076b0288fb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:38.406349+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #116 graph=ai_memo_4c6e80236021 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:39.041953+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #117 graph=ai_memo_79ebd65b4cdb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:39.947034+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #118 graph=ai_memo_8e8e41f6ee16 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:40.859169+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #119 graph=ai_memo_9e2a71ec4677 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:41.617998+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #120 graph=ai_memo_cdf11280995b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:42.397149+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #121 graph=ai_memo_5da00bd4df71 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:43.316474+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #122 graph=ai_memo_f0f437514432 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:44.031183+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #123 graph=ai_memo_2cb60016e9d2 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:44.724973+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #124 graph=ai_memo_c84ba1db7c78 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:45.739103+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #125 graph=ai_memo_835f8f90850f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:46.611030+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #126 graph=ai_memo_46f7339fca5b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:47.430181+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #127 graph=ai_memo_e5cf81bf3c48 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:48.410661+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #128 graph=ai_memo_5c23558370e7 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:49.450608+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #129 graph=ai_memo_b8cb096f2bbd agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:50.352164+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #130 graph=ai_memo_2ac841ea83b6 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:51.237752+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #131 graph=ai_memo_e91dfd261c8f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:52.019115+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #132 graph=ai_memo_174d00619746 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:52.774836+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #133 graph=ai_memo_6a1f3813ebc1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:53.645772+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #134 graph=ai_memo_0d383c47eeeb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:54.538366+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #135 graph=ai_memo_66ed614ce87c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:55.388288+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #136 graph=ai_memo_23ef82684c7a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:56.268910+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #137 graph=ai_memo_7f68bbc6fe15 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:56.947583+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #138 graph=ai_memo_100ff48eab01 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:57.681286+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #139 graph=ai_memo_d246e8feadae agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:58.415377+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #140 graph=ai_memo_a143a4a6a852 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:59.169978+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #141 graph=ai_memo_2d0f57674b84 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:00:59.885824+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #142 graph=ai_memo_30cfd9ee72e1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:00.595246+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #143 graph=ai_memo_3710a4b04eef agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:01.412236+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #144 graph=ai_memo_71803c34926d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:02.246737+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #145 graph=ai_memo_c18361d17b7a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:03.018396+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #146 graph=ai_memo_dbaf6755a96a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:03.819420+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #147 graph=ai_memo_74137972dd08 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:04.726816+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #148 graph=ai_memo_61c6df6c749b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:05.461382+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #149 graph=ai_memo_332dcbbb4b71 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:06.502310+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #150 graph=ai_memo_0c843b3615b8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:07.361689+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #151 graph=ai_memo_0866d014d389 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:08.097868+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #152 graph=ai_memo_1378d5352660 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:08.921411+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #153 graph=ai_memo_219416ca61c1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:09.652462+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #154 graph=ai_memo_aba01bee543e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:10.483738+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #155 graph=ai_memo_3cf49b16ea3c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:11.446196+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #156 graph=ai_memo_c86b29794b20 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:12.294926+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #157 graph=ai_memo_03500641eb36 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:13.117722+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #158 graph=ai_memo_1476c1b3d722 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:13.976803+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #159 graph=ai_memo_cb68d6f9ca48 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:14.768099+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #160 graph=ai_memo_997318179118 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:15.531825+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #161 graph=ai_memo_7c9d9fcea636 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:16.276274+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #162 graph=ai_memo_75a411285af1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:17.000054+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #163 graph=ai_memo_a02aca0016b4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:17.697259+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #164 graph=ai_memo_6e3013f04cc2 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:18.490471+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #165 graph=ai_memo_827ec9a0f8fe agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:19.386873+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #166 graph=ai_memo_b5005c34ad02 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:20.211647+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #167 graph=ai_memo_1e7d20dc55d7 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:20.920117+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #168 graph=ai_memo_e83b830f2ada agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:21.731240+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #169 graph=ai_memo_2f3d4512eb73 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:22.442624+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #170 graph=ai_memo_6d2fcdb80ba4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:23.308856+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #171 graph=ai_memo_ccc148802a52 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:24.209962+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #172 graph=ai_memo_6facd96a0d51 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:24.938962+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #173 graph=ai_memo_33d90030a048 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:25.646051+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #174 graph=ai_memo_4a277af4f5e7 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:26.443534+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #175 graph=ai_memo_7a0c0c217b38 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:27.157547+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #176 graph=ai_memo_919a1c879d14 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:27.876498+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #177 graph=ai_memo_a9a35422e412 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:28.745614+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #178 graph=ai_memo_d810cc014a0a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:29.665852+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #179 graph=ai_memo_30a1129dea73 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:30.371392+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #180 graph=ai_memo_347905521cfc agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:31.317019+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #181 graph=ai_memo_816c333add40 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:32.228811+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #182 graph=ai_memo_431b002b2baf agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:33.172132+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #183 graph=ai_memo_641bb0e46932 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:34.148281+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #184 graph=ai_memo_e1df5119e5ae agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:35.010290+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #185 graph=ai_memo_21f4b1dbfbf0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:35.878031+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #186 graph=ai_memo_a61227daefb6 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:36.747835+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #187 graph=ai_memo_2f97e56e8a1b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:37.671155+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #188 graph=ai_memo_56b19746643a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:38.652484+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #189 graph=ai_memo_c78699cbe9bc agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:39.505880+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #190 graph=ai_memo_e850048e6e0d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:40.205989+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #191 graph=ai_memo_a7e39d22ea49 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:41.150149+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #192 graph=ai_memo_b6fa62bbdeaa agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:41.861613+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #193 graph=ai_memo_3e448f6a2968 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:42.638777+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #194 graph=ai_memo_4886eec9d917 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:43.387919+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #195 graph=ai_memo_718fb09357b0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:44.257300+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #196 graph=ai_memo_d1f566ad498e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:45.047203+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #197 graph=ai_memo_816c758df000 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:45.758710+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #198 graph=ai_memo_ea7f52884948 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:46.706043+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #199 graph=ai_memo_874b33db2a6d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:47.581579+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #200 graph=ai_memo_c3394b8e704d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:48.302748+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #201 graph=ai_memo_520379f22d04 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:49.094529+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #202 graph=ai_memo_f95d20218328 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:49.844052+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #203 graph=ai_memo_447ea328d9df agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:50.591388+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #204 graph=ai_memo_1d2a381f893b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:51.309316+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #205 graph=ai_memo_836ab83cf1b5 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:52.302028+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #206 graph=ai_memo_80652056b22b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:52.939755+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #207 graph=ai_memo_e796a1104d18 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:53.724066+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #208 graph=ai_memo_22702d865b55 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:54.717786+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #209 graph=ai_memo_9f5951c3c81f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:55.644369+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #210 graph=ai_memo_3a56d291729f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:56.495865+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #211 graph=ai_memo_20911c004039 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:57.203371+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #212 graph=ai_memo_bce4e2b30a25 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:57.917070+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #213 graph=ai_memo_17184bc0b794 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:58.659950+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #214 graph=ai_memo_e64354e4f2c4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:01:59.374258+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #215 graph=ai_memo_204fa3c19d38 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:00.124569+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #216 graph=ai_memo_3d5f89c19080 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:00.835014+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #217 graph=ai_memo_c1de91039687 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:01.580538+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #218 graph=ai_memo_fec1845614f8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:02.489904+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #219 graph=ai_memo_81744e77569b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:03.237758+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #220 graph=ai_memo_f7c0da0b8a03 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:04.001573+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #221 graph=ai_memo_979c568cb5a9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:04.787203+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #222 graph=ai_memo_20f0416767cd agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:05.521168+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #223 graph=ai_memo_4aa955618953 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:06.251543+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #224 graph=ai_memo_db6ab9000cfb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:06.966585+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #225 graph=ai_memo_7a13e006d371 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:07.695951+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #226 graph=ai_memo_0d7f9269052f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:08.528527+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #227 graph=ai_memo_ef27bb2e4193 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:09.326322+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #228 graph=ai_memo_a0af49adee6d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:10.108120+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #229 graph=ai_memo_7fc5c5308b61 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:10.940344+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #230 graph=ai_memo_54e23ec55629 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:11.818540+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #231 graph=ai_memo_cb9e5e8e39a4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:12.729835+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #232 graph=ai_memo_e89674b693ca agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:13.604387+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #233 graph=ai_memo_9c8d20df428f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:14.322819+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #234 graph=ai_memo_eb8889cae2ae agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:15.077287+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #235 graph=ai_memo_8d6f5cdf8d0d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:15.836048+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #236 graph=ai_memo_c7514233c1df agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:16.565337+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #237 graph=ai_memo_f3924d30a0ed agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:17.304044+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #238 graph=ai_memo_e0dbbaf7e612 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:18.035231+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #239 graph=ai_memo_443b7311217f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:18.757624+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #240 graph=ai_memo_36a3cab0e546 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:19.466989+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #241 graph=ai_memo_eeb23fb76afb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:20.179134+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #242 graph=ai_memo_3ce4533af1d4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:20.911006+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #243 graph=ai_memo_70737126b9e1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:21.684301+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #244 graph=ai_memo_08522f2984e6 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:22.408835+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #245 graph=ai_memo_db980d5ba7a3 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:23.234544+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #246 graph=ai_memo_b76bc9cec91c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:23.967154+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #247 graph=ai_memo_cbc9481c7071 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:24.711841+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #248 graph=ai_memo_820fcaaeee2d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:25.621514+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #249 graph=ai_memo_48385be9707d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:26.397284+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #250 graph=ai_memo_126742fe754d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:27.190770+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #251 graph=ai_memo_7c839f4f0fa5 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:28.075271+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #252 graph=ai_memo_cb0cd3c04ae9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:28.862887+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #253 graph=ai_memo_ae2d57137c7d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:29.644941+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #254 graph=ai_memo_7e533728706b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:30.427998+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #255 graph=ai_memo_3ba432c8ec82 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:31.202865+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #256 graph=ai_memo_70f7b976c415 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:31.987512+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #257 graph=ai_memo_4e465293083f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:32.709190+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #258 graph=ai_memo_454e0629a446 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:33.424798+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #259 graph=ai_memo_dc6c477e3016 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:34.181441+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #260 graph=ai_memo_db4e3cf97d78 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:34.974626+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #261 graph=ai_memo_a84151314a51 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:35.723343+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #262 graph=ai_memo_1fdade032177 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:36.466729+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #263 graph=ai_memo_c487c76bd173 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:37.195036+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #264 graph=ai_memo_b124613f60bf agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:37.922810+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #265 graph=ai_memo_7df558f76446 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:38.640496+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #266 graph=ai_memo_0ca3220b6335 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:39.354625+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #267 graph=ai_memo_43d67d5c3d5a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:40.074561+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #268 graph=ai_memo_eb229a1c0f7d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:40.800827+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #269 graph=ai_memo_0bb02fd0539c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:41.538883+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #270 graph=ai_memo_99f78c86199b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:42.304483+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #271 graph=ai_memo_3b08414ef61d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:43.046429+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #272 graph=ai_memo_eb73e31841ff agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:43.894282+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #273 graph=ai_memo_b373d5a660dc agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:44.880810+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #274 graph=ai_memo_fb6df852d82c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:45.737101+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #275 graph=ai_memo_45d28dd45aab agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:46.570532+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #276 graph=ai_memo_847db3c90cfb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:47.718475+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #277 graph=ai_memo_32238344b54d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:48.505504+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #278 graph=ai_memo_ea76c0a67884 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:49.270650+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #279 graph=ai_memo_558f27026ef2 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:49.997967+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #280 graph=ai_memo_7468e178666b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:50.705830+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #281 graph=ai_memo_2f2655257113 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:51.426975+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #282 graph=ai_memo_4c0f1f077f71 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:52.162361+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #283 graph=ai_memo_14aba20ab5e9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:52.896757+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #284 graph=ai_memo_d8ab8379d668 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:53.788637+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #285 graph=ai_memo_186876a0a2d1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:54.660328+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #286 graph=ai_memo_5da257f65961 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:55.340406+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #287 graph=ai_memo_fd9924dfd516 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:56.126516+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #288 graph=ai_memo_efbed5a9b5ba agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:56.933142+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #289 graph=ai_memo_ce1f1e6d0118 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:57.653768+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #290 graph=ai_memo_8b95209aad67 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:58.314713+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #291 graph=ai_memo_2b780421a652 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:59.071338+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #292 graph=ai_memo_3f488fe56131 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:02:59.794903+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #293 graph=ai_memo_dd134862e95b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:00.593519+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #294 graph=ai_memo_02baed30788a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:01.389986+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #295 graph=ai_memo_5ac1016c6bc9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:02.114761+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #296 graph=ai_memo_035d8c4bbad1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:02.867383+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #297 graph=ai_memo_487d1c6c8860 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:03.587336+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #298 graph=ai_memo_a46fd9d5f54f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:04.316077+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #299 graph=ai_memo_5cc7826f61a0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:05.050067+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #300 graph=ai_memo_549e405fd069 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:05.800334+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #301 graph=ai_memo_792a2400e7e3 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:06.582864+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #302 graph=ai_memo_8de4eabaafc7 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:07.304587+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #303 graph=ai_memo_54851a7297c0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:08.155050+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #304 graph=ai_memo_1f76f309c371 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:08.904285+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #305 graph=ai_memo_38e94776ba04 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:31.177496+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:03:36.962972+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:03:36.994399+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_bb2e2e5b517ca94b (knowledge_ingest) wallet=agent_knowledge_ingest"}
+{"ts": "2026-07-28T01:03:40.049627+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #306 graph=ai_memo_f0d0767d2843 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:40.751792+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #307 graph=ai_memo_2ca76b548d5a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:41.463925+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #308 graph=ai_memo_b5eaf76ba768 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:42.181449+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #309 graph=ai_memo_c67f97fcb983 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:42.905447+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #310 graph=ai_memo_d556f612f52b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:43.629239+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #311 graph=ai_memo_ecbc904befec agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:44.327398+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #312 graph=ai_memo_8a3cf18b51d4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:45.046865+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #313 graph=ai_memo_a915ed124f7b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:45.798255+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #314 graph=ai_memo_18eff8f591f8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:46.508157+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #315 graph=ai_memo_711233a08e14 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:47.234457+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #316 graph=ai_memo_2f9a64efd4ed agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:47.951023+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #317 graph=ai_memo_eb5ba8871a86 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:48.659577+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #318 graph=ai_memo_23e86a42a032 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:49.366049+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #319 graph=ai_memo_39d571010b4e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:50.093385+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #320 graph=ai_memo_8f06e58a3da6 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:50.835547+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #321 graph=ai_memo_f34e374bf503 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:51.562698+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #322 graph=ai_memo_f5a54ee9f561 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:52.303695+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #323 graph=ai_memo_8f368d7cd4a1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:53.019221+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #324 graph=ai_memo_38a314a13e8e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:53.741762+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #325 graph=ai_memo_dfe25f1f833d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:54.457938+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #326 graph=ai_memo_53ee27e59920 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:55.191096+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #327 graph=ai_memo_81445b7ca965 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:55.916615+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #328 graph=ai_memo_96195e72b9ea agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:56.649464+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #329 graph=ai_memo_596d96adee7d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:57.379725+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #330 graph=ai_memo_ddd254e51951 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:58.101946+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #331 graph=ai_memo_40db72fbe9af agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:58.816415+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #332 graph=ai_memo_6ca030720e80 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:03:59.585364+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #333 graph=ai_memo_0f7f7f6eac7a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:00.313217+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #334 graph=ai_memo_8f2c9008466a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:01.019291+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #335 graph=ai_memo_3798b31245b1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:01.744426+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #336 graph=ai_memo_45d27d3fc40e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:02.452159+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #337 graph=ai_memo_e7d60dd3ac59 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:03.251223+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #338 graph=ai_memo_2f8a8b68728e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:03.950808+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #339 graph=ai_memo_755b2eeb9366 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:04.649968+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #340 graph=ai_memo_e5d61f612f0a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:05.372231+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #341 graph=ai_memo_7137c7f16e32 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:06.083394+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #342 graph=ai_memo_9ea7a73ef372 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:06.812277+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #343 graph=ai_memo_b522f6c642b9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:07.519538+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #344 graph=ai_memo_73486d459f58 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:08.278354+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #345 graph=ai_memo_a4e5e7bd8068 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:09.040266+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #346 graph=ai_memo_f84e64ad0910 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:09.788513+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #347 graph=ai_memo_ccec43fe5fcb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:10.534992+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #348 graph=ai_memo_cebc429aec8a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:11.293878+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #349 graph=ai_memo_1e7ee021d503 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:12.043654+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #350 graph=ai_memo_c9ae2ae4b3cf agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:12.806834+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #351 graph=ai_memo_b1f61ba30fb0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:13.606023+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #352 graph=ai_memo_224e87ca0342 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:14.330841+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #353 graph=ai_memo_36f5bcde92c7 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:15.050663+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #354 graph=ai_memo_822c3fba1dc8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:15.773285+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #355 graph=ai_memo_22d5d1e4644c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:16.511129+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #356 graph=ai_memo_5d848ddbebe4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:17.299324+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #357 graph=ai_memo_81261a53c38b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:18.057492+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #358 graph=ai_memo_8d3f0825037b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:18.781788+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #359 graph=ai_memo_bde7ec1962ce agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:19.812788+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #360 graph=ai_memo_ff68869e64d9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:20.598149+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #361 graph=ai_memo_f7d2fa258c3a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:21.347302+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #362 graph=ai_memo_36cb444cd9af agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:22.106431+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #363 graph=ai_memo_8cdb60c887f8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:22.818193+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #364 graph=ai_memo_dbe4932fbf52 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:23.564658+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #365 graph=ai_memo_4cd20d8ea286 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:24.319442+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #366 graph=ai_memo_5c9310cf9afa agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:25.082417+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #367 graph=ai_memo_a4b0ffc9ea73 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:25.781070+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #368 graph=ai_memo_fd842c7743a8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:26.539289+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #369 graph=ai_memo_ea32a3645ef4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:27.299926+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #370 graph=ai_memo_7769c3204b49 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:28.015221+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #371 graph=ai_memo_ded4578fabae agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:28.792141+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #372 graph=ai_memo_5908faa4a134 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:29.551063+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #373 graph=ai_memo_766e3aee17fc agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:30.318543+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #374 graph=ai_memo_bdcbfd28c8e0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:31.058955+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #375 graph=ai_memo_cde541a0facf agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:31.782437+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #376 graph=ai_memo_a06670b53737 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:32.523831+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #377 graph=ai_memo_16047b05863e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:33.253645+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #378 graph=ai_memo_150f86b7b875 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:33.977978+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #379 graph=ai_memo_9a1ccfd6b769 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:34.784069+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #380 graph=ai_memo_ed63914c98b8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:35.521131+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #381 graph=ai_memo_c9eeba226088 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:36.258289+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #382 graph=ai_memo_f38adacf26a9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:36.989872+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #383 graph=ai_memo_83f854e6612c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:37.771328+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #384 graph=ai_memo_cf68e6c968f8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:38.532610+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #385 graph=ai_memo_6b1791ace694 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:39.254550+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #386 graph=ai_memo_b6c49cf5fb05 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:40.018677+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #387 graph=ai_memo_902f113993c2 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:40.761274+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #388 graph=ai_memo_b5c2e2a64f18 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:41.524476+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #389 graph=ai_memo_0828e3590bfe agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:42.303047+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #390 graph=ai_memo_0c0caa4da456 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:43.037939+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #391 graph=ai_memo_6b50fe648ad1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:43.812030+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #392 graph=ai_memo_51f59ab5d23d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:44.485239+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #393 graph=ai_memo_0f0df46cf4d5 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:45.228382+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #394 graph=ai_memo_0b1fc8c920ba agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:46.003131+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #395 graph=ai_memo_f39385d6d335 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:46.763065+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #396 graph=ai_memo_d2c330ca3117 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:47.499392+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #397 graph=ai_memo_5b9f01366a5f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:48.239911+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #398 graph=ai_memo_aa396e112d47 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:48.988494+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #399 graph=ai_memo_a84d0e273867 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:49.720919+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #400 graph=ai_memo_e5b36a553909 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:50.520483+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #401 graph=ai_memo_054a067bfa56 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:51.252825+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #402 graph=ai_memo_5dede9d8a59e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:52.072172+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #403 graph=ai_memo_9c7634070dbe agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:52.782447+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #404 graph=ai_memo_4b06d5e10b02 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:53.508617+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #405 graph=ai_memo_3e7cb112e141 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:54.265519+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #406 graph=ai_memo_73eea7ef431f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:54.999154+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #407 graph=ai_memo_e86b7f15821b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:55.827268+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #408 graph=ai_memo_86e1a26217ba agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:56.544557+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #409 graph=ai_memo_f6b535db31d8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:57.324821+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #410 graph=ai_memo_3405863e7872 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:58.127004+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #411 graph=ai_memo_8ea331d76dcd agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:58.847363+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #412 graph=ai_memo_efc78e53280a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:04:59.678114+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #413 graph=ai_memo_3bec2134d245 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:00.361891+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #414 graph=ai_memo_e3f70a05ef33 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:01.109309+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #415 graph=ai_memo_2aea182ed0d1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:01.851716+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #416 graph=ai_memo_6de369121efd agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:02.596007+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #417 graph=ai_memo_a4025ab70bd5 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:03.326909+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #418 graph=ai_memo_e0d77ad8335b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:04.264421+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #419 graph=ai_memo_9700ca1e3062 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:04.992409+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #420 graph=ai_memo_c30e43a8317a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:05.782115+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #421 graph=ai_memo_760f7136172c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:06.522846+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #422 graph=ai_memo_2f5133b23897 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:07.275353+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #423 graph=ai_memo_821d01c90e8f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:08.036496+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #424 graph=ai_memo_b2d0c7db4e57 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:08.764026+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #425 graph=ai_memo_095f5f38d16b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:09.493565+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #426 graph=ai_memo_1591e765844b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:10.241778+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #427 graph=ai_memo_43c5e8e4e99e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:11.008822+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #428 graph=ai_memo_a2783e9690f3 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:11.756912+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #429 graph=ai_memo_cdefae05f94f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:12.508206+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #430 graph=ai_memo_1e3beddfaa2d agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:13.265752+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #431 graph=ai_memo_9de60dc45b39 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:14.008859+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #432 graph=ai_memo_cb397f852300 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:14.743756+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #433 graph=ai_memo_cccae15639ec agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:15.495007+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #434 graph=ai_memo_b8e2ab63637f agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:16.240520+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #435 graph=ai_memo_67b455b88450 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:16.973149+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #436 graph=ai_memo_c043a5e2b7af agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:17.714809+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #437 graph=ai_memo_92093e443b8a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:18.481904+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #438 graph=ai_memo_553c38123561 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:19.226231+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #439 graph=ai_memo_adc3071c072c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:19.969061+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #440 graph=ai_memo_3399446f7df0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:20.740203+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #441 graph=ai_memo_e0f1c7bb3a9a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:21.694344+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #442 graph=ai_memo_3c99c9955dc9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:22.507281+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #443 graph=ai_memo_a796b0ea6ab9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:23.252535+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #444 graph=ai_memo_0b287ce60d58 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:24.101307+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #445 graph=ai_memo_9f83b57c05db agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:24.844110+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #446 graph=ai_memo_ba8550f561a0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:25.621958+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #447 graph=ai_memo_7bee5dad259b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:26.355673+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #448 graph=ai_memo_c69369eb3eec agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:27.113588+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #449 graph=ai_memo_84d195105204 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:27.848618+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #450 graph=ai_memo_217e779968b4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:28.591361+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #451 graph=ai_memo_346a54caff87 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:29.360074+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #452 graph=ai_memo_1f6fa38431c1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:30.166151+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #453 graph=ai_memo_4b10b470996e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:31.068654+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #454 graph=ai_memo_6ae2837492a4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:31.967426+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #455 graph=ai_memo_05264309dfb2 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:32.797132+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #456 graph=ai_memo_f0438d94aee1 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:33.571585+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #457 graph=ai_memo_815751ab76a8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:34.325802+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #458 graph=ai_memo_a87fb4bf81d9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:35.117482+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #459 graph=ai_memo_267b3ef33b73 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:35.912168+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #460 graph=ai_memo_e064b598ebb6 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:36.685339+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #461 graph=ai_memo_56356cfffe72 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:37.466952+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #462 graph=ai_memo_027b69bd0ff2 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:38.263546+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #463 graph=ai_memo_04989642e6a9 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:39.013798+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #464 graph=ai_memo_2967ac8ace8c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:39.757636+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #465 graph=ai_memo_2f431b08cdfa agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:40.848141+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #466 graph=ai_memo_3a244c35d651 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:41.584131+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #467 graph=ai_memo_cb541c369ae8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:42.355169+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #468 graph=ai_memo_f7ddab06943b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:43.167763+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #469 graph=ai_memo_cb6bc6ecac41 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:43.919695+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #470 graph=ai_memo_8c10697a4d13 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:44.677729+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #471 graph=ai_memo_d7544550df86 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:45.456655+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #472 graph=ai_memo_6a4f3bc60b10 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:46.270447+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #473 graph=ai_memo_6d148848a508 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:47.015784+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #474 graph=ai_memo_50f5780d0cd6 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:47.762247+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #475 graph=ai_memo_a30c6d753203 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:48.540618+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #476 graph=ai_memo_4e32afa78d45 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:49.294367+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #477 graph=ai_memo_646174da8ba8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:50.043993+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #478 graph=ai_memo_5ab683562b7e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:50.911000+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #479 graph=ai_memo_4e3e07db5fe0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:51.792742+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #480 graph=ai_memo_4470be11fc05 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:52.685081+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #481 graph=ai_memo_b6d144ca3aa7 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:53.633430+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #482 graph=ai_memo_00a8a2522c8c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:54.414313+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #483 graph=ai_memo_5862cfcd69b4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:55.199007+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #484 graph=ai_memo_77b6c18009f8 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:56.008831+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #485 graph=ai_memo_c74afe1f9618 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:57.069195+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #486 graph=ai_memo_42a4198825c4 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:57.828520+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #487 graph=ai_memo_9667a0f1d7eb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:58.742996+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #488 graph=ai_memo_af9a996a6968 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:05:59.523132+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #489 graph=ai_memo_bceef7a19617 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:00.312568+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #490 graph=ai_memo_d66ed4b75d22 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:01.193184+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #491 graph=ai_memo_2fa0107b3760 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:01.989172+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #492 graph=ai_memo_e171ba8c610e agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:02.765108+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #493 graph=ai_memo_8cefa90e01a0 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:03.525536+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #494 graph=ai_memo_16dcae44f936 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:04.302794+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #495 graph=ai_memo_ba82bde8b8be agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:05.070076+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #496 graph=ai_memo_cd20db1bfe17 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:05.847457+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #497 graph=ai_memo_bd7514a01541 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:06.603788+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #498 graph=ai_memo_2fe95fcffca3 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:07.373125+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #499 graph=ai_memo_443b24742f1b agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:08.131293+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #500 graph=ai_memo_42c0b800448c agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:08.890074+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #501 graph=ai_memo_899bfda0ba91 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:09.749466+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #502 graph=ai_memo_907f40eae46a agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:10.566142+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #503 graph=ai_memo_3ed127053993 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:11.316889+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #504 graph=ai_memo_e0fd239613b3 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:11.991859+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #505 graph=ai_memo_6fdad5e58947 agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:12.748618+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #506 graph=ai_memo_c3630f3a04eb agent=knowledge_ingest"}
+{"ts": "2026-07-28T01:06:45.404581+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:06:50.989467+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:06:51.264637+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "Auto-wallet created for key kid_855c2bb729fade47: agent_audit"}
+{"ts": "2026-07-28T01:06:51.265757+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_855c2bb729fade47 (audit) wallet=agent_audit"}
+{"ts": "2026-07-28T01:07:20.215458+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:07:25.959966+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:07:49.170917+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:07:55.456342+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:08:17.229735+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:08:22.679976+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:08:45.595222+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:08:51.558649+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:09:11.723031+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:09:17.105519+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:13:05.369744+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:13:11.431107+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:13:15.378185+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_ae4d0efcd41b9f9b (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T01:13:15.395906+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_951d3943f562a6fe (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T01:13:16.219088+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #507 graph=ai_memo_eea2e250b32b agent=bob_write_replay"}
+{"ts": "2026-07-28T01:13:16.773475+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #508 graph=ai_memo_c7ad3d59ace5 agent=bob_write_replay"}
+{"ts": "2026-07-28T01:13:17.582883+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #509 graph=ai_memo_e6d955595391 agent=bob_write_replay"}
+{"ts": "2026-07-28T01:13:18.141120+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #510 graph=ai_memo_73009b75d904 agent=bob_write_replay"}
+{"ts": "2026-07-28T01:14:11.733465+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:14:38.128652+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:14:38.360309+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:31.664069+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:32.990802+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:33.859445+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:34.097727+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:34.319813+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:34.535943+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:34.742455+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:34.975869+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:35.195611+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:36.066386+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:37.049916+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:37.386901+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:37.846644+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=cli_test address=artcb19k4zvf7p6z6t4hpwfst6a92af0tdckv8c5zeja"}
+{"ts": "2026-07-28T01:15:38.760028+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:39.666541+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:15:40.412538+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=mine_cli address=artcb1qz6esl4yj0dpakn3nly2rhfrjjugm7ktfkd3av"}
+{"ts": "2026-07-28T01:15:41.268970+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_1df573b41080ea3e (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T01:15:41.277730+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_abdb5b4f3293fe01 (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T01:15:42.004244+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #511 graph=ai_memo_f1cb0ca5b770 agent=bob_write_replay"}
+{"ts": "2026-07-28T01:15:42.594253+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #512 graph=ai_memo_750bbf4b0013 agent=bob_write_replay"}
+{"ts": "2026-07-28T01:15:43.458990+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #513 graph=ai_memo_d63422eb9811 agent=bob_write_replay"}
+{"ts": "2026-07-28T01:15:44.292729+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #514 graph=ai_memo_0baa3d7c1265 agent=bob_write_replay"}
+{"ts": "2026-07-28T01:20:57.519782+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:20:58.003572+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:20:58.422418+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:20:58.842288+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:20:59.542356+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:20:59.882955+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:00.256111+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:00.700488+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:01.004621+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:01.219761+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:01.498856+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:01.723501+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=faucet_wallet address=artcb1qg22f6ns4p90dmmvx5ylqt637u5t8vdtlv3yyp"}
+{"ts": "2026-07-28T01:21:01.925144+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:02.139387+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=bal_wallet address=artcb1qtxcfykgjyk0zd7sd4hefgfgc5j3nqwy0c4p3h"}
+{"ts": "2026-07-28T01:21:02.320529+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:02.552549+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:03.337508+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:03.550941+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:03.818180+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:04.078384+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:04.557606+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:04.954934+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:05.795914+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:05.868852+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_07599b9e7900 join_code=1E4A63C7"}
+{"ts": "2026-07-28T01:21:06.610644+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:06.683762+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_8a1ec246f4f3 join_code=2C4BD5B4"}
+{"ts": "2026-07-28T01:21:07.451050+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:07.522828+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_252e04e6d602 join_code=D1A0F65B"}
+{"ts": "2026-07-28T01:21:08.455058+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:08.524982+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_d454b8d917d4 join_code=6D7B2741"}
+{"ts": "2026-07-28T01:21:08.702200+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "FOUNDER_IMMUTABLE blocked: Cannot modify founder membership"}
+{"ts": "2026-07-28T01:21:09.464171+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:09.536218+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_682eff2cdab5 join_code=2E3B5B4B"}
+{"ts": "2026-07-28T01:21:10.462944+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:10.542122+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_6945a00806fe join_code=97090FD5"}
+{"ts": "2026-07-28T01:21:11.679467+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:11.779246+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_5eb8cd054c30 join_code=2B39582F"}
+{"ts": "2026-07-28T01:21:12.791096+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:12.875648+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_d247a22aa68e join_code=85181696"}
+{"ts": "2026-07-28T01:21:13.857863+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:13.937636+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_43c647c17025 join_code=F93BFD8E"}
+{"ts": "2026-07-28T01:21:14.228505+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:14.745383+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:15.160434+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:15.676643+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:16.505722+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:16.686624+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:18.239744+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:18.817119+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:19.162083+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:48.610014+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:48.921791+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:49.253544+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:49.556952+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:49.843334+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:50.217250+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:50.461473+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pool_wallet address=artcb1dy4f9naf8zhcl0qumtfhej70ekx97dm8vygz82"}
+{"ts": "2026-07-28T01:21:51.085757+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:51.282241+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pool_wallet address=artcb16lxkk5kejd44q2jqgl5xz2kwddrl9f92ts08aw"}
+{"ts": "2026-07-28T01:21:51.899638+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:52.163434+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=founder_wallet address=artcb1u4us9yaj6n45dz8ckcczjznw8n6pg48upmgdkw"}
+{"ts": "2026-07-28T01:21:52.219952+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_0871020d36e9 join_code=4746A1B1"}
+{"ts": "2026-07-28T01:21:52.805841+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:53.009657+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=local_wallet address=artcb1khfrw8m42feqz49xa7u7yqskapmms2w7he97wv"}
+{"ts": "2026-07-28T01:21:53.584349+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:53.878646+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:54.170234+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:54.363958+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pipe_wallet address=artcb14swsz8s38cv3ktae2qz2u4g267zp695kgvzzyf"}
+{"ts": "2026-07-28T01:21:54.911282+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:55.157700+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=stress_wallet address=artcb13mkrte699x38tgtjacq2d0rlpsd7gntqxn73yw"}
+{"ts": "2026-07-28T01:21:55.452134+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:55.931640+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:56.259139+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=batch_wallet address=artcb12pdckn2pzgsryq5n6ve7z4g8rwh9peear0psz5"}
+{"ts": "2026-07-28T01:21:58.792771+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:59.162431+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=sym_wallet address=artcb1pm3dredqkypuh4098auggmczsg7hyruwg7cf4k"}
+{"ts": "2026-07-28T01:21:59.517788+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:59.722073+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:21:59.977021+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:22:00.435885+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:22:00.805673+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T01:22:00.992505+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T15:14:34.552462+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T15:14:39.426799+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T15:14:42.322041+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_be0987f1af099c04 (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-28T15:14:42.328099+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_e3370abf958420cf (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-28T15:14:42.982472+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #515 graph=ai_memo_130d230057aa agent=bob_write_replay"}
+{"ts": "2026-07-28T15:14:43.643021+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #516 graph=ai_memo_0454b9201d70 agent=bob_write_replay"}
+{"ts": "2026-07-28T15:14:44.566658+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #517 graph=ai_memo_43d976a750fd agent=bob_write_replay"}
+{"ts": "2026-07-28T15:14:45.305398+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #518 graph=ai_memo_dd3d50a90b30 agent=bob_write_replay"}
+{"ts": "2026-07-28T15:14:51.679634+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #519 graph=ai_memo_10921062e938 agent=bob_write_replay"}
+{"ts": "2026-07-28T16:08:19.015211+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:19.687190+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:19.821488+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:19.933035+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:20.045179+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:20.157954+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:20.281612+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:20.393124+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:20.897227+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:21.545836+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:21.940685+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=cli_test address=artcb1q8r6h0xfdr82anvzzhevcu34t0luf84m99fsdq"}
+{"ts": "2026-07-28T16:08:22.467570+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:22.971630+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:08:23.366094+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=mine_cli address=artcb19dqu5zjzzxc7gcurqev3x0d7wmfstd68zqgkx2"}
+{"ts": "2026-07-28T16:09:58.992653+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:09:59.258356+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:09:59.485139+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:09:59.713248+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:00.100464+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:00.278645+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:00.453317+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:00.650992+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:00.851073+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:00.969425+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:01.135472+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:01.265330+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=faucet_wallet address=artcb1myer366zh4zszvk0gcneulkys55uzfzxj85e6a"}
+{"ts": "2026-07-28T16:10:01.383960+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:01.498680+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=bal_wallet address=artcb1sxuf65c9p28e7t6kdjdnknjsrnj832tv0shcd5"}
+{"ts": "2026-07-28T16:10:01.605120+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:01.716819+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:01.960443+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:02.072347+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:02.192012+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:02.345686+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:02.622627+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:02.858502+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:03.345112+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:03.386369+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_c266696a8ac5 join_code=096BA8C1"}
+{"ts": "2026-07-28T16:10:03.805926+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:03.847504+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_2fe383f3f84a join_code=562A2660"}
+{"ts": "2026-07-28T16:10:04.284524+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:04.329041+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_4126baeeea28 join_code=508B80D6"}
+{"ts": "2026-07-28T16:10:04.887174+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:04.933743+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_bdab2166aceb join_code=1D72132A"}
+{"ts": "2026-07-28T16:10:05.037935+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "FOUNDER_IMMUTABLE blocked: Cannot modify founder membership"}
+{"ts": "2026-07-28T16:10:05.471952+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:05.517818+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_14ffaaa11469 join_code=FA542425"}
+{"ts": "2026-07-28T16:10:06.053167+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:06.095196+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_fc428807ab37 join_code=D3D99708"}
+{"ts": "2026-07-28T16:10:06.713051+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:06.752987+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_03f2323159f6 join_code=20E63AA7"}
+{"ts": "2026-07-28T16:10:07.284411+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:07.320070+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_f3be46b25d97 join_code=0AD2C589"}
+{"ts": "2026-07-28T16:10:07.833116+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:07.868505+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_8c968d24ac54 join_code=8F234C1F"}
+{"ts": "2026-07-28T16:10:08.014477+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:08.287578+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:08.500414+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:08.783145+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:09.221213+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:09.318925+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:10.107301+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:10.383982+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:10.537342+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:20.485508+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:20.629571+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:20.785150+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:20.965231+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:21.145528+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:21.315882+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:21.431049+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pool_wallet address=artcb12k6ugzrkwqqfdvcz9eg5wlvcpqcphwhe60633k"}
+{"ts": "2026-07-28T16:10:21.754220+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:21.855476+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pool_wallet address=artcb1s9ntd8klqcfrque764n3hc8uen6s9sdf87z6fh"}
+{"ts": "2026-07-28T16:10:22.180134+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:22.284161+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=founder_wallet address=artcb13epwrzzewcfumyf5gw0fg5q253mae5rz9h4838"}
+{"ts": "2026-07-28T16:10:22.303708+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_09ae66d48c5f join_code=5192C9BB"}
+{"ts": "2026-07-28T16:10:22.639005+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:22.747620+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=local_wallet address=artcb13yflh0605fkv04tjrfeu86zk8w0yq0ellftes9"}
+{"ts": "2026-07-28T16:10:23.054801+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:23.203794+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:23.375194+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:23.503908+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pipe_wallet address=artcb1nv3selqrsjr7mmnt5823rnayr9uhpmnxdf2vtr"}
+{"ts": "2026-07-28T16:10:23.806427+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:23.926404+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=stress_wallet address=artcb1n97y9x9zgct73zs82a08z2pt5j0ns7arflq7wa"}
+{"ts": "2026-07-28T16:10:24.125566+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:24.335444+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:24.450231+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=batch_wallet address=artcb195nwusny52er5jdajj3mrxyd6garmt6scwv9ue"}
+{"ts": "2026-07-28T16:10:25.268181+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:25.387999+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=sym_wallet address=artcb18gq9k2yfas99yx3yw0axngddmfgrcrvstx2m38"}
+{"ts": "2026-07-28T16:10:25.572319+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:25.689030+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:25.831024+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:26.137602+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:26.370486+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:26.481390+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T16:10:52.411616+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:39.254369+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:39.823499+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:39.942721+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:40.058658+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:40.176417+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:40.287277+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:40.408227+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:40.519979+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:40.995239+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:41.605163+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:41.981598+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=cli_test address=artcb1k7s0lgpug4kfuzk6r26hzehpgw6qy29twtvlmw"}
+{"ts": "2026-07-28T19:44:42.451350+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:42.906009+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:44:43.279987+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=mine_cli address=artcb1h3zjf3eftcmmzdl7fd9pu8jf0wnly5vnpagxgs"}
+{"ts": "2026-07-28T19:46:12.029884+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:12.282210+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:12.489854+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:12.697314+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:13.038404+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:13.198919+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:13.356735+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:13.527116+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:13.687611+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:13.811431+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:13.945026+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:14.050749+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=faucet_wallet address=artcb1tg7gwacumtrjndhdcsck993ftm9kg7vucntjjt"}
+{"ts": "2026-07-28T19:46:14.156530+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:14.264280+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=bal_wallet address=artcb17c6jj9xd7gmsqew85e056kj94n42rscf97vd9h"}
+{"ts": "2026-07-28T19:46:14.364919+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:14.478337+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:14.713661+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:14.831012+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:14.945790+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:15.093170+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:15.317483+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:15.538560+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:16.002776+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:16.041561+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_9b9e5600174b join_code=B3568D1E"}
+{"ts": "2026-07-28T19:46:16.458624+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:16.494588+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_e87419ee6b9c join_code=6C9F96E4"}
+{"ts": "2026-07-28T19:46:16.896297+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:16.932623+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_3b7a3c8c8826 join_code=67F05A9D"}
+{"ts": "2026-07-28T19:46:17.438414+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:17.473378+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_b5b663c6a342 join_code=462B2F58"}
+{"ts": "2026-07-28T19:46:17.575447+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "FOUNDER_IMMUTABLE blocked: Cannot modify founder membership"}
+{"ts": "2026-07-28T19:46:18.003763+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:18.055337+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_a2f2f1144ced join_code=AA6BB2A6"}
+{"ts": "2026-07-28T19:46:18.557493+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:18.594740+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_7f694977f567 join_code=81D321EC"}
+{"ts": "2026-07-28T19:46:19.192297+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:19.226321+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_edea14f7f7e5 join_code=21E390A4"}
+{"ts": "2026-07-28T19:46:19.745722+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:19.781407+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_86822bad3859 join_code=A70EC780"}
+{"ts": "2026-07-28T19:46:20.271783+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:20.305916+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_b82dce231507 join_code=BFB7FCFE"}
+{"ts": "2026-07-28T19:46:20.452502+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:20.712583+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:20.935410+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:21.211603+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:21.636836+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:21.732101+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:22.514115+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:22.802728+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:23.264723+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:32.202745+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:32.350188+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:32.495397+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:32.641630+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:32.791995+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:33.236285+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:33.331786+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pool_wallet address=artcb1d77dqrwqxgdmz48f7mtf38sgrh9tal4q57lc3p"}
+{"ts": "2026-07-28T19:46:33.639986+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:33.737901+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pool_wallet address=artcb10grx99l0xk55cvlxv66j53z4vcun2d6wg3pn8g"}
+{"ts": "2026-07-28T19:46:34.057592+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:34.168447+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=founder_wallet address=artcb1xfgx54xz5njlkh0ppkwh5ckksful8yyzqzpmtz"}
+{"ts": "2026-07-28T19:46:34.188183+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_9a259a4fd5c6 join_code=A483E1A9"}
+{"ts": "2026-07-28T19:46:34.484948+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:34.582568+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=local_wallet address=artcb1pefxuxypvpm9uvj0a5j7dgszr5nv9pcrkm4uyr"}
+{"ts": "2026-07-28T19:46:34.886315+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:35.034855+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:35.195790+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:35.293776+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pipe_wallet address=artcb1utuhpyd44qwqhngh8xncqc89a5ml8vthymke3l"}
+{"ts": "2026-07-28T19:46:35.581324+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:35.681883+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=stress_wallet address=artcb13ycdk75wt4ayy99ncdvlmpmjwyd4yh6lfjng3f"}
+{"ts": "2026-07-28T19:46:35.826737+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:36.004210+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:36.102273+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=batch_wallet address=artcb1rtpcq3qxkt8g3r5cg9je036pfnmjdn9saf765h"}
+{"ts": "2026-07-28T19:46:36.907812+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:37.020550+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=sym_wallet address=artcb1my8mykprcgmywqjan4ypn9yjxsl6pwfk3fdjq5"}
+{"ts": "2026-07-28T19:46:37.201090+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:37.319622+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:37.468160+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:37.766778+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:37.994178+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-28T19:46:38.100146+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}

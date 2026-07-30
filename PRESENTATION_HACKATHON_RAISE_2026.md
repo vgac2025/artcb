@@ -139,21 +139,8 @@ Balance finale : 150 ARTCB (incluant genesis)
 
 ---
 
-### 8. 🔑 WALLETS FOUNDERS OPÉRATIONNELS
+### 8. 
 
-**Allocation** :
-- ✅ 5 founders créés
-- ✅ 210,000 ARTCB chacun (1% de 21M)
-- ✅ Total : 1,050,000 ARTCB (5%)
-- ✅ Clés Ed25519 générées
-- ✅ Signatures fonctionnelles
-
-**Sécurité** :
-- ✅ Clés privées gitignorées
-- ✅ Balances publiques commitées
-- ✅ Guide complet fourni
-
-**Preuve** : `data/founders/founders_allocation.json` + Script `scripts/create_founders_wallets.py`
 
 ---
 

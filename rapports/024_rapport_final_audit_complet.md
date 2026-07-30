@@ -394,7 +394,7 @@ git push origin main
 | **Avantage vs Sentence-BERT** | 24.2× plus rapide |
 | **Avantage vs Neo4j** | 241.9× plus rapide |
 | **Avantage vs Bitcoin** | 2× plus rapide (SHA-256) |
-| **Conformité PROTOCOLE** | 17/17 règles (100%) |
+| **Conformité PROTOCOLE** | 17/17 règles (100%) |^
 | **Documentation** | 4030 lignes (24 rapports) |
 | **Commits prêts** | 14 commits (~200 KB) |
 | **Interfaces actives** | API (8000) + Frontend (5174) |

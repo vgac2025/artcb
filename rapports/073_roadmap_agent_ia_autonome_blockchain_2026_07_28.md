@@ -72,10 +72,10 @@ La clé `sk-0s-kISVitrQ…` (service Manus externe) a été postée en clair dan
 
 ## Ce qui manque — Classement par priorité
 
-### 🔴 P0 — Bloquant : sans ça l'agent redémarre aveugle à chaque session
+##, lire 50+ memos, les synthétiser. Coûteux et non automatique.# 🔴 P0 — Bloquant : sans ça l'agent redémarre aveugle à chaque session
 
 #### P0-1 — GET /api/v1/ai/context (PRIORITÉ ABSOLUE)
-**Problème :** À chaque nouvelle session Bob/Cursor, l'agent ne sait pas ce qu'il a fait. Il doit manuellement appeler `/ai/memory`, lire 50+ memos, les synthétiser. Coûteux et non automatique.
+**Problème :** À chaque nouvelle session Bob/Cursor, l'agent ne sait pas ce qu'il a fait. Il doit manuellement appeler `/ai/memory`
 
 **Ce qu'il faut créer :**
 ```

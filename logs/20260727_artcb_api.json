@@ -990,3 +990,27 @@
 {"ts": "2026-07-27T23:25:14.634185+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
 {"ts": "2026-07-27T23:25:14.986680+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
 {"ts": "2026-07-27T23:25:15.167326+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T23:36:03.039334+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T23:36:07.883569+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T23:57:52.143155+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T23:57:57.011396+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T23:57:57.990576+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_ce883fdf16db3537 (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-27T23:57:57.997875+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_d71d9b1436ad9003 (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-27T23:57:58.626490+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #61 graph=ai_memo_3906cb160a17 agent=bob_write_replay"}
+{"ts": "2026-07-27T23:57:59.098122+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-27T23:57:59.421389+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #62 graph=ai_memo_1699c274682d agent=bob_write_replay"}
+{"ts": "2026-07-27T23:58:00.039393+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-27T23:58:00.330754+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #63 graph=ai_memo_5a16142d6181 agent=bob_write_replay"}
+{"ts": "2026-07-27T23:58:00.776177+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-27T23:58:01.062377+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #64 graph=ai_memo_22ad6d1dbfad agent=bob_write_replay"}
+{"ts": "2026-07-27T23:59:31.498471+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T23:59:36.316971+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-07-27T23:59:38.247866+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_7ce2ff8a43172fbb (bob_write_replay) wallet=agent_bob_write_replay"}
+{"ts": "2026-07-27T23:59:38.255058+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_61f99a523465d40e (bob_read_only) wallet=agent_bob_read_only"}
+{"ts": "2026-07-27T23:59:38.813234+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #65 graph=ai_memo_4fbdbdd8f716 agent=bob_write_replay"}
+{"ts": "2026-07-27T23:59:39.291315+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-27T23:59:39.601535+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #66 graph=ai_memo_0d280004dc4c agent=bob_write_replay"}
+{"ts": "2026-07-27T23:59:40.196693+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-27T23:59:40.488561+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #67 graph=ai_memo_582d06355b57 agent=bob_write_replay"}
+{"ts": "2026-07-27T23:59:40.935326+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "Anti-Sybil rate-limit — memo IA gravé sans signature contributors"}
+{"ts": "2026-07-27T23:59:41.237039+00:00", "level": "INFO", "module": "artcb.api.ai", "message": "AI memo gravé: bloc #68 graph=ai_memo_deb5fd704aa0 agent=bob_write_replay"}

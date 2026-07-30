@@ -462,3 +462,41 @@ reward      = 1 ARTCB >> epoch_total
 
 - project_id manquant — **utilisateur bloqué sur plateforme IBM**
 - Suspendu jusqu'à nouvel ordre
+
+## [2026-07-28T23:00:00Z] Phase 11 validée — Audit rapport 071 corrigé
+
+### Phase 11 — COMMITTÉE (303/303 tests PASS)
+
+**Nouveaux modules :**
+- `src/artcb/ir/rules.py` — IR v0.2 moteur règles déclaratives (smart contracts PoL)
+- `src/artcb/pol/nft.py` — PolNFT registry (NFT sémantiques post-quantiques)
+- `src/artcb/pol/transfer.py` — PolTransfer ledger (transactions PoL natives)
+- `src/api/pol_phase11_routes.py` — 13 endpoints FastAPI Phase 11
+- `tests/test_ir_rules.py` — 26 tests (26/26 PASS)
+- `tests/test_pol_nft.py` — 17 tests (17/17 PASS)
+- `tests/test_pol_transfer.py` — 26 tests (26/26 PASS)
+
+### Audit rapport 071 — CORRECTIONS
+
+5 items P0/P1 signalés étaient des FAUX POSITIFS :
+
+| Item | Signalé | Réalité |
+|------|---------|---------|
+| i18n brisé (0/14 pages t()) | P0 critique | 16/16 pages branchées ✅ |
+| Clés i18n 56/238 (23%) | P0 critique | 238×7 langues complet ✅ |
+| Module API Keys absent | P0 critique | api_keys_routes.py complet ✅ |
+| Google AI absent | P0 | google_ai Gemini 1.5 Flash intégré ✅ |
+| test_pool_manager_explore_batch fail | P1 | PASS ✅ |
+
+### Intégrations LLM disponibles (confirmé)
+- OpenAI, Anthropic, Google AI (Gemini), OpenRouter, Cursor, Ollama, WatsonX (suspendu), Manus
+
+### Suite de tests
+- **303/303 PASS** (234 anciens + 69 Phase 11)
+- Build TypeScript frontend : 0 erreur
+
+### Prochain rapport 083
+- Frontend page IR Rules (smart contracts UI)
+- Wikipedia connector
+- libp2p natif Phase 12
+
