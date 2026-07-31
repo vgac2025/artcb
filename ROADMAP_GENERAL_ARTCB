@@ -1,7 +1,7 @@
 # ROADMAP GÉNÉRALE — ARTCB MVP Avancé → Couche Universelle PoL
 
 **Horodatage :** 2026-07-04T22:50:00Z
-**Mise à jour :** 2026-07-28T21:30:00Z — Vision PoL couche universelle (rapport 081)
+**Mise à jour :** 2026-07-31T00:00:00Z — Phase 12 : MCP + Interopérabilité + Multi-environnement (rapport 086)
 
 ---
 
@@ -206,7 +206,9 @@
 | Consensus multi-agents | Validation distribuée IR | P2 |
 | Scheduler distribué | Exécution PoL rules planifiée | P2 |
 | Marketplace PoL | Échange de blocs de connaissance | P3 |
-| Federation inter-chaînes | Pont ARTCB ↔ Ethereum/Solana | P3 |
+| Federation inter-chaînes | Pont ARTCB ↔ Ethereum/Solana/Bitcoin | **✅ FAIT Phase 12** |
+| **Serveur MCP** | **Protocol Context Protocol — intégration Cursor/Bob/Claude/VSCode** | **✅ FAIT Phase 12** |
+| **Multi-env Nix** | **Environnement Nix reproductible (Replit, Codespaces, Gitpod)** | **✅ FAIT Phase 12** |
 | IR v0.3 | PoL Value Index + Transfer Protocol | P2 |
 | IR v1.0 | Turing-complet PoL | P3 |
 
@@ -223,6 +225,75 @@
 > **Point faible identifié :** l'obstacle n'est plus technique, mais culturel.
 > Comment convaincre milliards d'humains + agents IA d'utiliser un seul protocole ?
 > Réponse : commencer par les intégrations directes (Cursor, ChatGPT, Claude via API Keys).
+
+---
+
+## Phase 12 — MCP + Interopérabilité Blockchain + Multi-environnement (2026-07-31 →)
+
+> **Vision :** ARTCB devient accessible depuis tout IDE (Cursor, Bob, VSCode, JetBrains, Lovable),
+> tout environnement (Nix, Replit, Codespaces, Gitpod) et interopère nativement avec
+> Bitcoin, Ethereum, Solana, BNB Chain via des bridges sémantiques PoL.
+> Rapport de référence : `rapports/086_mcp_interop_multienv_2026_07_31.md`
+
+### Phase 12.1 — Serveur MCP ARTCB (Model Context Protocol)
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 12.1.1 | `src/artcb/mcp/server.py` — Serveur MCP FastAPI | Enregistrement tools, resources, prompts | [ ] | P1 |
+| 12.1.2 | Tool `artcb_memo` — graver une pensée | Input text → bloc gravé, retourne block_index + pol_score | [ ] | P1 |
+| 12.1.3 | Tool `artcb_think` — IA raisonne sur la chaîne | Question → réponse IA gravée | [ ] | P1 |
+| 12.1.4 | Tool `artcb_search` — recherche sémantique | Query → liste blocs pertinents | [ ] | P1 |
+| 12.1.5 | Tool `artcb_mine` — miner un bloc | Texte → pipeline mining complet | [ ] | P1 |
+| 12.1.6 | Resource `artcb://chain/status` — état chaîne live | Blocs, PoL moyen, nœuds | [ ] | P1 |
+| 12.1.7 | Resource `artcb://wallet/{address}` — balance wallet | Solde + historique | [ ] | P1 |
+| 12.1.8 | Prompt `artcb_blockchain_assistant` — prompt système ARTCB | Instructions complètes pour agent IA | [ ] | P1 |
+| 12.1.9 | Config Cursor (`.cursor/mcp.json`) | Branché nativement dans Cursor IDE | [ ] | P1 |
+| 12.1.10 | Config Bob IDE (`bob_mcp_config`) | Branché nativement dans Bob | [ ] | P1 |
+| 12.1.11 | Config VSCode (`settings.json` MCP) | Branché nativement dans VSCode | [ ] | P2 |
+| 12.1.12 | Config JetBrains (plugin MCP) | Branché nativement dans IntelliJ/PyCharm | [ ] | P2 |
+| 12.1.13 | Config Lovable / Replit Agent | Branché nativement | [ ] | P2 |
+| 12.1.14 | Tests `tests/test_mcp_server.py` — 20+ cas | 100 % pass | [ ] | P1 |
+| 12.1.15 | Documentation `docs/MCP_SETUP.md` | Guide installation par IDE | [ ] | P1 |
+
+### Phase 12.2 — Interopérabilité Blockchain (Bridges sémantiques)
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 12.2.1 | `src/artcb/bridges/__init__.py` — module bridges | Structure commune | [ ] | P1 |
+| 12.2.2 | `src/artcb/bridges/ethereum.py` — Bridge ETH | Lire txs ETH → encoder en IR PoL → graver ARTCB | [ ] | P2 |
+| 12.2.3 | `src/artcb/bridges/bitcoin.py` — Bridge BTC | Lire txs BTC (ordinals/inscriptions) → IR PoL | [ ] | P2 |
+| 12.2.4 | `src/artcb/bridges/solana.py` — Bridge SOL | Lire events Solana → IR PoL | [ ] | P2 |
+| 12.2.5 | `src/artcb/bridges/evm_generic.py` — Bridge EVM générique | Compatible BNB/Polygon/Avalanche | [ ] | P2 |
+| 12.2.6 | `POST /api/v1/bridges/import` — importer tx externe | Tx externe → bloc ARTCB | [ ] | P2 |
+| 12.2.7 | `POST /api/v1/bridges/export` — exporter vers autre chaîne | Bloc ARTCB → format EVM ou Solana | [ ] | P3 |
+| 12.2.8 | `GET /api/v1/bridges/status` — état des bridges | Ping RPC + dernière tx synchronisée | [ ] | P2 |
+| 12.2.9 | Connecteur RPC universel (Infura, Alchemy, QuickNode) | URL configurable via `.env` | [ ] | P2 |
+| 12.2.10 | Tests `tests/test_bridges.py` — 15+ cas (mock RPC) | 100 % pass | [ ] | P2 |
+| 12.2.11 | UI `/bridges` dans le dashboard | Statut bridges + import manuel | [ ] | P3 |
+
+### Phase 12.3 — Multi-environnement & Déploiement universel
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 12.3.1 | `flake.nix` — environnement Nix reproductible | `nix develop` → API + tests fonctionnels | [ ] | P1 |
+| 12.3.2 | `.replit` + `replit.nix` — Replit ready | Un-click deploy sur Replit | [ ] | P1 |
+| 12.3.3 | `.devcontainer/devcontainer.json` — Codespaces/Gitpod | GitHub Codespaces + Gitpod | [ ] | P1 |
+| 12.3.4 | `Dockerfile` — image Docker officielle | `docker run artcb/node` | [ ] | P1 |
+| 12.3.5 | `docker-compose.yml` — stack complète | API + frontend + données persistées | [ ] | P1 |
+| 12.3.6 | `render.yaml` / `railway.toml` — deploy 1-clic | Render.com + Railway.app | [ ] | P2 |
+| 12.3.7 | Makefile cibles `env-nix`, `env-docker`, `env-replit` | Commandes unifiées | [ ] | P1 |
+| 12.3.8 | Guide `docs/DEPLOY_GUIDE.md` | Installation sur 7 environnements | [ ] | P1 |
+
+### Phase 12.4 — Protocoles interopérabilité standards
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 12.4.1 | Support ERC-20 compatible (lecture) | Lire balances ERC-20 → afficher dans ARTCB | [ ] | P2 |
+| 12.4.2 | Support ERC-721 / ERC-1155 (NFT externe) | Lire NFT externe → créer NFT sémantique ARTCB lié | [ ] | P2 |
+| 12.4.3 | Webhook sortant vers chaînes externes | Nouveau bloc ARTCB → notif Ethereum/Solana | [ ] | P3 |
+| 12.4.4 | IBC (Inter-Blockchain Communication) stub | Base pour compatibilité Cosmos/Polkadot | [ ] | P3 |
+| 12.4.5 | Atomic swap ARTCB ↔ ETH/SOL (Hash Time Lock) | Échange sans tiers de confiance | [ ] | P3 |
+| 12.4.6 | `GET /api/v1/interop/chains` — liste chaînes supportées | Statut de chaque bridge | [ ] | P2 |
 
 ---
 

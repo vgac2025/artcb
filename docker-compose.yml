@@ -1,0 +1,46 @@
+# ARTCB — Docker Compose
+# Usage : docker compose up
+# Démarre : API ARTCB (port 8000) + MCP Server (port 8001)
+# Zéro dépendance à ngrok
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - artcb_data:/app/data
+      - artcb_logs:/app/logs
+      - artcb_rapports:/app/rapports
+    environment:
+      ARTCB_DEBUG: "true"
+      ARTCB_DATA_DIR: /app/data
+      ARTCB_LOG_DIR: /app/logs
+      ARTCB_REPORTS_DIR: /app/rapports
+      PYTHONPATH: /app
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  mcp:
+    build: .
+    command: ["python", "-m", "src.artcb.mcp.server", "--http", "8001"]
+    ports:
+      - "8001:8001"
+    environment:
+      ARTCB_API_URL: "http://api:8000"
+      PYTHONPATH: /app
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  artcb_data:
+  artcb_logs:
+  artcb_rapports:

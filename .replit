@@ -1,0 +1,19 @@
+run = "make api"
+language = "python3"
+entrypoint = "src/api/main.py"
+
+[nix]
+channel = "stable-23_11"
+
+[env]
+PYTHONPATH = "/home/runner/${REPL_SLUG}"
+ARTCB_DEBUG = "true"
+ARTCB_DATA_DIR = "/home/runner/${REPL_SLUG}/data"
+
+[deployment]
+run = ["sh", "-c", "PYTHONPATH=/home/runner/${REPL_SLUG} python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 8000
+externalPort = 80

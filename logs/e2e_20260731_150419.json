@@ -1,0 +1,207 @@
+{
+  "timestamp": "2026-07-31T15:06:07.272269+00:00",
+  "total_ms": 107919.96,
+  "ok": 6,
+  "total": 24,
+  "fail": 18,
+  "steps": [
+    {
+      "ts": "2026-07-31T15:04:21.242935+00:00",
+      "step": "01_health",
+      "ok": true,
+      "latency_ms": 1890.66,
+      "detail": "blocks=527 algo=ML-DSA-65 hybrid=True",
+      "data": {
+        "block_count": 527,
+        "pqc": "ML-DSA-65"
+      }
+    },
+    {
+      "ts": "2026-07-31T15:04:22.631669+00:00",
+      "step": "02_chain_list",
+      "ok": true,
+      "latency_ms": 1118.36,
+      "detail": "count=527"
+    },
+    {
+      "ts": "2026-07-31T15:04:22.890886+00:00",
+      "step": "03_chain_verify",
+      "ok": true,
+      "latency_ms": 247.43,
+      "detail": "valid=True blocks=527 errors=[]",
+      "data": {
+        "valid": true,
+        "block_count": 527,
+        "errors": []
+      }
+    },
+    {
+      "ts": "2026-07-31T15:04:23.127157+00:00",
+      "step": "04_chain_block_genesis",
+      "ok": false,
+      "latency_ms": 235.84,
+      "detail": "hash= pol=None sig="
+    },
+    {
+      "ts": "2026-07-31T15:04:24.032784+00:00",
+      "step": "05_block_sizes",
+      "ok": false,
+      "latency_ms": 905.41,
+      "detail": "avg=NoneB max=NoneB total_mined=None ARTCB"
+    },
+    {
+      "ts": "2026-07-31T15:04:24.057813+00:00",
+      "step": "06_wallet_list",
+      "ok": false,
+      "latency_ms": 24.36,
+      "detail": "total=0 hybrid_pqc=0 legacy=0",
+      "data": {
+        "total": 0,
+        "hybrid": 0
+      }
+    },
+    {
+      "ts": "2026-07-31T15:04:24.065604+00:00",
+      "step": "07_wallet_vgactech",
+      "ok": false,
+      "latency_ms": 7.31,
+      "detail": "address= hybrid=None addr_v2="
+    },
+    {
+      "ts": "2026-07-31T15:04:24.073384+00:00",
+      "step": "08_wallet_balance",
+      "ok": false,
+      "latency_ms": 7.23,
+      "detail": "balance=None ARTCB blocks_mined=None",
+      "data": {
+        "balance_artcb": null,
+        "blocks": null
+      }
+    },
+    {
+      "ts": "2026-07-31T15:04:24.080815+00:00",
+      "step": "09_mining_status",
+      "ok": false,
+      "latency_ms": 6.88,
+      "detail": "pol_threshold=None antisybil=None bypass_ai=None"
+    },
+    {
+      "ts": "2026-07-31T15:04:24.113080+00:00",
+      "step": "10_store_bloc_pol",
+      "ok": false,
+      "latency_ms": 31.71,
+      "detail": "index=None pol=None sig_prefix=",
+      "data": {
+        "index": null,
+        "pol": null,
+        "hash": ""
+      }
+    },
+    {
+      "ts": "2026-07-31T15:04:26.252003+00:00",
+      "step": "11_mining_pipeline",
+      "ok": true,
+      "latency_ms": 2138.57,
+      "detail": "index=527 pol=0.6 status=None"
+    },
+    {
+      "ts": "2026-07-31T15:04:26.492165+00:00",
+      "step": "12_p2p_status",
+      "ok": true,
+      "latency_ms": 239.92,
+      "detail": "node_id=node_22fa5b6ceeb6 peers=2 gossip=None",
+      "data": {
+        "peers": 2,
+        "node_id": "node_22fa5b6ceeb6"
+      }
+    },
+    {
+      "ts": "2026-07-31T15:04:36.504012+00:00",
+      "step": "13_bridges_status",
+      "ok": false,
+      "latency_ms": 10011.55,
+      "detail": "ok=[] fail=[]",
+      "data": {
+        "ok": [],
+        "fail": []
+      }
+    },
+    {
+      "ts": "2026-07-31T15:04:46.517708+00:00",
+      "step": "14_interop_chains",
+      "ok": false,
+      "latency_ms": 10013.6,
+      "detail": "supported=None"
+    },
+    {
+      "ts": "2026-07-31T15:04:56.531702+00:00",
+      "step": "15_antisybil_config",
+      "ok": false,
+      "latency_ms": 10013.87,
+      "detail": "min_interval=Nones ai_bypass=None study=None"
+    },
+    {
+      "ts": "2026-07-31T15:05:06.545730+00:00",
+      "step": "16_antisybil_metrics",
+      "ok": false,
+      "latency_ms": 10013.88,
+      "detail": "samples=None p5=Nones suggested=Nones"
+    },
+    {
+      "ts": "2026-07-31T15:05:16.559212+00:00",
+      "step": "17_governance",
+      "ok": false,
+      "latency_ms": 10013.36,
+      "detail": "{}"
+    },
+    {
+      "ts": "2026-07-31T15:05:26.575690+00:00",
+      "step": "18_ai_context",
+      "ok": false,
+      "latency_ms": 10016.34,
+      "detail": "chain_height=None open_bugs=None memos=0"
+    },
+    {
+      "ts": "2026-07-31T15:05:36.589199+00:00",
+      "step": "19_pol_nft",
+      "ok": false,
+      "latency_ms": 10013.33,
+      "detail": "nfts=0 status=ERR"
+    },
+    {
+      "ts": "2026-07-31T15:05:46.604700+00:00",
+      "step": "20_ir_rules",
+      "ok": false,
+      "latency_ms": 10015.36,
+      "detail": "rules=0 status=ERR"
+    },
+    {
+      "ts": "2026-07-31T15:05:56.619446+00:00",
+      "step": "21_groups",
+      "ok": false,
+      "latency_ms": 10014.64,
+      "detail": "groups=0"
+    },
+    {
+      "ts": "2026-07-31T15:06:06.630773+00:00",
+      "step": "22_connectors_formats",
+      "ok": false,
+      "latency_ms": 10011.22,
+      "detail": "formats=0"
+    },
+    {
+      "ts": "2026-07-31T15:06:06.638013+00:00",
+      "step": "23_mcp_http",
+      "ok": false,
+      "latency_ms": 0,
+      "detail": "Non d\u00e9marr\u00e9 (stdio natif OK): HTTPConnectionPool(host='127.0.0.1', por"
+    },
+    {
+      "ts": "2026-07-31T15:06:07.271912+00:00",
+      "step": "24_doppler_secrets",
+      "ok": true,
+      "latency_ms": 0,
+      "detail": "secrets=24 sur projet artcb-blockchain/dev"
+    }
+  ]
+}

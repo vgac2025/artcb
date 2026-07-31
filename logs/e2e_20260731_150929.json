@@ -1,0 +1,217 @@
+{
+  "timestamp": "2026-07-31T15:11:20.011598+00:00",
+  "total_ms": 110536.69,
+  "ok": 12,
+  "total": 25,
+  "fail": 13,
+  "steps": [
+    {
+      "ts": "2026-07-31T15:09:29.709303+00:00",
+      "step": "01_health",
+      "ok": true,
+      "latency_ms": 234.84,
+      "detail": "blocks=528 pqc=ML-DSA-65 hybrid=True",
+      "data": {
+        "block_count": 528,
+        "pqc": "ML-DSA-65"
+      }
+    },
+    {
+      "ts": "2026-07-31T15:09:30.286125+00:00",
+      "step": "02_chain_explorer",
+      "ok": true,
+      "latency_ms": 534.37,
+      "detail": "blocks=528 public=21 rewards=82200000000 syms=10611",
+      "data": {
+        "block_count": 528,
+        "public": 21
+      }
+    },
+    {
+      "ts": "2026-07-31T15:09:30.529773+00:00",
+      "step": "03_chain_verify",
+      "ok": true,
+      "latency_ms": 241.87,
+      "detail": "valid=True blocks=528 pqc=ML-DSA-65",
+      "data": {
+        "valid": true,
+        "block_count": 528,
+        "errors": []
+      }
+    },
+    {
+      "ts": "2026-07-31T15:09:30.756173+00:00",
+      "step": "04_block_genesis",
+      "ok": true,
+      "latency_ms": 226.17,
+      "detail": "hash=a0847a087aeb2539 pol=0.6 sig=ed25519:75dad59aed8d"
+    },
+    {
+      "ts": "2026-07-31T15:09:30.991244+00:00",
+      "step": "05_block_latest",
+      "ok": true,
+      "latency_ms": 234.82,
+      "detail": "index=524 hash=2f261fca5b17f8b5 pol=0.75 sig_algo=hybrid:ed255"
+    },
+    {
+      "ts": "2026-07-31T15:09:31.014399+00:00",
+      "step": "06_wallet_list",
+      "ok": true,
+      "latency_ms": 22.32,
+      "detail": "total=44 hybrid_pqc=44 legacy=0",
+      "data": {
+        "total": 44,
+        "hybrid": 44,
+        "legacy": 0
+      }
+    },
+    {
+      "ts": "2026-07-31T15:09:31.221983+00:00",
+      "step": "07_wallet_create",
+      "ok": true,
+      "latency_ms": 207.34,
+      "detail": "address=artcb1v045qax5gfasmd8km90845 hybrid=None"
+    },
+    {
+      "ts": "2026-07-31T15:09:31.229753+00:00",
+      "step": "08_mining_info",
+      "ok": false,
+      "latency_ms": 3.8,
+      "detail": "status=ERR {}"
+    },
+    {
+      "ts": "2026-07-31T15:09:31.233396+00:00",
+      "step": "09_store_bloc_pol",
+      "ok": false,
+      "latency_ms": 3.45,
+      "detail": "index=None pol=None hash=",
+      "data": {
+        "index": null,
+        "pol": null,
+        "hash": ""
+      }
+    },
+    {
+      "ts": "2026-07-31T15:09:32.293204+00:00",
+      "step": "10_mining_pipeline",
+      "ok": true,
+      "latency_ms": 1059.43,
+      "detail": "index=528 pol=0.6",
+      "data": {
+        "index": 528,
+        "pol": 0.6
+      }
+    },
+    {
+      "ts": "2026-07-31T15:09:32.538265+00:00",
+      "step": "11_p2p_status",
+      "ok": true,
+      "latency_ms": 244.79,
+      "detail": "node_id=node_22fa5b6ceeb6 peers=2",
+      "data": {
+        "peers": 2
+      }
+    },
+    {
+      "ts": "2026-07-31T15:09:32.541704+00:00",
+      "step": "12_p2p_peers",
+      "ok": true,
+      "latency_ms": 3.25,
+      "detail": "peers=2"
+    },
+    {
+      "ts": "2026-07-31T15:09:37.547627+00:00",
+      "step": "13_bridges_status",
+      "ok": false,
+      "latency_ms": 5005.74,
+      "detail": "status=ERR"
+    },
+    {
+      "ts": "2026-07-31T15:09:45.558848+00:00",
+      "step": "14_interop_chains",
+      "ok": false,
+      "latency_ms": 8011.08,
+      "detail": "total=None chains=[]"
+    },
+    {
+      "ts": "2026-07-31T15:09:53.572600+00:00",
+      "step": "15_antisybil_config",
+      "ok": false,
+      "latency_ms": 8013.61,
+      "detail": "enabled=None min_interval=Nones pol_min=None"
+    },
+    {
+      "ts": "2026-07-31T15:10:01.584333+00:00",
+      "step": "16_antisybil_metrics",
+      "ok": false,
+      "latency_ms": 8011.59,
+      "detail": "samples=None suggested=Nones"
+    },
+    {
+      "ts": "2026-07-31T15:10:09.596774+00:00",
+      "step": "17_ai_context",
+      "ok": false,
+      "latency_ms": 8012.29,
+      "detail": "height=None memos=None ready=None"
+    },
+    {
+      "ts": "2026-07-31T15:10:17.607760+00:00",
+      "step": "18_ai_bugs_open",
+      "ok": false,
+      "latency_ms": 8010.86,
+      "detail": "open_bugs=None bugs=[]"
+    },
+    {
+      "ts": "2026-07-31T15:10:25.619660+00:00",
+      "step": "19_pol_nft",
+      "ok": false,
+      "latency_ms": 8011.78,
+      "detail": "nfts=None minted=0"
+    },
+    {
+      "ts": "2026-07-31T15:10:33.632725+00:00",
+      "step": "20_ir_rules",
+      "ok": false,
+      "latency_ms": 8012.95,
+      "detail": "rules=None"
+    },
+    {
+      "ts": "2026-07-31T15:10:41.644563+00:00",
+      "step": "21_groups_endpoint",
+      "ok": false,
+      "latency_ms": 8011.69,
+      "detail": "status=ERR"
+    },
+    {
+      "ts": "2026-07-31T15:10:49.656846+00:00",
+      "step": "22_connectors_formats",
+      "ok": false,
+      "latency_ms": 8012.14,
+      "detail": "formats=None types=0"
+    },
+    {
+      "ts": "2026-07-31T15:10:57.672724+00:00",
+      "step": "23_devnet_faucet",
+      "ok": false,
+      "latency_ms": 8015.73,
+      "detail": "total_requests=None distributed=None"
+    },
+    {
+      "ts": "2026-07-31T15:11:19.368619+00:00",
+      "step": "24_ir_encode",
+      "ok": true,
+      "latency_ms": 21695.53,
+      "detail": "status=200 {'graph_id': 'g_1b6dab1690ae', 'node_count': 1, 'edge_count'"
+    },
+    {
+      "ts": "2026-07-31T15:11:20.010904+00:00",
+      "step": "25_doppler_secrets",
+      "ok": true,
+      "latency_ms": 0,
+      "detail": "secrets=24 projet=artcb-blockchain/dev",
+      "data": {
+        "count": 24
+      }
+    }
+  ]
+}

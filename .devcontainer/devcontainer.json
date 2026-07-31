@@ -1,0 +1,32 @@
+{
+  "name": "ARTCB Blockchain",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "postCreateCommand": "pip install -r requirements.txt",
+  "forwardPorts": [8000, 8001, 5173],
+  "portsAttributes": {
+    "8000": {"label": "ARTCB API", "onAutoForward": "notify"},
+    "8001": {"label": "ARTCB MCP Server", "onAutoForward": "silent"},
+    "5173": {"label": "ARTCB Frontend", "onAutoForward": "openPreview"}
+  },
+  "containerEnv": {
+    "PYTHONPATH": "${containerWorkspaceFolder}",
+    "ARTCB_DEBUG": "true",
+    "ARTCB_DATA_DIR": "${containerWorkspaceFolder}/data"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.pylance",
+        "github.copilot",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "mounts": [],
+  "remoteUser": "vscode"
+}

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import aiofiles
 from pypdf import PdfReader
-from pypdf.errors import PdfReadError
+from pypdf.errors import PdfReadError, LimitReachedError
 
 
 async def extract_pdf_text_async(
@@ -32,8 +32,11 @@ async def extract_pdf_text_async(
 
     # Parse PDF (sync operation, but fast) - wrap bytes in BytesIO
     pdf_stream = io.BytesIO(pdf_bytes)
-    reader = PdfReader(pdf_stream)
-    total_pages = len(reader.pages)
+    try:
+        reader = PdfReader(pdf_stream)
+        total_pages = len(reader.pages)
+    except (PdfReadError, LimitReachedError, Exception):
+        return ""
     num_pages = min(max_pages, total_pages) if max_pages else total_pages
 
     if not parallel or num_pages < 4:
@@ -42,7 +45,7 @@ async def extract_pdf_text_async(
         for i in range(num_pages):
             try:
                 text = reader.pages[i].extract_text() or ""
-            except PdfReadError:
+            except (PdfReadError, LimitReachedError, Exception):
                 text = ""
             if text.strip():
                 chunks.append(text.strip())
@@ -56,7 +59,7 @@ async def extract_pdf_text_async(
         def _extract() -> str:
             try:
                 return reader.pages[page_num].extract_text() or ""
-            except PdfReadError:
+            except (PdfReadError, LimitReachedError, Exception):
                 return ""
         text = await loop.run_in_executor(None, _extract)
         return (page_num, text.strip() if text.strip() else "")

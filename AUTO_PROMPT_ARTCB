@@ -528,3 +528,54 @@ reward      = 1 ARTCB >> epoch_total
 - libp2p natif Phase 10
 - Wikipedia connector P1
 - WatsonX project_id (bloqué IBM)
+
+## [2026-07-31T00:00:00Z] Rapport 087 — Installation complète + 371 tests PASS
+
+- **Tests :** 371/371 PASS — 0 fail — 0 skip ✅ (record absolu)
+- **liboqs-python** v0.16.0 installé — ML-DSA-65 + ML-KEM-768 NATIFS (pk/sk taille réelle)
+- **requirements.txt** complet : 28 packages — `pip install -r requirements.txt` one-shot
+- **Phase 12.1 MCP Server** : `src/artcb/mcp/` (5 fichiers, 7 tools, 4 resources, 2 prompts)
+  - `.cursor/mcp.json` → Cursor IDE branché nativement sans ngrok
+  - `python -m src.artcb.mcp.server` → stdio | `--http 8001` → HTTP sans ngrok
+- **Phase 12.2 Bridges** : `src/artcb/bridges/` (6 chaînes : ETH/BTC/SOL/BNB/Polygon/AVAX)
+  - `POST /api/v1/bridges/import` → tx externe → IR PoL → bloc ARTCB
+  - `GET /api/v1/interop/chains` → liste chaînes | `GET /api/v1/bridges/status` → 3/6 publics OK
+- **Phase 12.3 Multi-env** : Dockerfile, docker-compose.yml, flake.nix, .replit, replit.nix, .devcontainer/
+- **Zéro dépendance ngrok** pour le développement et l'intégration IDE
+- **Corrections** : `kem.py` fallback X25519, `test_pqc_crypto.py` skipif liboqs, `tools.py` urllib bug
+- **Avancement global : 92 %**
+- **Rapport :** `rapports/087_installation_complete_371tests_pqc_natif_2026_07_31.md`
+
+### Règles ajoutées
+- `pip install -r requirements.txt` installe TOUT — ne jamais installer manuellement
+- Le MCP server remplace ngrok pour l'intégration IDE — utiliser `.cursor/mcp.json`
+- liboqs-python est dans requirements.txt — fallback X25519 actif si compilation échoue
+- ARTCB_KEM_ENABLED=true et ARTCB_PQC_ENABLED=true dans .env pour activer PQC natif
+
+
+## [2026-07-31T15:00:00Z] Rapport 088 — ngrok rôle exact + benchmark ARTCB vs concurrents 2026
+
+- **Nouvelle clé ngrok :** `3HEkD48SA5Hjz2AZlqfmYcDq5wB_2mpxfjRBxUvZZbdZxbuPL` (enregistrée `.env` + ngrok.yml)
+- **Ancien token révoqué :** `3H5Idtq6UBfVBJ9j5GWWl9iZQLU_4o3dGg9jPzAZozRvRJhEA` → remplacé
+- **Commande SSH ngrok :** `ssh -R 443:localhost:80 v2@connect.ngrok-agent.com http` — nécessite clé SSH enregistrée dans dashboard ngrok
+
+### Rôle exact de ngrok
+- **ngrok = tunnel inversé de développement UNIQUEMENT** — non requis pour la blockchain décentralisée
+- Sert à : partager l'API locale, tester webhooks, démo rapide
+- **Depuis Phase 12.1 :** serveur MCP remplace ngrok pour l'intégration IDE (Cursor, VS Code)
+- **Objectif final Phase 13 :** libp2p natif → zéro ngrok, décentralisation 100%
+
+### Métriques blockchain réelles (2026-07-31)
+- **525 blocs** | 25.48 jours | 20.60 blocs/j | TPS 0.000238 (devnet)
+- **819 ARTCB** minés | PoL score moyen 0.7389 | Taille bloc moy 10.7 KB
+- **ML-DSA-65** Sign: 0.116 ms | Verify: 0.053 ms (mesuré liboqs v0.16.0)
+- **ML-KEM-768** Encap: 0.072 ms | Decap: 0.027 ms
+
+### Tests
+- **371/371 PASS** — 0 FAIL — 0 SKIP (154.78s) ← confirmation second run
+
+### Rapport
+- `rapports/088_ngrok_role_decentralisation_benchmark_blockchain_2026_07_31.md`
+
+### Avancement global : 92 %
+

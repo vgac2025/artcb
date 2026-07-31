@@ -19,7 +19,18 @@ from artcb.crypto.pqc import (
 from artcb.wallet.address import hybrid_address_v2, verify_address_v2
 from artcb.wallet.manager import WalletManager
 
-pytestmark = pytest.mark.skipif(not pqc_enabled(), reason="ARTCB_PQC_ENABLED=false")
+def _oqs_installed() -> bool:
+    try:
+        import oqs  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+pytestmark = pytest.mark.skipif(
+    not pqc_enabled() or not _oqs_installed(),
+    reason="liboqs-python non installé ou ARTCB_PQC_ENABLED=false",
+)
 
 
 class TestPQCCore:
