@@ -1,4 +1,4 @@
-run = "make api"
+run = "bash scripts/replit_start.sh"
 language = "python3"
 entrypoint = "src/api/main.py"
 
@@ -9,6 +9,10 @@ channel = "stable-23_11"
 PYTHONPATH = "/home/runner/${REPL_SLUG}"
 ARTCB_DEBUG = "true"
 ARTCB_DATA_DIR = "/home/runner/${REPL_SLUG}/data"
+ARTCB_LOG_DIR = "/home/runner/${REPL_SLUG}/logs"
+ARTCB_ENCODE_MODE = "rule-based"
+ARTCB_LLM_ENABLED = "false"
+ARTCB_ANTI_SYBIL_AI_BYPASS = "true"
 
 [deployment]
 run = ["sh", "-c", "PYTHONPATH=/home/runner/${REPL_SLUG} python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000"]

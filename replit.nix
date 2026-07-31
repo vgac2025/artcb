@@ -2,14 +2,12 @@
   deps = [
     pkgs.python312
     pkgs.python312Packages.pip
-    pkgs.gcc
     pkgs.cmake
-    pkgs.gnumake
+    pkgs.ninja
+    pkgs.gcc
     pkgs.openssl
-    pkgs.nodejs_22
+    pkgs.liboqs          # ML-DSA-65 + ML-KEM-768 (NIST PQC 2024)
     pkgs.curl
+    pkgs.git
   ];
-  env = {
-    PYTHONPATH = "${pkgs.lib.placeholder "out"}";
-  };
 }

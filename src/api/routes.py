@@ -401,7 +401,7 @@ class WalletBalanceRequest(BaseModel):
 
 @router.post("/wallet/create")
 def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
-    """Create new ARTCB wallet with Ed25519 keypair."""
+    """Create new ARTCB wallet with Ed25519 + ML-DSA-65 hybrid keypair."""
     from src.artcb.wallet.manager import WalletManager
 
     _state(request)
@@ -410,12 +410,16 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
     try:
         wallet = wallet_mgr.create_wallet(name=body.name)
         logger.info("Created wallet name=%s address=%s", body.name, wallet.address)
-        return {
+        response: dict = {
             "name": body.name,
             "address": wallet.address,
             "public_key_hex": wallet.public_key_hex,
             "public_key_b64": wallet.public_key_b64,
+            "hybrid": wallet.is_hybrid,
         }
+        if wallet.address_v2:
+            response["address_v2"] = wallet.address_v2
+        return response
     except FileExistsError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 

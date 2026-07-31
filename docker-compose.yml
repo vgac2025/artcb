@@ -1,46 +1,62 @@
-# ARTCB — Docker Compose
-# Usage : docker compose up
-# Démarre : API ARTCB (port 8000) + MCP Server (port 8001)
-# Zéro dépendance à ngrok
+# ARTCB — Stack complète Docker
+# Usage : docker compose up -d
+# API disponible sur http://localhost:8000/api/v1/health
 
 services:
-  api:
+
+  artcb-api:
     build: .
+    image: artcb/node:latest
+    container_name: artcb-api
+    restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
-      - artcb_data:/app/data
-      - artcb_logs:/app/logs
-      - artcb_rapports:/app/rapports
+      - artcb-data:/app/data
+      - artcb-logs:/app/logs
+      - artcb-rapports:/app/rapports
     environment:
-      ARTCB_DEBUG: "true"
-      ARTCB_DATA_DIR: /app/data
-      ARTCB_LOG_DIR: /app/logs
-      ARTCB_REPORTS_DIR: /app/rapports
-      PYTHONPATH: /app
-    env_file:
-      - .env
+      - PYTHONPATH=/app
+      - ARTCB_DEBUG=${ARTCB_DEBUG:-false}
+      - ARTCB_ENCODE_MODE=${ARTCB_ENCODE_MODE:-rule-based}
+      - ARTCB_LLM_ENABLED=${ARTCB_LLM_ENABLED:-false}
+      - ARTCB_ANTI_SYBIL_AI_BYPASS=${ARTCB_ANTI_SYBIL_AI_BYPASS:-false}
+      - ARTCB_MIN_BLOCK_INTERVAL_SEC=${ARTCB_MIN_BLOCK_INTERVAL_SEC:-60}
+      - ARTCB_WALLET_PASSPHRASE=${ARTCB_WALLET_PASSPHRASE:-changeme_in_prod}
+      - BOB_API_KEY=${BOB_API_KEY:-}
+      - GRADIUM_API_KEY=${GRADIUM_API_KEY:-}
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
       interval: 30s
-      timeout: 5s
+      timeout: 10s
       retries: 3
-    restart: unless-stopped
+      start_period: 20s
 
-  mcp:
+  artcb-node2:
     build: .
-    command: ["python", "-m", "src.artcb.mcp.server", "--http", "8001"]
-    ports:
-      - "8001:8001"
-    environment:
-      ARTCB_API_URL: "http://api:8000"
-      PYTHONPATH: /app
-    depends_on:
-      api:
-        condition: service_healthy
+    image: artcb/node:latest
+    container_name: artcb-node2
     restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - artcb-data-node2:/app/data
+      - artcb-logs-node2:/app/logs
+    environment:
+      - PYTHONPATH=/app
+      - ARTCB_DEBUG=${ARTCB_DEBUG:-false}
+      - ARTCB_ENCODE_MODE=rule-based
+      - ARTCB_LLM_ENABLED=false
+      - ARTCB_ANTI_SYBIL_AI_BYPASS=false
+    depends_on:
+      artcb-api:
+        condition: service_healthy
+    profiles:
+      - multinode
 
 volumes:
-  artcb_data:
-  artcb_logs:
-  artcb_rapports:
+  artcb-data:
+  artcb-logs:
+  artcb-rapports:
+  artcb-data-node2:
+  artcb-logs-node2:
