@@ -1,4 +1,12 @@
-"""Async PDF text extraction (Optimisation #4)."""
+"""Async PDF text extraction (Optimisation #4).
+
+IMPORTANT — Thread-safety :
+  PdfReader de pypdf N'EST PAS thread-safe. Partager un seul reader
+  entre plusieurs threads via asyncio.gather + run_in_executor provoque
+  des race conditions sur le curseur BytesIO interne → LimitReachedError
+  et pages vides.
+  FIX : chaque thread crée son propre PdfReader à partir des bytes bruts.
+"""
 
 from __future__ import annotations
 
@@ -21,26 +29,27 @@ async def extract_pdf_text_async(
     Args:
         path: Path to PDF file
         max_pages: Maximum number of pages to extract
-        parallel: Whether to process pages in parallel
+        parallel: Whether to process pages in parallel (chaque thread a son propre reader)
 
     Returns:
         Extracted text from PDF
     """
-    # Read PDF file asynchronously
+    # Lire les bytes du PDF une seule fois de façon async
     async with aiofiles.open(path, 'rb') as f:
         pdf_bytes = await f.read()
 
-    # Parse PDF (sync operation, but fast) - wrap bytes in BytesIO
-    pdf_stream = io.BytesIO(pdf_bytes)
+    # Déterminer le nombre de pages avec un reader temporaire
     try:
-        reader = PdfReader(pdf_stream)
-        total_pages = len(reader.pages)
+        _tmp_reader = PdfReader(io.BytesIO(pdf_bytes))
+        total_pages = len(_tmp_reader.pages)
     except (PdfReadError, LimitReachedError, Exception):
         return ""
+
     num_pages = min(max_pages, total_pages) if max_pages else total_pages
 
     if not parallel or num_pages < 4:
-        # Sequential extraction for small PDFs
+        # Extraction séquentielle — un seul reader, pas de problème thread-safety
+        reader = PdfReader(io.BytesIO(pdf_bytes))
         chunks = []
         for i in range(num_pages):
             try:
@@ -51,24 +60,26 @@ async def extract_pdf_text_async(
                 chunks.append(text.strip())
         return "\n\n".join(chunks)
 
-    # Parallel extraction for large PDFs
+    # Extraction parallèle — CHAQUE THREAD crée son propre PdfReader
+    # (PdfReader n'est pas thread-safe — race condition sur le BytesIO interne)
     async def extract_page(page_num: int) -> tuple[int, str]:
-        """Extract text from a single page."""
-        # Run sync extraction in executor
+        """Extrait une page dans un thread isolé avec son propre PdfReader."""
         loop = asyncio.get_event_loop()
         def _extract() -> str:
+            # Reader isolé par thread — thread-safe garanti
             try:
-                return reader.pages[page_num].extract_text() or ""
+                isolated_reader = PdfReader(io.BytesIO(pdf_bytes))
+                return isolated_reader.pages[page_num].extract_text() or ""
             except (PdfReadError, LimitReachedError, Exception):
                 return ""
         text = await loop.run_in_executor(None, _extract)
         return (page_num, text.strip() if text.strip() else "")
 
-    # Process all pages concurrently
+    # Toutes les pages en parallèle, chacune dans un thread avec son propre reader
     tasks = [extract_page(i) for i in range(num_pages)]
     results = await asyncio.gather(*tasks)
 
-    # Sort by page number and join
+    # Tri par numéro de page et assemblage
     results.sort(key=lambda x: x[0])
     chunks = [text for _, text in results if text]
     return "\n\n".join(chunks)

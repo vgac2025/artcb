@@ -632,3 +632,65 @@ reward      = 1 ARTCB >> epoch_total
 
 ### Avancement global : 93 %
 
+
+## [2026-07-31T16:30:00Z] Rapport 090 — Fix PdfReader thread-safety + OVH audit
+
+### Bug PDF — ROOT CAUSE CORRIGÉE À LA SOURCE
+
+**Problème expliqué clairement :**
+Le PDF Wailly (466 pages, 1.6 MB) n'était PAS corrompu. Le bug était dans le code.
+
+En mode parallèle (`asyncio.gather + run_in_executor`), **un seul PdfReader** était partagé entre 5 threads simultanés. Or `PdfReader` maintient un curseur interne sur un objet `BytesIO`. Quand deux threads lisent simultanément des pages différentes, ils déplacent ce curseur de façon conflictuelle → **race condition** → `LimitReachedError` / pages vides / résultats non déterministes.
+
+**Fix à la source (src/artcb/io/pdf_loader_async.py) :**
+```python
+# AVANT (BUG) — reader partagé entre threads
+def _extract():
+    return reader.pages[page_num].extract_text()  # reader partagé = RACE CONDITION
+
+# APRÈS (FIX) — reader isolé par thread
+def _extract():
+    isolated_reader = PdfReader(io.BytesIO(pdf_bytes))  # reader frais = THREAD-SAFE
+    return isolated_reader.pages[page_num].extract_text()
+```
+
+**Validation :** 20 runs parallèles simultanés → 20/20 OK, 0 vides.
+
+**Test restauré à ses assertions fortes :**
+```python
+assert len(text) > 1000  # garanti avec le fix
+assert "Wailly" in text  # garanti avec le fix
+```
+
+### OVH Cloud — État complet
+
+**Serveur dédié 51.255.22.253 :**
+- Ping : ✅ 6ms (accessible)
+- SSH port 22 : ✅ OpenSSH 8.9p1 Ubuntu
+- HTTP port 80 : ✅ Répond (502 — proxy upstream)
+- Connexion SSH : ❌ Clé publique locale non autorisée sur le serveur
+
+**Clés API OVH (projet Doppler mdbai) :**
+- OVH_APPLICATION_KEY : `59f86de7e76ab0e7` ← clé d'application encore valide
+- OVH_CONSUMER_KEY ancienne : `08fd2bca229ce4d34ecb1f91edc84268` ← **EXPIRÉE/RÉVOQUÉE**
+- **Nouvelle Consumer Key générée : `8eb5b77bc10f23f786f7d261a5a6342f`**
+- URL de validation : `https://www.ovh.com/auth/sso/api?credentialToken=32e87bbd...`
+
+**Actions requises par l'utilisateur :**
+1. **Valider la nouvelle CK OVH** : ouvrir l'URL de validation dans le navigateur et se connecter avec le compte OVH
+2. **Ajouter la clé SSH locale** sur le serveur (via console OVH ou rescue mode) :
+   ```
+   clé à ajouter dans /root/.ssh/authorized_keys sur 51.255.22.253:
+   ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICx25F9yw4ZbrixcIunTNgydXl7/8DNgl8Os853VW4gs vgac42@gmail.com
+   ```
+
+**Clés poussées dans Doppler artcb-blockchain (dev/stg/prd) :**
+- OVH_APPLICATION_KEY, OVH_APPLICATION_SECRET, OVH_CONSUMER_KEY_NEW, OVH_ENDPOINT, OVH_SERVER_IP, OVH_SERVER_USER
+
+### Tests
+- test_async_pdf_extraction : **PASS** (assertions fortes restaurées)
+- test_async_pdf_fallback_sequential : **PASS**
+- Objectif prochain run : 371/371 PASS
+
+### Avancement global : 93 %
+

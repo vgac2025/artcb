@@ -97,20 +97,21 @@ def test_faiss_empty_query():
 
 @pytest.mark.asyncio
 async def test_async_pdf_extraction():
-    """Test extraction PDF asynchrone — résiste aux PDFs corrompus/auto-référents."""
+    """Test extraction PDF asynchrone avec reader isolé par thread (thread-safe).
+
+    Bug corrigé : PdfReader partagé entre threads → race condition BytesIO
+    → LimitReachedError/pages vides. Fix : chaque thread crée son propre PdfReader.
+    """
     pdf_path = Path("data/fixtures/wailly_le_roi_de_l_inconnu.pdf")
 
     if not pdf_path.exists():
         pytest.skip("PDF Wailly non disponible")
 
-    # Extraction async — le PDF peut avoir des pages corrompues (LimitReachedError)
     text = await extract_pdf_text_async(pdf_path, max_pages=5, parallel=True)
 
-    # Si toutes les pages sont corrompues, on accepte un résultat vide sans crash
-    assert isinstance(text, str)
-    # Si du texte a pu être extrait, il doit être cohérent
-    if len(text) > 100:
-        assert "Wailly" in text or "roi" in text or "Wailly" in text.lower()
+    # Avec le fix thread-safety, le texte est toujours extrait correctement
+    assert len(text) > 1000, f"Texte trop court ({len(text)} chars) — reader thread-safe défaillant"
+    assert "Wailly" in text or "roi" in text.lower(), "Texte Wailly non trouvé dans le PDF"
 
 
 @pytest.mark.asyncio
