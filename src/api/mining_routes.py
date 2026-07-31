@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 
 from fastapi import APIRouter, HTTPException, Request
@@ -66,7 +67,7 @@ def _pipeline(request: Request) -> MiningPipeline:
 
 
 @router.post("/pipeline")
-def run_mining_pipeline(body: MiningPipelineRequest, request: Request) -> dict:
+async def run_mining_pipeline(body: MiningPipelineRequest, request: Request) -> dict:
     """
     Pipeline unifié : source d'apprentissage → raisonnement (dual-agent) → minage PoL.
 
@@ -117,11 +118,11 @@ def run_mining_pipeline(body: MiningPipelineRequest, request: Request) -> dict:
             chunk_chars = state.optimization.pool_chunk_chars
         if chunk_chars is None:
             from src.artcb.system.optimizer import default_pool_chunk_chars
-
             chunk_chars = default_pool_chunk_chars()
 
         try:
-            return run_mining_with_options(
+            return await asyncio.to_thread(
+                run_mining_with_options,
                 text=body.text,
                 use_distributed_pool=True,
                 encrypt_transport=body.encrypt_transport,
@@ -151,7 +152,8 @@ def run_mining_pipeline(body: MiningPipelineRequest, request: Request) -> dict:
     pipeline = _pipeline(request)
     try:
         if body.connector_id:
-            result = pipeline.run_from_connector(
+            result = await asyncio.to_thread(
+                pipeline.run_from_connector,
                 body.connector_id,
                 limit=body.limit,
                 offset=body.offset,
@@ -166,7 +168,8 @@ def run_mining_pipeline(body: MiningPipelineRequest, request: Request) -> dict:
                 store_block=body.store_block,
             )
         elif body.text:
-            result = pipeline.run_from_text(
+            result = await asyncio.to_thread(
+                pipeline.run_from_text,
                 body.text,
                 session_id=body.session_id,
                 use_llm=body.use_llm,

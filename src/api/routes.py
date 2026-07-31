@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import uuid
 
@@ -34,7 +35,8 @@ class SearchRequest(BaseModel):
 
 
 class StoreRequest(BaseModel):
-    graph_id: str
+    graph_id: str | None = None
+    text: str | None = Field(default=None, min_length=1, description="Auto-encode si graph_id absent")
     session_id: str = "sess_default"
     visibility: str = "private"
     group_id: str | None = None
@@ -183,11 +185,25 @@ def search(body: SearchRequest, request: Request) -> dict:
 
 
 @router.post("/store")
-def store(body: StoreRequest, request: Request) -> dict:
+async def store(body: StoreRequest, request: Request) -> dict:
     state = _state(request)
-    graph = state.get_graph(body.graph_id)
-    if not graph:
-        raise HTTPException(status_code=404, detail="graph not found")
+
+    # BUG-P0-2 : auto-encode si text fourni sans graph_id
+    if not body.graph_id and body.text:
+        graph_id = f"g_{uuid.uuid4().hex[:12]}"
+        from src.artcb.ir.llm_encoder import LLMEncoder
+        llm_encoder = LLMEncoder(encoder=state.encoder)
+        graph = await asyncio.to_thread(
+            lambda: llm_encoder.encode(body.text, use_llm=False, session_id=graph_id)
+        )
+        state.register_graph(graph)
+        state.vectors.index_graph(graph)
+    elif body.graph_id:
+        graph = state.get_graph(body.graph_id)
+        if not graph:
+            raise HTTPException(status_code=404, detail="graph not found")
+    else:
+        raise HTTPException(status_code=422, detail="graph_id ou text requis")
 
     if body.visibility not in ("private", "group", "public"):
         raise HTTPException(status_code=422, detail="visibility must be private, group, or public")
