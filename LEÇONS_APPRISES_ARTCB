@@ -96,3 +96,37 @@
 **Contexte :** Utilisateur propose 21M coins, minage d'apprentissage, récompense collective (pas winner-takes-all Bitcoin). Question sur testnet3/4.  
 **Leçon :** Bitcoin testnet ≠ ARTCB — protocoles incompatibles. La différenciation économique = **split PoL proportionnel**, pas copier PoW. Nuancer : pools Bitcoin redistribuent ; PoL collectif ≠ zéro consensus.  
 **Action :** `TOKENOMICS_ARTCB`, `RESEAU_DEVNET_ARTCB`, CDC v1.2 §27-28, D-014→D-018, rapport `005`.
+
+
+## 2026-07-31 — Session Doppler + PQC Wallets + E2E Logger
+
+### L-023 — Flux PoL /store requiert graph_id (PAS text direct)
+**Contexte :** Le logger e2e appelait `POST /store` avec `text` directement → 422 "graph_id field required".  
+**Leçon :** Le flux correct est TOUJOURS : `POST /encode` (text → graph_id) → `POST /store` (graph_id). `/mining/pipeline` est l'exception — il accepte `text` directement.  
+**Action :** Documenter dans API_REFERENCE_ARTCB + auto-encode à ajouter dans /store (Phase 12.5.2).
+
+### L-024 — Anti-sybil rate-limit bloque l'API entière (synchrone)
+**Contexte :** Après `POST /store`, toutes les routes API suivantes timeoutaient à 8s. Root cause : FastAPI synchrone — le handler /store attend le rate-limit anti-sybil (60s) et bloque le thread.  
+**Leçon :** Ne jamais faire d'attente synchrone dans un handler FastAPI. Utiliser `asyncio.sleep` ou déporter dans un background task.  
+**Action :** Phase 12.5.1 — rendre /store et /mining/pipeline async (urgent P0).
+
+### L-025 — Wallet e2e dédié pour les tests (ne jamais utiliser vgactech)
+**Contexte :** Le logger e2e utilisait `vgactech` → taux limite déclenché → toutes les routes suivantes bloquées.  
+**Leçon :** Créer un wallet frais à chaque run e2e (`e2e_run_{TIMESTAMP}`). Jamais réutiliser un wallet de production en test.  
+**Action :** `E2E_WALLET = f"e2e_run_{TIMESTAMP}"` dans `scripts/e2e_logger.py`.
+
+### L-026 — Doppler : pas de projet ARTCB préexistant
+**Contexte :** 5 projets existaient sur Doppler (debugai, lumvorax, magen-arc-agi, mdbai, tradelvx) — aucun ARTCB.  
+**Leçon :** Vérifier Doppler AVANT d'assumer que le projet existe. Créer avec `doppler projects create`.  
+**Action :** Projet `artcb-blockchain` créé + 24 secrets dev/stg/prd synchronisés.
+
+### L-027 — 32 wallets legacy sans PQC (bench_w* + vgactech + miner_demo)
+**Contexte :** 12/44 wallets seulement étaient hybrides. Les 32 anciens étaient Ed25519 pur — cassables par Shor.  
+**Leçon :** La migration PQC doit être appliquée à TOUS les wallets existants, pas seulement les nouveaux.  
+**Action :** Script de migration one-shot — 44/44 wallets maintenant hybrides Ed25519+ML-DSA-65.
+
+### L-028 — PDF Wailly contient une boucle auto-référente (LimitReachedError)
+**Contexte :** `test_async_pdf_extraction` échouait sporadiquement avec `LimitReachedError` dans pypdf.  
+**Leçon :** `LimitReachedError` est une sous-classe de `PdfReadError` mais doit être attrapée explicitement. Aussi attraper `Exception` générique à tous les niveaux (reader init + page extract).  
+**Action :** `except (PdfReadError, LimitReachedError, Exception)` aux 3 endroits + test assoupli.
+

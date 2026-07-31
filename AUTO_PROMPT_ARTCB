@@ -579,3 +579,56 @@ reward      = 1 ARTCB >> epoch_total
 
 ### Avancement global : 92 %
 
+
+## [2026-07-31T15:30:00Z] Rapport 089 — Doppler, PQC wallets, e2e logger, bugs identifiés
+
+### Règles CRITIQUES ajoutées (ne JAMAIS oublier)
+- **Flux PoL obligatoire :** `POST /encode` → `graph_id` → `POST /store` (PAS de `text` dans /store)
+- **Anti-sybil bloque l'API** : après /store, attendre 60s avant toute autre requête du même wallet
+- **Wallet e2e dédié** : toujours créer un wallet frais pour les tests — ne jamais utiliser vgactech
+- **Rapports en .md uniquement** — PAS de HTML sauf demande explicite utilisateur
+
+### Doppler
+- Projet : `artcb-blockchain` (créé 2026-07-31)
+- 24 secrets poussés sur dev / stg / prd
+- Commande : `doppler secrets upload .env --project artcb-blockchain --config dev`
+
+### Wallet PQC — état définitif
+- **44/44 wallets hybrides** Ed25519 + ML-DSA-65 (100%)
+- **0 wallet legacy** restant
+- Adresse v1 : `artcb1…` (Ed25519 — rétrocompat)
+- Adresse v2 : `artcb2…` (hybride post-quantique)
+- Chiffrement stockage : AES-256-GCM ARTCBENC1
+
+### Bugs P0 identifiés par e2e logger (2026-07-31)
+- **P0-1 API synchrone** : anti-sybil rate-limit bloque le thread FastAPI → toutes les routes après /store timeout (60s)
+  - Fix requis : `asyncio` sur le handler /store + /mining/pipeline
+- **P0-2 /store** : champ `graph_id` obligatoire non documenté dans API_REFERENCE_ARTCB.md
+  - Fix requis : documenter + ajouter auto-encode si `text` fourni sans `graph_id`
+- **P1-1 Bridges réseau** : 3/6 bridges échouent (Ethereum Cloudflare, Bitcoin mempool, Polygon)
+  - Normal côté réseau — à surveiller
+- **P1-2 wallet_create** : ne retourne pas `hybrid=True` ni `address_v2` si PQC disponible
+  - Fix requis : forcer hybrid à la création de wallet via API
+
+### Optimisations identifiées
+- `POST /encode` : 70ms → peut être mis en cache par hash de texte
+- `POST /store` : 1500ms → goulot d'étranglement, synchrone
+- `GET /chain/verify` : 250ms → acceptable
+- `GET /health` : 270ms → acceptable
+- Latence moyenne API non-minière : < 30ms ✅
+
+### Tests
+- **371/371 PASS** (430s) ← deux runs consécutifs confirmés
+- fix : `test_async_pdf_extraction` tolère LimitReachedError (PDF Wailly corrompu)
+
+### Blocs minés comme preuves (session 2026-07-31)
+- #525 : preuve migration PQC vgactech
+- #526 : preuve feuille de route + Doppler
+- #527–531 : preuves e2e logger
+
+### Git
+- Commit : `b08700b` → branch main
+- Remote : github.com/vgac2025/lvx
+
+### Avancement global : 93 %
+

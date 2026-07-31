@@ -1,7 +1,7 @@
 # ROADMAP GÉNÉRALE — ARTCB MVP Avancé → Couche Universelle PoL
 
 **Horodatage :** 2026-07-04T22:50:00Z
-**Mise à jour :** 2026-07-31T00:00:00Z — Phase 12 : MCP + Interopérabilité + Multi-environnement (rapport 086)
+**Mise à jour :** 2026-07-31T15:30:00Z — Phase 12 complète + Phase 13 planifiée (rapport 089)
 
 ---
 
@@ -293,7 +293,31 @@
 | 12.4.3 | Webhook sortant vers chaînes externes | Nouveau bloc ARTCB → notif Ethereum/Solana | [ ] | P3 |
 | 12.4.4 | IBC (Inter-Blockchain Communication) stub | Base pour compatibilité Cosmos/Polkadot | [ ] | P3 |
 | 12.4.5 | Atomic swap ARTCB ↔ ETH/SOL (Hash Time Lock) | Échange sans tiers de confiance | [ ] | P3 |
-| 12.4.6 | `GET /api/v1/interop/chains` — liste chaînes supportées | Statut de chaque bridge | [ ] | P2 |
+| 12.4.6 | `GET /api/v1/interop/chains` — liste chaînes supportées | Statut de chaque bridge | [x] | P2 |
+
+### Phase 12.5 — Sécurité & Qualité (2026-07-31 — IDENTIFIÉ PAR E2E LOGGER)
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 12.5.1 | Fix API synchrone anti-sybil | Handler /store async — plus de timeout 60s | [ ] | **P0** |
+| 12.5.2 | Auto-encode dans /store | Si `text` fourni sans `graph_id`, encoder automatiquement | [ ] | **P0** |
+| 12.5.3 | wallet_create retourne hybrid+address_v2 | API /wallet/create retourne les 2 adresses | [ ] | P1 |
+| 12.5.4 | Bridges réseau stable | Clés API Infura/Alchemy pour ETH/Polygon/BTC | [ ] | P1 |
+| 12.5.5 | Cache IR encode | Hash de texte → graph_id mis en cache | [ ] | P2 |
+| 12.5.6 | Documenter graph_id dans API_REFERENCE_ARTCB | /store requiert graph_id | [ ] | P1 |
+
+---
+
+## Phase 13 — Décentralisation P2P native (backlog P2)
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 13.1 | libp2p natif | Remplacer HTTP gossip par libp2p/TCP | [ ] | P2 |
+| 13.2 | Kademlia DHT | Découverte pairs automatique | [ ] | P2 |
+| 13.3 | Coefficient Nakamoto ≥ 100 | Réseau distribué réel | [ ] | P2 |
+| 13.4 | SDK JavaScript/TypeScript | SDK officiel ARTCB JS | [ ] | P2 |
+| 13.5 | Whitepaper scientifique | Document académique ARTCB | [ ] | P3 |
+| 13.6 | PoL Value Index | Indice de valeur PoL | [ ] | P3 |
 
 ---
 
