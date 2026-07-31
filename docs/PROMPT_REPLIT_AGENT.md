@@ -20,13 +20,39 @@ Tu es l'agent Replit chargé de travailler en **parallèle** avec l'agent Bob (l
 curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sh
 
 # 2. Configurer avec le token dédié Replit
-doppler configure set token <DOPPLER_TOKEN_REPLIT>   # voir ci-dessous section "Token"
+doppler configure set token <DOPPLER_TOKEN_REPLIT>
 doppler configure set project artcb-blockchain
 doppler configure set config dev
 
 # 3. Vérifier que Doppler répond
 doppler secrets download --no-file --format env | head -5
 ```
+
+> **Important :** Dans les **Secrets Replit** (panneau verrou 🔒), ajouter :
+> - `DOPPLER_TOKEN` = le token fourni séparément
+> - `SSH_PRIVATE_KEY` = la clé privée (récupérée depuis Doppler automatiquement)
+
+---
+
+## ÉTAPE 1bis — SETUP SSH GIT PERSISTANT
+
+> Ce script règle le problème de la clé SSH qui change à chaque nouvelle session Replit.
+
+```bash
+# Clone d'abord sans SSH (HTTPS)
+git clone https://github.com/vgac2025/lvx.git artcb
+cd artcb
+
+# Setup SSH persistant (récupère la clé depuis Doppler automatiquement)
+bash scripts/setup_ssh_git.sh
+
+# Vérifier que git push fonctionne
+git remote -v   # doit afficher git@github.com:vgac2025/lvx.git
+ssh -T git@github.com   # doit répondre "Hi vgac2025!"
+```
+
+**Si tu changes de compte Replit :** relance juste `bash scripts/setup_ssh_git.sh`
+→ La clé est récupérée depuis Doppler, pas régénérée. GitHub ne la perd pas.
 
 ---
 

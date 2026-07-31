@@ -248,12 +248,12 @@
 | 12.1.7 | Resource `artcb://wallet/{address}` — balance wallet | Solde + historique | [ ] | P1 |
 | 12.1.8 | Prompt `artcb_blockchain_assistant` — prompt système ARTCB | Instructions complètes pour agent IA | [ ] | P1 |
 | 12.1.9 | Config Cursor (`.cursor/mcp.json`) | Branché nativement dans Cursor IDE | [ ] | P1 |
-| 12.1.10 | Config Bob IDE (`bob_mcp_config`) | Branché nativement dans Bob | [ ] | P1 |
+| 12.1.10 | Config Bob IDE (`.bob/mcp.json`) | Branché nativement dans Bob | [x] | P1 |
 | 12.1.11 | Config VSCode (`settings.json` MCP) | Branché nativement dans VSCode | [ ] | P2 |
 | 12.1.12 | Config JetBrains (plugin MCP) | Branché nativement dans IntelliJ/PyCharm | [ ] | P2 |
 | 12.1.13 | Config Lovable / Replit Agent | Branché nativement | [ ] | P2 |
 | 12.1.14 | Tests `tests/test_mcp_server.py` — 20+ cas | 100 % pass | [ ] | P1 |
-| 12.1.15 | Documentation `docs/MCP_SETUP.md` | Guide installation par IDE | [ ] | P1 |
+| 12.1.15 | Documentation `docs/MCP_SETUP.md` | Guide installation par IDE | [x] | P1 |
 
 ### Phase 12.2 — Interopérabilité Blockchain (Bridges sémantiques)
 
@@ -304,7 +304,7 @@
 | 12.5.3 | wallet_create retourne hybrid+address_v2 | API /wallet/create retourne les 2 adresses | [x] | P1 |
 | 12.5.4 | Bridges réseau stable | Clés API Infura/Alchemy pour ETH/Polygon/BTC | [ ] | P1 |
 | 12.5.5 | Cache IR encode | Hash de texte → graph_id mis en cache | [x] | P2 |
-| 12.5.6 | Documenter graph_id dans API_REFERENCE_ARTCB | /store requiert graph_id | [ ] | P1 |
+| 12.5.6 | Documenter graph_id dans API_REFERENCE_ARTCB | /store requiert graph_id | [x] | P1 |
 
 ---
 

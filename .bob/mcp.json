@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "artcb-blockchain": {
+      "command": "python",
+      "args": ["-m", "src.artcb.mcp.server"],
+      "env": {
+        "ARTCB_API_URL": "http://localhost:8000",
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "description": "ARTCB Blockchain — mémoire IA immuable post-quantique (PoL + ML-DSA-65)"
+    }
+  }
+}
