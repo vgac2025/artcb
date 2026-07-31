@@ -1,0 +1,23 @@
+version: "2"
+authtoken: 3HEkD48SA5Hjz2AZlqfmYcDq5wB_2mpxfjRBxUvZZbdZxbuPL
+
+tunnels:
+  artcb-api:
+    proto: http
+    addr: 8000
+    inspect: true
+
+  artcb-mcp:
+    proto: http
+    addr: 8001
+    inspect: true
+
+# NOTE: ngrok est un outil de développement UNIQUEMENT.
+# La décentralisation 100% se fait via libp2p (Phase 13) — pas ngrok.
+# Utiliser ngrok uniquement pour :
+#   - Partager l'API locale pendant le développement
+#   - Tester les webhooks entrants
+#   - Démo rapide sans déploiement cloud
+#
+# Commande SSH alternative (compte v2@connect.ngrok-agent.com) :
+#   ssh -R 443:localhost:80 v2@connect.ngrok-agent.com http

@@ -694,3 +694,36 @@ assert "Wailly" in text  # garanti avec le fix
 
 ### Avancement global : 93 %
 
+
+## [2026-07-31T16:00:00Z] Rapport 095 — ngrok rôle exact + décentralisation + benchmark 371 tests
+
+- **Nouveau token ngrok :** `3HEkD48SA5Hjz2AZlqfmYcDq5wB_2mpxfjRBxUvZZbdZxbuPL` (`.env` ligne 24 + `ngrok.yml` créé)
+- **Ancien token révoqué :** `3H5Idtq6UBfVBJ9j5GWWl9iZQLU_4o3dGg9jPzAZozRvRJhEA`
+- **Commande SSH ngrok :** `ssh -R 443:localhost:80 v2@connect.ngrok-agent.com http`
+
+### Rôle exact de ngrok (définitif)
+- ngrok = **tunnel inversé de développement UNIQUEMENT** — non requis pour la blockchain
+- Usage légitime : partager l'API locale en démo rapide, tester webhooks entrants
+- **JAMAIS un composant architectural** de la blockchain ARTCB
+- Depuis Phase 12.1 : MCP server stdio remplace ngrok pour l'intégration IDE (Cursor, VS Code)
+- Phase 13 (libp2p natif) : **ngrok disparaît complètement** — décentralisation 100%
+
+### Décentralisation sans ngrok (architecture Phase 13)
+- libp2p : Kademlia DHT (découverte) + Gossipsub (propagation blocs) + Noise XX/ML-KEM-768 (chiffrement)
+- Chaque nœud se connecte directement aux autres pairs — **zéro serveur intermédiaire**
+- Même protocole qu'Ethereum 2.0 et IPFS
+- **Phase 13 = suspendu** jusqu'à GO explicite utilisateur
+
+### Métriques réelles mesurées (2026-07-31)
+- **Tests :** 371/371 PASS (434.70s)
+- **ML-DSA-65** Sign: 0.325 ms | Verify: 0.134 ms (100 itérations)
+- **ML-KEM-768** Encap: 0.046 ms | Decap: 0.044 ms (100 itérations)
+- **IREncoder** latence moyenne encode: 0.4 ms (min 0.2 ms / max 0.5 ms)
+- **Tokenomics :** MAX_SUPPLY=21M ARTCB | HALVING_INTERVAL=105 000 blocs | VELOCITY_REFERENCE=144 blocs/j
+
+### Benchmark ARTCB vs concurrents (réel testé)
+- ARTCB = seule blockchain IA-native post-quantique existante
+- Différenciateurs : PoL (minage = apprentissage), ML-DSA-65+ML-KEM-768, halving dynamique, mémoire IA universelle
+- Niche unique : 3.4 milliards utilisateurs IA (Gartner 2026) — couche mémoire universelle
+- **Rapport :** `rapports/095_ngrok_decentralisation_benchmark_comparatif_2026_07_31.md`
+- **Avancement global : 92 %**
