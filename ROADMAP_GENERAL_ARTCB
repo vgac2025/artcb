@@ -326,6 +326,63 @@
 
 ---
 
+## Phase 14 — Confidentialité, Multi-env complet, N8N, Homomorphe (2026-08-01 →)
+
+> **Vision :** ARTCB devient accessible depuis TOUS les environnements (JetBrains, N8N, Jupyter,
+> Windows, Lovable) et offre un **module de confidentialité homomorphe** permettant aux participants
+> de contribuer à l'apprentissage partagé SANS révéler leurs données.
+> Rapport de référence : `rapports/rapport_102_audit_manques_phase14_2026-08-01.md`
+
+### Phase 14.1 — Complétion multi-environnement
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 14.1.1 | `.devcontainer/setup.sh` | Script setup Codespaces/Gitpod complet | [ ] | P1 |
+| 14.1.2 | `.vscode/settings.json` + `launch.json` | MCP config + debug ARTCB dans VSCode | [ ] | P1 |
+| 14.1.3 | `.idea/runConfigurations/` — JetBrains | Run config PyCharm/IntelliJ + MCP | [ ] | P2 |
+| 14.1.4 | `scripts/setup_windows.bat` | Installation ARTCB sur Windows | [ ] | P2 |
+| 14.1.5 | `notebooks/artcb_demo.ipynb` — Jupyter | Notebook démo complet ARTCB | [ ] | P2 |
+| 14.1.6 | `docs/LOVABLE_SETUP.md` | Guide intégration Lovable via MCP HTTP | [ ] | P2 |
+
+### Phase 14.2 — Intégration N8N
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 14.2.1 | `docs/N8N_SETUP.md` | Guide complet N8N → ARTCB webhook | [ ] | P1 |
+| 14.2.2 | `n8n/artcb_nodes/` — node custom N8N | Node ARTCB dans le marketplace N8N | [ ] | P2 |
+| 14.2.3 | Tool MCP `artcb_bridge_import` | Importer tx externe via MCP | [ ] | P2 |
+
+### Phase 14.3 — Module Homomorphe (confidentialité)
+
+> **Principe :** les participants chiffrent leurs données avec TenSEAL (CKKS) avant de les
+> soumettre au pool. L'orchestrateur agrège les chiffrés sans jamais voir les données brutes.
+> Activable/désactivable via `ARTCB_HOMOMORPHIC_MODE=true/false`.
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 14.3.1 | `src/artcb/privacy/__init__.py` | Module confidentialité | [ ] | P1 |
+| 14.3.2 | `src/artcb/privacy/homomorphic.py` | Chiffrement CKKS (TenSEAL) + agrégation | [ ] | P1 |
+| 14.3.3 | `src/artcb/privacy/federated.py` | Aggregateur fédéré (FedAvg sur chiffrés) | [ ] | P1 |
+| 14.3.4 | Intégration `mining/pipeline.py` | Option `homomorphic=True` dans pipeline | [ ] | P1 |
+| 14.3.5 | Intégration `pool/service.py` | Minage partagé avec données chiffrées | [ ] | P1 |
+| 14.3.6 | `POST /api/v1/privacy/encrypt` | Endpoint chiffrement côté client | [ ] | P1 |
+| 14.3.7 | `POST /api/v1/privacy/aggregate` | Agrégation homomorphique côté serveur | [ ] | P1 |
+| 14.3.8 | Variable `ARTCB_HOMOMORPHIC_MODE` | `true`=chiffré, `false`=classique (défaut) | [ ] | P1 |
+| 14.3.9 | Tests `tests/test_privacy_homomorphic.py` | 15+ cas — chiffrement, agrégation, toggle | [ ] | P1 |
+| 14.3.10 | Documentation `docs/PRIVACY_GUIDE.md` | Guide activation + explications | [ ] | P1 |
+
+### Phase 14.4 — Interopérabilité avancée (complétion Phase 12.2)
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| 14.4.1 | `src/artcb/bridges/erc20.py` | Lecture balances ERC-20 → ARTCB | [ ] | P2 |
+| 14.4.2 | Support ERC-721 / ERC-1155 (NFT externes) | NFT externe → NFT sémantique ARTCB | [ ] | P2 |
+| 14.4.3 | Export ARTCB → format EVM | Sens inverse bridge | [ ] | P2 |
+| 14.4.4 | IBC stub (Cosmos/Polkadot) | Base compatibilité inter-chaînes | [ ] | P3 |
+| 14.4.5 | Atomic swap ARTCB ↔ ETH/SOL (HTLC) | Échange sans tiers de confiance | [ ] | P3 |
+
+---
+
 ## Phase 6 — Extensions (P1/P2 — post-hackathon) ✅
 
 - [x] Connecteurs IA utilisateur (OpenAI, Claude, Bob, Google AI, Manus) — v1.3+
