@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: artcb-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn src.api.main:app --host 0.0.0.0 --port $PORT --workers 2
+    envVars:
+      - key: ARTCB_DATA_DIR
+        value: /opt/render/project/src/data
+      - key: ARTCB_ANTI_SYBIL_AI_BYPASS
+        value: "false"
+      - key: ARTCB_PQC_ENABLED
+        value: "true"
+      - key: ARTCB_KEM_ENABLED
+        value: "true"
+      - fromGroup: artcb-secrets
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    plan: free
+
+  - type: worker
+    name: artcb-p2p-node
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m src.artcb.p2p.libp2p_node --port 18444
+    envVars:
+      - key: ARTCB_DATA_DIR
+        value: /opt/render/project/src/data
+      - fromGroup: artcb-secrets
+    plan: free

@@ -1,7 +1,7 @@
 # ROADMAP GÉNÉRALE — ARTCB MVP Avancé → Couche Universelle PoL
 
 **Horodatage :** 2026-07-04T22:50:00Z
-**Mise à jour :** 2026-07-31T15:30:00Z — Phase 12 complète + Phase 13 planifiée (rapport 089)
+**Mise à jour :** 2026-07-31T17:00:00Z — Phase 13 libp2p natif lancée et validée (rapport 096)
 
 ---
 
@@ -239,27 +239,27 @@
 
 | Jalon | Livrable | Critère | Statut | Priorité |
 |-------|----------|---------|--------|---------|
-| 12.1.1 | `src/artcb/mcp/server.py` — Serveur MCP FastAPI | Enregistrement tools, resources, prompts | [ ] | P1 |
-| 12.1.2 | Tool `artcb_memo` — graver une pensée | Input text → bloc gravé, retourne block_index + pol_score | [ ] | P1 |
-| 12.1.3 | Tool `artcb_think` — IA raisonne sur la chaîne | Question → réponse IA gravée | [ ] | P1 |
-| 12.1.4 | Tool `artcb_search` — recherche sémantique | Query → liste blocs pertinents | [ ] | P1 |
-| 12.1.5 | Tool `artcb_mine` — miner un bloc | Texte → pipeline mining complet | [ ] | P1 |
-| 12.1.6 | Resource `artcb://chain/status` — état chaîne live | Blocs, PoL moyen, nœuds | [ ] | P1 |
-| 12.1.7 | Resource `artcb://wallet/{address}` — balance wallet | Solde + historique | [ ] | P1 |
-| 12.1.8 | Prompt `artcb_blockchain_assistant` — prompt système ARTCB | Instructions complètes pour agent IA | [ ] | P1 |
-| 12.1.9 | Config Cursor (`.cursor/mcp.json`) | Branché nativement dans Cursor IDE | [ ] | P1 |
+| 12.1.1 | `src/artcb/mcp/server.py` — Serveur MCP FastAPI | Enregistrement tools, resources, prompts | [x] | P1 |
+| 12.1.2 | Tool `artcb_memo` — graver une pensée | Input text → bloc gravé, retourne block_index + pol_score | [x] | P1 |
+| 12.1.3 | Tool `artcb_think` — IA raisonne sur la chaîne | Question → réponse IA gravée | [x] | P1 |
+| 12.1.4 | Tool `artcb_search` — recherche sémantique | Query → liste blocs pertinents | [x] | P1 |
+| 12.1.5 | Tool `artcb_mine` — miner un bloc | Texte → pipeline mining complet | [x] | P1 |
+| 12.1.6 | Resource `artcb://chain/status` — état chaîne live | Blocs, PoL moyen, nœuds | [x] | P1 |
+| 12.1.7 | Resource `artcb://wallet/{address}` — balance wallet | Solde + historique | [x] | P1 |
+| 12.1.8 | Prompt `artcb_blockchain_assistant` — prompt système ARTCB | Instructions complètes pour agent IA | [x] | P1 |
+| 12.1.9 | Config Cursor (`.cursor/mcp.json`) | Branché nativement dans Cursor IDE | [x] | P1 |
 | 12.1.10 | Config Bob IDE (`.bob/mcp.json`) | Branché nativement dans Bob | [x] | P1 |
 | 12.1.11 | Config VSCode (`settings.json` MCP) | Branché nativement dans VSCode | [ ] | P2 |
 | 12.1.12 | Config JetBrains (plugin MCP) | Branché nativement dans IntelliJ/PyCharm | [ ] | P2 |
 | 12.1.13 | Config Lovable / Replit Agent | Branché nativement | [ ] | P2 |
-| 12.1.14 | Tests `tests/test_mcp_server.py` — 20+ cas | 100 % pass | [ ] | P1 |
+| 12.1.14 | Tests `tests/test_mcp_server.py` — 20+ cas | 100 % pass | [x] | P1 |
 | 12.1.15 | Documentation `docs/MCP_SETUP.md` | Guide installation par IDE | [x] | P1 |
 
 ### Phase 12.2 — Interopérabilité Blockchain (Bridges sémantiques)
 
 | Jalon | Livrable | Critère | Statut | Priorité |
 |-------|----------|---------|--------|---------|
-| 12.2.1 | `src/artcb/bridges/__init__.py` — module bridges | Structure commune | [ ] | P1 |
+| 12.2.1 | `src/artcb/bridges/__init__.py` — module bridges | Structure commune | [x] | P1 |
 | 12.2.2 | `src/artcb/bridges/ethereum.py` — Bridge ETH | Lire txs ETH → encoder en IR PoL → graver ARTCB | [ ] | P2 |
 | 12.2.3 | `src/artcb/bridges/bitcoin.py` — Bridge BTC | Lire txs BTC (ordinals/inscriptions) → IR PoL | [ ] | P2 |
 | 12.2.4 | `src/artcb/bridges/solana.py` — Bridge SOL | Lire events Solana → IR PoL | [ ] | P2 |
@@ -275,14 +275,14 @@
 
 | Jalon | Livrable | Critère | Statut | Priorité |
 |-------|----------|---------|--------|---------|
-| 12.3.1 | `flake.nix` — environnement Nix reproductible | `nix develop` → API + tests fonctionnels | [ ] | P1 |
+| 12.3.1 | `flake.nix` — environnement Nix reproductible | `nix develop` → API + tests fonctionnels | [x] | P1 |
 | 12.3.2 | `.replit` + `replit.nix` — Replit ready | Un-click deploy sur Replit | [x] | P1 |
 | 12.3.3 | `.devcontainer/devcontainer.json` — Codespaces/Gitpod | GitHub Codespaces + Gitpod | [x] | P1 |
 | 12.3.4 | `Dockerfile` — image Docker officielle | `docker run artcb/node` | [x] | P1 |
 | 12.3.5 | `docker-compose.yml` — stack complète | API + frontend + données persistées | [x] | P1 |
-| 12.3.6 | `render.yaml` / `railway.toml` — deploy 1-clic | Render.com + Railway.app | [ ] | P2 |
-| 12.3.7 | Makefile cibles `env-nix`, `env-docker`, `env-replit` | Commandes unifiées | [ ] | P1 |
-| 12.3.8 | Guide `docs/DEPLOY_GUIDE.md` | Installation sur 7 environnements | [ ] | P1 |
+| 12.3.6 | `render.yaml` / `railway.toml` — deploy 1-clic | Render.com + Railway.app | [x] | P2 |
+| 12.3.7 | Makefile cibles `env-nix`, `env-docker`, `env-replit` | Commandes unifiées | [x] | P1 |
+| 12.3.8 | Guide `docs/DEPLOY_GUIDE.md` | Installation sur 7 environnements | [x] | P1 |
 
 ### Phase 12.4 — Protocoles interopérabilité standards
 
@@ -312,12 +312,17 @@
 
 | Jalon | Livrable | Critère | Statut | Priorité |
 |-------|----------|---------|--------|---------|
-| 13.1 | libp2p natif | Remplacer HTTP gossip par libp2p/TCP | [ ] | P2 |
-| 13.2 | Kademlia DHT | Découverte pairs automatique | [ ] | P2 |
-| 13.3 | Coefficient Nakamoto ≥ 100 | Réseau distribué réel | [ ] | P2 |
-| 13.4 | SDK JavaScript/TypeScript | SDK officiel ARTCB JS | [ ] | P2 |
-| 13.5 | Whitepaper scientifique | Document académique ARTCB | [ ] | P3 |
-| 13.6 | PoL Value Index | Indice de valeur PoL | [ ] | P3 |
+| 13.1 | `src/artcb/p2p/libp2p_node.py` — TCP asyncio natif | LibP2PNode + KademliaDHT + GossipSub | [x] | P1 |
+| 13.2 | Kademlia DHT 48 buckets | Découverte pairs automatique — persistance JSON | [x] | P1 |
+| 13.3 | Gossipsub v1.1 simplifié | Propagation blocs publics — TTL 64 — seen cache LRU | [x] | P1 |
+| 13.4 | Routes API `/api/v1/p2p/libp2p/*` | 6 endpoints (status, peers, connect, bootstrap, announce_block, dht) | [x] | P1 |
+| 13.5 | Makefile Phase 13 | `make node-start`, `make p2p-status`, `make p2p-connect`, `make p2p-dht` | [x] | P1 |
+| 13.6 | Tests `tests/test_libp2p_p2p.py` — 38 cas | 38/38 PASS — TCP réel 2 nœuds | [x] | P1 |
+| 13.7 | `render.yaml` + `railway.toml` | Deploy 1-clic Render.com + Railway.app | [x] | P1 |
+| 13.8 | Coefficient Nakamoto ≥ 100 | Réseau distribué réel multi-nœuds | [ ] | P2 |
+| 13.9 | SDK JavaScript/TypeScript | SDK officiel ARTCB JS | [ ] | P2 |
+| 13.10 | Whitepaper scientifique | Document académique ARTCB | [ ] | P3 |
+| 13.11 | PoL Value Index | Indice de valeur PoL | [ ] | P3 |
 
 ---
 

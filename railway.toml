@@ -1,0 +1,22 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pip install -r requirements.txt"
+
+[deploy]
+startCommand = "python -m uvicorn src.api.main:app --host 0.0.0.0 --port $PORT --workers 2"
+healthcheckPath = "/api/v1/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[environments.production.variables]
+ARTCB_DATA_DIR = "/data"
+ARTCB_ANTI_SYBIL_AI_BYPASS = "false"
+ARTCB_PQC_ENABLED = "true"
+ARTCB_KEM_ENABLED = "true"
+
+[environments.staging.variables]
+ARTCB_DATA_DIR = "/data"
+ARTCB_ANTI_SYBIL_AI_BYPASS = "true"
+ARTCB_PQC_ENABLED = "true"
+ARTCB_KEM_ENABLED = "true"

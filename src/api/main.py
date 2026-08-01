@@ -25,6 +25,7 @@ from src.api.groups_routes import router as groups_router
 from src.api.mining_routes import router as mining_router
 from src.api.notifications_routes import router as notifications_router
 from src.api.p2p_routes import router as p2p_router
+from src.api.libp2p_routes import router as libp2p_router
 from src.api.pool_routes import router as pool_router
 from src.api.routes import router as api_router
 from src.api.symbols_routes import router as symbols_router
@@ -63,6 +64,7 @@ def create_app() -> FastAPI:
     app.include_router(router_security)
     app.include_router(pol_phase11_router)
     app.include_router(bridges_router)
+    app.include_router(libp2p_router)
     logger.debug("ARTCB API started debug=%s", app.state.artcb.settings.debug)
     @app.get("/health")
     async def health_check():

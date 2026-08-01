@@ -727,3 +727,46 @@ assert "Wailly" in text  # garanti avec le fix
 - Niche unique : 3.4 milliards utilisateurs IA (Gartner 2026) — couche mémoire universelle
 - **Rapport :** `rapports/095_ngrok_decentralisation_benchmark_comparatif_2026_07_31.md`
 - **Avancement global : 92 %**
+
+## [2026-07-31T17:00:00Z] Rapport 096 — Phase 13 libp2p natif : 409/409 PASS
+
+### Jalons Phase 12 terminés (cette session)
+- `render.yaml` Render.com + `railway.toml` Railway.app — créés ✅
+- `12.3.6`, `12.3.7`, `12.3.8` → tous [x] dans ROADMAP ✅
+
+### Phase 13 — libp2p natif ARTCB (TCP asyncio pur, zéro dépendance externe)
+
+**Fichiers créés :**
+- `src/artcb/p2p/libp2p_node.py` — LibP2PNode complet :
+  - **KademliaDHT** 48 buckets, distance XOR, find_closest, persistance JSON
+  - **GossipSub** v1.1 simplifié : seen cache LRU 10K, TTL=64, message_id SHA-256
+  - **Transport TCP asyncio** : protocole ARTCB-P2P/1.0 (uint32 length + JSON)
+  - Messages : HELLO, FIND_NODE, FOUND_NODES, ANNOUNCE_BLOCK, GET_BLOCKS, BLOCKS, PING, PONG
+  - Bootstrap Kademlia : seed → HELLO → FIND_NODE → expansion automatique
+  - Ping périodique 60s + reconnexion auto 30s
+  - CLI : `python3 -m src.artcb.p2p.libp2p_node --port 18444 --seed host:port`
+- `src/api/libp2p_routes.py` — 7 routes FastAPI `/api/v1/p2p/libp2p/*`
+- `tests/test_libp2p_p2p.py` — **38 tests (38/38 PASS)** dont TCP réel 2 nœuds
+
+**Fichiers modifiés :**
+- `src/api/main.py` — `libp2p_router` enregistré
+- `Makefile` — `node-start`, `node-start-seed`, `p2p-status`, `p2p-connect`, `p2p-dht`, `test-p2p`
+- `ROADMAP_GENERAL_ARTCB` — Phase 13 jalons 13.1–13.7 marqués [x]
+
+### Tests
+- **409/409 PASS** (144.58s) — 38 nouveaux + 371 anciens = **0 régression**
+- Tests TCP réels validés : `test_node_start_stop`, `test_two_nodes_handshake`, `test_gossipsub_block_propagation`
+
+### Architecture décentralisation Phase 13
+- Kademlia DHT : découverte pairs automatique sans serveur central
+- Gossipsub : propagation blocs publics entre nœuds (TTL=64)
+- ZÉRO ngrok — ZÉRO HTTP REST pour P2P — TCP natif asyncio
+- Blocs privés JAMAIS propagés (filtrage dans `announce_block`)
+
+### Avancement global : **95 %**
+- **Rapport :** `rapports/096_phase13_libp2p_natif_kademlia_gossipsub_2026_07_31.md`
+
+### Prochaine étape recommandée
+- P2 : Tester 2 nœuds sur machines réelles distinctes (coefficient Nakamoto)
+- P2 : SDK JavaScript/TypeScript (jalon 13.9)
+- P3 : Whitepaper scientifique
