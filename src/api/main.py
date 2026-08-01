@@ -30,6 +30,7 @@ from src.api.pool_routes import router as pool_router
 from src.api.routes import router as api_router
 from src.api.symbols_routes import router as symbols_router
 from src.api.websocket import router as ws_router
+from src.api.privacy_routes import router as privacy_router
 
 setup_logging("artcb.api")
 logger = logging.getLogger("artcb.api")
@@ -65,6 +66,7 @@ def create_app() -> FastAPI:
     app.include_router(pol_phase11_router)
     app.include_router(bridges_router)
     app.include_router(libp2p_router)
+    app.include_router(privacy_router)
     logger.debug("ARTCB API started debug=%s", app.state.artcb.settings.debug)
     @app.get("/health")
     async def health_check():

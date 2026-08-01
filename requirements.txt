@@ -42,6 +42,9 @@ psutil>=5.9.0
 # ─── MCP (Model Context Protocol) — intégration Cursor/Bob/VSCode/JetBrains ───
 mcp>=1.0
 
+# ─── Kaggle — datasets pour pipeline minage PoL ───────────────────────────────
+kaggle>=2.2.0
+
 # ─── Connecteurs base de données (optionnels) ─────────────────────────────────
 psycopg2-binary>=2.9.0
 pymysql>=1.1.0

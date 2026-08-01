@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ARTCB API (uvicorn)" type="PythonRunConfigurationType" factoryName="Python">
+    <module name="lvx" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONPATH" value="$PROJECT_DIR$" />
+      <env name="ARTCB_DEBUG" value="true" />
+      <env name="ARTCB_ENCODE_MODE" value="rule-based" />
+      <env name="ARTCB_LLM_ENABLED" value="false" />
+      <env name="ARTCB_ANTI_SYBIL_AI_BYPASS" value="true" />
+    </envs>
+    <option name="SDK_HOME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="SCRIPT_NAME" value="-m" />
+    <option name="PARAMETERS" value="uvicorn src.api.main:app --host 127.0.0.1 --port 8000 --reload" />
+    <method v="2" />
+  </configuration>
+</component>

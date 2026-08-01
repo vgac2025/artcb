@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="ARTCB MCP HTTP :8001" type="PythonRunConfigurationType" factoryName="Python">
+    <module name="lvx" />
+    <option name="INTERPRETER_OPTIONS" value="" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONPATH" value="$PROJECT_DIR$" />
+      <env name="ARTCB_API_URL" value="http://localhost:8000" />
+    </envs>
+    <option name="SDK_HOME" value="" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="IS_MODULE_SDK" value="true" />
+    <option name="ADD_CONTENT_ROOTS" value="true" />
+    <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="SCRIPT_NAME" value="-m" />
+    <option name="PARAMETERS" value="src.artcb.mcp.server --http 8001" />
+    <method v="2" />
+  </configuration>
+</component>
