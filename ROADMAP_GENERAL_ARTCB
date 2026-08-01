@@ -173,28 +173,28 @@
 
 | Jalon | Livrable | Critère | Statut |
 |-------|----------|---------|--------|
-| 11.1.1 | `src/artcb/ir/rules.py` — moteur de règles D+G+P | Évaluation conditionnelle | [-] |
-| 11.1.2 | Types étendus : `TRANSFER`, `NFT`, `RULE`, `ACTION` | NodeType v0.2 | [-] |
-| 11.1.3 | `POST /api/v1/ir/rules/evaluate` | API publique | [ ] |
-| 11.1.4 | Tests `test_ir_rules.py` — 15+ cas | 100% pass | [ ] |
+| 11.1.1 | `src/artcb/ir/rules.py` — moteur de règles D+G+P | Évaluation conditionnelle | [x] |
+| 11.1.2 | Types étendus : `TRANSFER`, `NFT`, `RULE`, `ACTION` | NodeType v0.2 | [x] |
+| 11.1.3 | `POST /api/v1/ir/rules/evaluate` | API publique | [x] |
+| 11.1.4 | Tests `test_ir_rules.py` — 26 cas | 26/26 PASS ✅ | [x] |
 
 ### Phase 11.2 — PoL Transfer Protocol (transactions natives)
 
 | Jalon | Livrable | Critère | Statut |
 |-------|----------|---------|--------|
-| 11.2.1 | `src/artcb/pol/transfer.py` — PolTransfer dataclass | Encode/vérifie un transfert | [ ] |
-| 11.2.2 | `POST /api/v1/pol/transfer` — signe + grave dans chaîne | Transfert immuable | [ ] |
-| 11.2.3 | `GET /api/v1/pol/transfers/{address}` | Historique adresse | [ ] |
-| 11.2.4 | Tests `test_pol_transfer.py` | 10+ cas | [ ] |
+| 11.2.1 | `src/artcb/pol/transfer.py` — PolTransfer dataclass | Encode/vérifie un transfert | [x] |
+| 11.2.2 | `POST /api/v1/pol/transfer` — signe + grave dans chaîne | Transfert immuable | [x] |
+| 11.2.3 | `GET /api/v1/pol/transfers/{address}` | Historique adresse | [x] |
+| 11.2.4 | Tests `test_pol_transfer.py` | 26/26 PASS ✅ | [x] |
 
 ### Phase 11.3 — PoL NFT (tokens non-fongibles sémantiques)
 
 | Jalon | Livrable | Critère | Statut |
 |-------|----------|---------|--------|
-| 11.3.1 | `src/artcb/pol/nft.py` — PolNFT dataclass | Mint + ownership | [ ] |
-| 11.3.2 | `POST /api/v1/pol/nft/mint` — contenu gravé dans chaîne | NFT immuable | [ ] |
-| 11.3.3 | `GET /api/v1/pol/nft/{nft_id}` — info NFT | Métadonnées + owner | [ ] |
-| 11.3.4 | Tests `test_pol_nft.py` | 10+ cas | [ ] |
+| 11.3.1 | `src/artcb/pol/nft.py` — PolNFT dataclass | Mint + ownership | [x] |
+| 11.3.2 | `POST /api/v1/pol/nft/mint` — contenu gravé dans chaîne | NFT immuable | [x] |
+| 11.3.3 | `GET /api/v1/pol/nft/{nft_id}` — info NFT | Métadonnées + owner | [x] |
+| 11.3.4 | Tests `test_pol_nft.py` | 17/17 PASS ✅ | [x] |
 
 ### Phase 11.4 — Modules futurs (P2/P3)
 
@@ -341,9 +341,9 @@
 - [x] CLI standalone `artcb_cli.py`
 - [x] API Keys Bearer (phase 10)
 - [x] i18n 7 langues (phase 10)
-- [ ] IR v0.2 règles déclaratives (→ Phase 11.1)
-- [ ] PoL Transfer Protocol (→ Phase 11.2)
-- [ ] PoL NFT (→ Phase 11.3)
+- [x] IR v0.2 règles déclaratives (→ Phase 11.1) ✅
+- [x] PoL Transfer Protocol (→ Phase 11.2) ✅
+- [x] PoL NFT (→ Phase 11.3) ✅
 - [ ] Whitepaper scientifique
 
 ---
