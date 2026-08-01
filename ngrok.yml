@@ -12,12 +12,29 @@ tunnels:
     addr: 8001
     inspect: true
 
-# NOTE: ngrok est un outil de développement UNIQUEMENT.
+# ─────────────────────────────────────────────────────────────────
+# NOUVEAU COMPTE ngrok (mis à jour 2026-07-30)
+# Authtoken  : 3HEkD48SA5Hjz2AZlqfmYcDq5wB_2mpxfjRBxUvZZbdZxbuPL
+# Serveur SSH : v2@connect.ngrok-agent.com
+#
+# Commandes de démarrage :
+#   Méthode 1 — Agent ngrok (recommandée) :
+#     ngrok start --all --config ngrok.yml
+#
+#   Méthode 2 — Tunnel SSH (sans agent) :
+#     ssh -R 443:localhost:80 v2@connect.ngrok-agent.com http
+#
+# ─────────────────────────────────────────────────────────────────
+# NOTE: ngrok est un outil de DÉVELOPPEMENT UNIQUEMENT.
 # La décentralisation 100% se fait via libp2p (Phase 13) — pas ngrok.
-# Utiliser ngrok uniquement pour :
+#
+# En production, utiliser :
+#   - VPS (OVH, Hetzner, AWS) → IP publique fixe directe
+#   - Render.com / Railway.app → URL publique permanente
+#   - DynDNS + port forwarding → si nœud fixe à domicile
+#
+# Ngrok sert UNIQUEMENT à :
 #   - Partager l'API locale pendant le développement
 #   - Tester les webhooks entrants
 #   - Démo rapide sans déploiement cloud
-#
-# Commande SSH alternative (compte v2@connect.ngrok-agent.com) :
-#   ssh -R 443:localhost:80 v2@connect.ngrok-agent.com http
+# ─────────────────────────────────────────────────────────────────

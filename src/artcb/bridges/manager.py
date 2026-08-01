@@ -23,7 +23,7 @@ logger = logging.getLogger("artcb.bridges.manager")
 # RPC defaults — endpoints publics gratuits, aucune clé requise
 _ETH_RPC = os.getenv("ETHEREUM_RPC_URL", "https://cloudflare-eth.com")
 _BSC_RPC = os.getenv("BNB_RPC_URL", "https://bsc-dataseed.binance.org")
-_POLYGON_RPC = os.getenv("POLYGON_RPC_URL", "https://polygon-rpc.com")
+_POLYGON_RPC = os.getenv("POLYGON_RPC_URL", "https://polygon-bor-rpc.publicnode.com")
 _AVAX_RPC = os.getenv("AVALANCHE_RPC_URL", "https://api.avax.network/ext/bc/C/rpc")
 _SOL_RPC = os.getenv("SOLANA_RPC_URL", "https://api.mainnet-beta.solana.com")
 _BTC_API = os.getenv("BITCOIN_API_URL", "https://mempool.space/api")
