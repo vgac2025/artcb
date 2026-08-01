@@ -845,7 +845,7 @@ def chain_block_sizes(
 
     # Coins minés jusqu'ici
     mined_artcb = total_reward_satoshi / SATOSHI_PER_ARTCB
-    supply_max = MAX_SUPPLY_ARTCB  # 420_000 ARTCB (1 ARTCB/bloc × 210_000 × 2)
+    supply_max = MAX_SUPPLY_ARTCB  # 21_000_000 ARTCB hard cap (D-014 — rapport 079b/080)
     mined_pct = mined_artcb / supply_max * 100
 
     tokenomics = {

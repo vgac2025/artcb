@@ -163,12 +163,19 @@ def gossip_announcements(request: Request) -> dict:
 
 
 @router.post("/gossip/announce")
-def gossip_announce(request: Request) -> dict:
+def gossip_announce(request: Request, host: str = "127.0.0.1") -> dict:
+    """Annonce ce nœud sur le réseau gossip.
+    Le paramètre ``host`` peut être passé en query string pour exposer
+    l'adresse publique réelle (ex: IP OVH, domaine ngrok…) plutôt que
+    127.0.0.1 qui n'est accessible qu'en local.
+    """
     state = _state(request)
     identity = state.p2p_identity
+    import os
+    public_host = os.getenv("ARTCB_PUBLIC_HOST", host)
     entry = state.gossip.announce(
         node_id=identity.node_id,
-        host="127.0.0.1",
+        host=public_host,
         api_port=identity.api_port,
         p2p_port=identity.p2p_port,
         kem_public_key_hex=identity.kem_public_key_hex,

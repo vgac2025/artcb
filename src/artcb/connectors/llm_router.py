@@ -204,7 +204,10 @@ class LLMRouter:
             return str(data.get("content") or data["choices"][0]["message"]["content"]).strip()
 
     def _ollama_chat(self, api_key: str, prompt: str, record: ConnectorRecord, *, model: str | None) -> str:
-        base = record.config.get("base_url", "http://127.0.0.1:11434")
+        # Valeur par défaut Ollama locale — configurable via connecteur base_url ou ARTCB_OLLAMA_URL
+        import os
+        default_ollama = os.getenv("ARTCB_OLLAMA_URL", "http://127.0.0.1:11434")
+        base = record.config.get("base_url", default_ollama)
         model_name = model or record.config.get("model", "llama3.2")
         headers = {"Content-Type": "application/json"}
         if api_key and not api_key.startswith("local-"):
