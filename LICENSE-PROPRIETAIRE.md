@@ -1,9 +1,9 @@
-# Licence propriétaire VGACTech — réseaux PRIVÉ et GROUPE
+# Licence propriétaire artcb — réseaux PRIVÉ et GROUPE
 
 **Titulaire :** VGACTech (Société)  
 **Œuvre :** ARTCB — AI Reasoning Trace & Cognitive Blockchain  
 **Horodatage :** 2026-07-08  
-**Statut :** En vigueur jusqu'à décision contraire écrite de VGACTech
+**Statut :** En vigueur jusqu'à décision contraire écrite de artcb
 
 ---
 
@@ -24,7 +24,7 @@ Et à **tout le code source** du dépôt **sauf** les fichiers listés en annexe
 
 **Aucun droit** n'est accordé par défaut au-delà de la consultation du dépôt public GitHub à titre informatif.
 
-Usage autorisé **uniquement** avec accord écrit VGACTech :
+Usage autorisé **uniquement** avec accord écrit artcb :
 
 - déploiement en production (privé ou groupe) ;
 - modification du code ;
@@ -36,22 +36,21 @@ Usage autorisé **uniquement** avec accord écrit VGACTech :
 ## 3. Données utilisateur
 
 Les données mémorisées en réseau **privé** ou **groupe** restent sous contrôle du détenteur du wallet.  
-VGACTech ne revendique **pas** la propriété du contenu utilisateur — seulement celle du **logiciel** et des **règles du protocole**.
+artcb ne revendique **pas** la propriété du contenu utilisateur — seulement celle du **logiciel** et des **règles du protocole**.
 
 ---
 
 ## 4. Durée
 
-Jusqu'à **décision écrite contraire** du représentant légal de VGACTech.
+Jusqu'à **décision écrite contraire** du représentant légal de artcb.
 
-Le hackathon RAISE Summit 2026 est **terminé** — l'obligation « open source hackathon » ne s'applique plus.
 
 ---
 
 ## 5. Contact
 
-VGACTech — vgacofficiel@gmail.com
+artcb — vgacofficiel@gmail.com
 
 ---
 
-**© 2026 VGACTech — Tous droits réservés**
+**© 2026 artcb — Tous droits réservés**
