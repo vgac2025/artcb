@@ -15,9 +15,12 @@ ARTCB_LLM_ENABLED = "false"
 ARTCB_ANTI_SYBIL_AI_BYPASS = "true"
 
 [deployment]
-run = ["sh", "-c", "PYTHONPATH=/home/runner/${REPL_SLUG} python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000"]
-deploymentTarget = "cloudrun"
+# Port 5000 : requis pour Replit webview (pas 8000)
+# Venv créé au build, utilisé au run
+build = ["sh", "-c", "python3 -m venv $HOME/venv && $HOME/venv/bin/pip install -r requirements.txt -q"]
+run = ["sh", "-c", "PYTHONPATH=/home/runner/${REPL_SLUG} $HOME/venv/bin/python3 -m uvicorn src.api.main:app --host 0.0.0.0 --port 5000"]
+deploymentTarget = "autoscale"
 
 [[ports]]
-localPort = 8000
+localPort = 5000
 externalPort = 80
