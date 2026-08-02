@@ -1,6 +1,6 @@
 # Licence propriétaire artcb — réseaux PRIVÉ et GROUPE
 
-**Titulaire :** VGACTech (Société)  
+**Titulaire :** artcb (Société)  
 **Œuvre :** ARTCB — AI Reasoning Trace & Cognitive Blockchain  
 **Horodatage :** 2026-07-08  
 **Statut :** En vigueur jusqu'à décision contraire écrite de artcb
