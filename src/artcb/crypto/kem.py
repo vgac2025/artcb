@@ -55,9 +55,9 @@ def _oqs_available() -> bool:
     if _OQS_AVAILABLE is None:
         try:
             import oqs as _oqs_test  # noqa: F401
-            _oqs_test.get_enabled_KEMs()  # vérifie que le .so natif est chargé
+            _oqs_test.get_enabled_kem_mechanisms()  # vérifie que le .so KEM natif est chargé
             _OQS_AVAILABLE = True
-        except (ImportError, RuntimeError, OSError, SystemExit, BaseException):
+        except (ImportError, RuntimeError, OSError, AttributeError, SystemExit, BaseException):
             _OQS_AVAILABLE = False
             logger.warning(
                 "liboqs-python non disponible ou bibliothèque native absente — "
@@ -71,10 +71,10 @@ def _import_oqs():
     """Importe oqs ou lève KEMError si absent (utilisation directe ML-KEM uniquement)."""
     try:
         import oqs
-        oqs.get_enabled_KEMs()  # vérifie que le .so natif est chargé
+        oqs.get_enabled_kem_mechanisms()  # vérifie que le .so natif est chargé
     except ImportError as exc:
         raise KEMError("liboqs-python not installed — pip install liboqs-python") from exc
-    except (RuntimeError, OSError, SystemExit, BaseException) as exc:
+    except (AttributeError, RuntimeError, OSError, SystemExit, BaseException) as exc:
         raise KEMError(
             "liboqs native library not found — fallback X25519 actif. "
             "Compiler liboqs (cmake) pour ML-KEM-768."

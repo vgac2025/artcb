@@ -27,12 +27,13 @@ def pqc_enabled() -> bool:
 def _import_oqs():
     try:
         import oqs  # liboqs-python
-        oqs.get_enabled_KEMs()  # vérifie que le .so natif est chargé
+        # Vérifie que le .so natif est chargé — API stable liboqs-python
+        oqs.get_enabled_sig_mechanisms()
     except ImportError as exc:
         raise PQCError(
             "liboqs-python not installed — run: pip install liboqs-python"
         ) from exc
-    except (RuntimeError, OSError, SystemExit, BaseException) as exc:
+    except (AttributeError, RuntimeError, OSError, SystemExit, BaseException) as exc:
         raise PQCError(
             "liboqs native library not found — fallback Ed25519 actif. "
             "Compiler liboqs (cmake) pour ML-DSA-65 complet."
