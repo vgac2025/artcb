@@ -16,10 +16,8 @@ ARTCB_LLM_ENABLED = "false"
 ARTCB_ANTI_SYBIL_AI_BYPASS = "true"
 
 [deployment]
-# Port 5000 : requis pour Replit webview (pas 8000)
-# NOTE Autoscale : build et run = conteneurs DISTINCTS → venv du build absent au run
-# Solution : run recrée son propre venv (cache pip = rapide après 1er déploiement)
-run = ["sh", "-c", "python3 -m venv $HOME/venv && PIP_USER=false $HOME/venv/bin/pip install --no-user -r requirements.txt -q && cd frontend && npm install -q && npm run build && cd .. && PYTHONPATH=/home/runner/${REPL_SLUG} $HOME/venv/bin/python3 -m uvicorn src.api.main:app --host 0.0.0.0 --port 5000"]
+# Uses the same validated startup script as the interactive workflow
+run = ["bash", "scripts/replit_start.sh"]
 deploymentTarget = "autoscale"
 
 [[ports]]
