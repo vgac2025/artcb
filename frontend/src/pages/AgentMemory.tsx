@@ -209,61 +209,47 @@ export function AgentMemory() {
     { id: "stream", label: t('agent_memory_tab_stream') },
   ];
 
-  const inp: React.CSSProperties = {
-    width: "100%", padding: "8px 10px", borderRadius: 6,
-    border: "1px solid #e5e7eb", fontSize: 14, boxSizing: "border-box",
-  };
-  const btn = (color = "#3b82d4"): React.CSSProperties => ({
-    background: color, color: "#fff", border: "none", borderRadius: 6,
-    padding: "8px 18px", cursor: "pointer", fontSize: 14, fontWeight: 600,
-  });
-
   return (
-    <div style={{ padding: 24, maxWidth: 900, margin: "0 auto", fontFamily: "system-ui, sans-serif" }}>
-      <h2 style={{ marginBottom: 4 }}>{t('agent_memory_title')}</h2>
-      <p style={{ color: "#57606a", fontSize: 14, marginBottom: 16 }}>
-        Interface complète pour que Bob/Cursor/ChatGPT utilise ARTCB comme mémoire persistante
+    <div className="mc-page">
+      <h1 className="dashboard-title">{t('agent_memory_title')}</h1>
+      <p className="mc-muted" style={{ marginBottom: 16 }}>
+        Interface memoire persistante IA — Bob / Cursor / ChatGPT utilisent ARTCB comme backend.
       </p>
 
       {/* Token Bearer */}
-      <div style={{ background: "#f7f8fa", border: "1px solid #e5e7eb", borderRadius: 8, padding: 12, marginBottom: 16 }}>
-        <label style={{ fontSize: 12, fontWeight: 600, color: "#57606a" }}>Bearer Token (optionnel)</label>
+      <div className="panel">
+        <label className="mc-label">Bearer Token (optionnel)</label>
         <input
-          style={{ ...inp, marginTop: 4, fontFamily: "monospace" }}
+          style={{ marginTop: 4, fontFamily: "monospace", width: "100%" }}
           type="password"
-          placeholder="artcb_xxxxxxxx… (généré dans Clés API)"
+          placeholder="artcb_xxxxxxxx... (genere dans Cles API)"
           value={token}
           onChange={e => setToken(e.target.value)}
         />
       </div>
 
-      {/* Onglets */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 20 }}>
-        {tabs.map(t => (
+      {/* Onglets MC */}
+      <div className="toolbar" style={{ flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
+        {tabs.map(tab_ => (
           <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            style={{
-              padding: "6px 14px", borderRadius: 6, border: "none", cursor: "pointer",
-              background: tab === t.id ? "#3b82d4" : "#e5e7eb",
-              color: tab === t.id ? "#fff" : "#1f2328",
-              fontWeight: 600, fontSize: 13,
-            }}
+            key={tab_.id}
+            onClick={() => setTab(tab_.id)}
+            className={tab === tab_.id ? "primary" : ""}
           >
-            {t.label}
+            {tab_.label}
           </button>
         ))}
       </div>
 
-      {error && <div style={{ color: "#dc2626", background: "#fef2f2", padding: 10, borderRadius: 6, marginBottom: 12 }}>{error}</div>}
-      {success && <div style={{ color: "#16a34a", background: "#f0fdf4", padding: 10, borderRadius: 6, marginBottom: 12 }}>{success}</div>}
+      {error   && <p className="mc-error"   style={{ marginBottom: 12 }}>{error}</p>}
+      {success && <p className="mc-success" style={{ marginBottom: 12 }}>{success}</p>}
 
       {/* STATUS */}
       {tab === "status" && (
-        <div>
-          <button style={btn()} onClick={loadStatus} disabled={loading}>Rafraichir</button>
+        <div className="panel">
+          <div className="toolbar"><button onClick={loadStatus} disabled={loading}>Rafraichir</button></div>
           {status && (
-            <pre style={{ background: "#f7f8fa", border: "1px solid #e5e7eb", borderRadius: 8, padding: 16, marginTop: 12, fontSize: 13, overflow: "auto" }}>
+            <pre className="mc-console" style={{ marginTop: 12, maxHeight: 400, overflow: "auto" }}>
               {JSON.stringify(status, null, 2)}
             </pre>
           )}
@@ -272,19 +258,19 @@ export function AgentMemory() {
 
       {/* MÉMOIRE */}
       {tab === "memos" && (
-        <div>
-          <button style={btn()} onClick={loadMemos} disabled={loading}>Rafraichir</button>
+        <div className="panel">
+          <div className="toolbar"><button onClick={loadMemos} disabled={loading}>Rafraichir</button></div>
           <div style={{ marginTop: 12 }}>
-            {memos.length === 0 && <p style={{ color: "#57606a" }}>Aucun mémo IA gravé pour l'instant.</p>}
+            {memos.length === 0 && <p className="mc-muted">Aucun memo IA grave pour l'instant.</p>}
             {memos.map(m => (
-              <div key={m.block_index} style={{ border: "1px solid #e5e7eb", borderRadius: 8, padding: 12, marginBottom: 8 }}>
+              <div key={m.block_index} className="panel" style={{ marginBottom: 8, padding: 10 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
                   {badge(m.memo_type, "#7c5cd8")}
                   {badge(`Bloc #${m.block_index}`, "#3b82d4")}
                   {badge(`PoL ${m.pol_score.toFixed(3)}`, m.pol_score > 0.8 ? "#16a34a" : "#f59e0b")}
-                  <span style={{ fontSize: 12, color: "#57606a" }}>{m.timestamp}</span>
+                  <span className="mc-muted" style={{ fontSize: 12 }}>{m.timestamp}</span>
                 </div>
-                <div style={{ fontSize: 12, color: "#57606a" }}>
+                <div className="mc-muted" style={{ fontSize: 12 }}>
                   Agent: <b>{m.agent_id}</b> · Session: {m.session_id} · Graph: {m.graph_id.slice(0, 16)}…
                   {m.tags.length > 0 && <> · Tags: {m.tags.join(", ")}</>}
                 </div>
@@ -296,23 +282,24 @@ export function AgentMemory() {
 
       {/* NOUVEAU MÉMO */}
       {tab === "memo_new" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div className="panel" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <textarea
-            style={{ ...inp, minHeight: 120, resize: "vertical" }}
-            placeholder="Observation, bug, fix, décision, leçon apprise…"
+            className="mc-input"
+            style={{ minHeight: 120, resize: "vertical" }}
+            placeholder="Observation, bug, fix, decision, lecon apprise..."
             value={memoContent}
             onChange={e => setMemoContent(e.target.value)}
           />
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <select style={{ ...inp, width: "auto" }} value={memoType} onChange={e => setMemoType(e.target.value)}>
+          <div className="toolbar" style={{ flexWrap: "wrap" }}>
+            <select value={memoType} onChange={e => setMemoType(e.target.value)}>
               {["observation", "bug", "fix", "lesson", "decision", "hypothesis", "goal", "proof"].map(v => (
                 <option key={v} value={v}>{v}</option>
               ))}
             </select>
-            <input style={{ ...inp, flex: 1 }} placeholder="Tags (virgule séparés)" value={memoTags} onChange={e => setMemoTags(e.target.value)} />
-            <input style={{ ...inp, flex: 1 }} placeholder="Session ID" value={memoSession} onChange={e => setMemoSession(e.target.value)} />
+            <input placeholder="Tags (virgule separes)" value={memoTags} onChange={e => setMemoTags(e.target.value)} style={{ flex: 1 }} />
+            <input placeholder="Session ID" value={memoSession} onChange={e => setMemoSession(e.target.value)} style={{ flex: 1 }} />
           </div>
-          <button style={btn("#7c5cd8")} onClick={submitMemo} disabled={loading || !memoContent.trim()}>
+          <button className="primary" onClick={submitMemo} disabled={loading || !memoContent.trim()}>
             Graver dans la blockchain
           </button>
         </div>
@@ -320,39 +307,39 @@ export function AgentMemory() {
 
       {/* RECHERCHE */}
       {tab === "search" && (
-        <div>
-          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-            <input style={{ ...inp, flex: 1 }} placeholder="Terme à rechercher dans toute la chaîne…" value={searchQ} onChange={e => setSearchQ(e.target.value)} onKeyDown={e => e.key === "Enter" && doSearch()} />
-            <button style={btn()} onClick={doSearch} disabled={loading}>Rechercher</button>
+        <div className="panel">
+          <div className="toolbar" style={{ marginBottom: 12 }}>
+            <input style={{ flex: 1 }} placeholder="Terme a rechercher dans toute la chaine..." value={searchQ} onChange={e => setSearchQ(e.target.value)} onKeyDown={e => e.key === "Enter" && doSearch()} />
+            <button className="primary" onClick={doSearch} disabled={loading}>Rechercher</button>
           </div>
           {searchResults.map((r, i) => (
-            <div key={i} style={{ border: "1px solid #e5e7eb", borderRadius: 8, padding: 10, marginBottom: 8, fontSize: 13 }}>
+            <div key={i} className="panel" style={{ marginBottom: 8, padding: 10, fontSize: 13 }}>
               <b>Score:</b> {String((r.score as number | undefined)?.toFixed(4) ?? "—")} · <b>Graph:</b> {String(r.graph_id ?? "—").slice(0, 20)}…
               {r.block != null && <> · <b>Bloc:</b> #{String((r.block as Record<string, unknown>)?.block_index ?? "—")}</>}
-              <div style={{ color: "#57606a", marginTop: 4 }}>{String(r.text ?? r.label ?? "").slice(0, 200)}</div>
+              <div className="mc-muted" style={{ marginTop: 4 }}>{String(r.text ?? r.label ?? "").slice(0, 200)}</div>
             </div>
           ))}
-          {searchResults.length === 0 && searchQ && <p style={{ color: "#57606a" }}>Aucun résultat.</p>}
+          {searchResults.length === 0 && searchQ && <p className="mc-muted">Aucun resultat.</p>}
         </div>
       )}
 
       {/* EXPORT */}
       {tab === "export" && (
-        <div>
-          <div style={{ display: "flex", gap: 8, marginBottom: 12, alignItems: "center" }}>
-            <select style={{ ...inp, width: 140 }} value={exportFmt} onChange={e => setExportFmt(e.target.value as typeof exportFmt)}>
+        <div className="panel">
+          <div className="toolbar" style={{ marginBottom: 12, alignItems: "center" }}>
+            <select value={exportFmt} onChange={e => setExportFmt(e.target.value as typeof exportFmt)}>
               <option value="summary">Summary</option>
               <option value="jsonl">JSONL (RAG)</option>
               <option value="json">JSON complet</option>
             </select>
-            <button style={btn()} onClick={doExport} disabled={loading}>Exporter</button>
+            <button onClick={doExport} disabled={loading}>Exporter</button>
             {exportData && (
-              <button style={btn("#16a34a")} onClick={() => navigator.clipboard?.writeText(exportData)}>Copier</button>
+              <button onClick={() => navigator.clipboard?.writeText(exportData)}>Copier</button>
             )}
           </div>
           {exportData && (
-            <pre style={{ background: "#f7f8fa", border: "1px solid #e5e7eb", borderRadius: 8, padding: 16, fontSize: 12, overflow: "auto", maxHeight: 400 }}>
-              {exportData.slice(0, 8000)}{exportData.length > 8000 ? "\n…(tronqué)" : ""}
+            <pre className="mc-console" style={{ fontSize: 12, maxHeight: 400, overflow: "auto" }}>
+              {exportData.slice(0, 8000)}{exportData.length > 8000 ? "\n...(tronque)" : ""}
             </pre>
           )}
         </div>
@@ -360,19 +347,19 @@ export function AgentMemory() {
 
       {/* WEBHOOKS */}
       {tab === "webhooks" && (
-        <div>
-          <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
-            <input style={{ ...inp, flex: 2 }} placeholder="URL HTTPS (https://…)" value={whUrl} onChange={e => setWhUrl(e.target.value)} />
-            <input style={{ ...inp, flex: 1 }} placeholder="Label" value={whLabel} onChange={e => setWhLabel(e.target.value)} />
-            <button style={btn()} onClick={addWebhook} disabled={loading || !whUrl || !whLabel}>+ Ajouter</button>
+        <div className="panel">
+          <div className="toolbar" style={{ marginBottom: 12, flexWrap: "wrap" }}>
+            <input style={{ flex: 2 }} placeholder="URL HTTPS (https://...)" value={whUrl} onChange={e => setWhUrl(e.target.value)} />
+            <input style={{ flex: 1 }} placeholder="Label" value={whLabel} onChange={e => setWhLabel(e.target.value)} />
+            <button onClick={addWebhook} disabled={loading || !whUrl || !whLabel}>+ Ajouter</button>
           </div>
           {webhooks.map(h => (
-            <div key={String(h.hook_id)} style={{ border: "1px solid #e5e7eb", borderRadius: 8, padding: 10, marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div key={String(h.hook_id)} className="panel" style={{ marginBottom: 8, padding: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <b>{String(h.label)}</b> <span style={{ color: "#57606a", fontSize: 12 }}>{String(h.url)}</span>
-                <div style={{ fontSize: 12, color: "#57606a" }}>Events: {(h.events as string[])?.join(", ")}</div>
+                <b>{String(h.label)}</b> <span className="mc-muted" style={{ fontSize: 12 }}>{String(h.url)}</span>
+                <div className="mc-muted" style={{ fontSize: 12 }}>Events: {(h.events as string[])?.join(", ")}</div>
               </div>
-              <button style={{ ...btn("#dc2626"), padding: "4px 12px" }} onClick={() => removeWebhook(String(h.hook_id))}>X</button>
+              <button onClick={() => removeWebhook(String(h.hook_id))} style={{ padding: "4px 12px", background: "var(--mc-redstone, #ff4757)" }}>X</button>
             </div>
           ))}
         </div>
@@ -380,24 +367,27 @@ export function AgentMemory() {
 
       {/* STREAM THOUGHT */}
       {tab === "stream" && (
-        <div>
-          <p style={{ color: "#57606a", fontSize: 13, marginBottom: 12 }}>
-            Connecte un WebSocket <code>/ws/stream_thought</code> — envoie des tokens en temps réel → grave le raisonnement complet en un seul bloc PoL.
+        <div className="panel">
+          <p className="mc-muted" style={{ marginBottom: 12 }}>
+            WebSocket <code>/ws/stream_thought</code> — tokens en temps reel → bloc PoL unique.
           </p>
-          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-            {streamStatus === "idle" && <button style={btn("#16a34a")} onClick={openStream}>Ouvrir le stream</button>}
+          <div className="toolbar" style={{ marginBottom: 12 }}>
+            {streamStatus === "idle" && <button className="primary" onClick={openStream}>Ouvrir le stream</button>}
             {streamStatus === "open" && <>
-              <input style={{ ...inp, flex: 1 }} placeholder="Texte a streamer..." value={streamInput} onChange={e => setStreamInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendTokens()} />
-              <button style={btn()} onClick={sendTokens}>Envoyer tokens</button>
-              <button style={btn("#7c5cd8")} onClick={commitStream}>Graver</button>
-              <button style={btn("#dc2626")} onClick={abortStream}>Annuler</button>
+              <input style={{ flex: 1 }} placeholder="Texte a streamer..." value={streamInput} onChange={e => setStreamInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendTokens()} />
+              <button onClick={sendTokens}>Envoyer tokens</button>
+              <button className="primary" onClick={commitStream}>Graver</button>
+              <button onClick={abortStream} style={{ background: "var(--mc-redstone, #ff4757)" }}>Annuler</button>
             </>}
             {(streamStatus === "done" || streamStatus === "committing") && (
-              <button style={btn("#57606a")} onClick={() => { setStreamStatus("idle"); setStreamLog([]); if (wsRef.current) wsRef.current.close(); }}>Reinitialiser</button>
+              <button onClick={() => { setStreamStatus("idle"); setStreamLog([]); if (wsRef.current) wsRef.current.close(); }}>Reinitialiser</button>
             )}
           </div>
-          <div style={{ background: "#0d1117", borderRadius: 8, padding: 12, minHeight: 120, maxHeight: 300, overflow: "auto", fontFamily: "monospace", fontSize: 13, color: "#e6edf3" }}>
-            {streamLog.length === 0 ? <span style={{ color: "#57606a" }}>— En attente de connexion…</span> : streamLog.map((l, i) => <div key={i}>{l}</div>)}
+          <div className="mc-console" style={{ minHeight: 120, maxHeight: 300, overflow: "auto" }}>
+            {streamLog.length === 0
+              ? <span className="mc-muted">— En attente de connexion...</span>
+              : streamLog.map((l, i) => <div key={i}>{l}</div>)
+            }
           </div>
         </div>
       )}

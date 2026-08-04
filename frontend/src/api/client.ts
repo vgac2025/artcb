@@ -205,7 +205,14 @@ export async function fetchChain(params?: {
 
 export async function createWallet(name: string) {
   const { data } = await api.post("/wallet/create", { name });
-  return data as { name: string; address: string; public_key_hex: string };
+  return data as {
+    name: string;
+    address: string;
+    address_v2?: string;
+    public_key_hex: string;
+    public_key_b64: string;
+    hybrid: boolean;
+  };
 }
 
 export async function fetchBlockDetail(index: number) {

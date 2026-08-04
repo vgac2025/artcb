@@ -43,13 +43,41 @@ def mining_latest_log(request: Request) -> dict:
 
 @router.get("/founders/allocation")
 def founders_allocation(request: Request) -> dict:
+    """Retourne l'allocation founders — priorité v2 (2 comptes) sur v1 (5 founders)."""
     settings = _settings(request)
-    path = settings.data_dir / "founders" / "founders_allocation.json"
-    if not path.is_file():
-        path = Path("data/founders/founders_allocation.json")
-    if not path.is_file():
-        raise HTTPException(status_code=404, detail="founders_allocation.json not found")
-    return json.loads(path.read_text(encoding="utf-8"))
+    data_dir = settings.data_dir / "founders"
+
+    # Priorité v2 (Créateur 1M + Dev 1M) — puis fallback v1 (5 founders legacy)
+    for fname in ("founders_allocation_v2.json", "founders_allocation.json"):
+        path = data_dir / fname
+        if not path.is_file():
+            path = Path("data/founders") / fname
+        if path.is_file():
+            raw = json.loads(path.read_text(encoding="utf-8"))
+            # Normaliser le format v2 → v1 pour la compatibilité frontend
+            if raw.get("version") == "2.0" and "founders" in raw:
+                balances = [
+                    {
+                        "founder_id": i + 1,
+                        "name": f["name"],
+                        "address": f["address"],
+                        "balance_artcb": f["allocation_artcb"],
+                        "is_creator": f.get("is_creator", False),
+                        "vote_weight": f.get("vote_weight", 1),
+                    }
+                    for i, f in enumerate(raw["founders"])
+                ]
+                return {
+                    "version": "2.0",
+                    "founders_total_artcb": sum(f["allocation_artcb"] for f in raw["founders"]),
+                    "founders_percentage": round(
+                        sum(f["allocation_artcb"] for f in raw["founders"]) / 21_000_000 * 100, 2
+                    ),
+                    "balances": balances,
+                }
+            return raw
+
+    raise HTTPException(status_code=404, detail="founders_allocation not found")
 
 
 @router.get("/mining/status")
