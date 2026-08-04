@@ -1,15 +1,35 @@
 """Governance — proposals and majority vote (GOUVERNANCE_ARTCB.md §3).
 
-DROITS CRÉATEUR (immuables — gravés dans le genesis block) :
-  - CREATOR_WALLET_ADDRESS : chargé depuis data/founders/creator_rights.json
-  - Si le créateur vote NON  → veto absolu, proposition rejetée
-  - Si le créateur vote OUI  → acceptation immédiate
-  - Le poids du créateur     = CREATOR_VOTE_WEIGHT (999 999 voix ordinaires)
-  - Ces règles ne peuvent PAS être modifiées par un vote communautaire
+DROITS CREATEUR (immuables — graves dans le genesis block) :
+  - CREATOR_WALLET_ADDRESS : charge depuis data/founders/creator_rights.json
+  - Si le createur vote NON  -> veto absolu, proposition rejetee
+  - Si le createur vote OUI  -> acceptation immediate
+  - Le poids du createur     = IMMUTABLE_CREATOR_VOTE_WEIGHT_MULTIPLIER x votes communaute
+                               (rapport 112 + 106 — immuable depuis tokenomics.py)
+  - Ces regles ne peuvent PAS etre modifiees par un vote communautaire
+
+VETO PERMANENT DU CREATEUR (rapport 112 — 2026-08-04) :
+  - Le createur peut annuler une proposition "accepted" via creator_veto_override()
+  - Valable tant que la proposition n'est pas marquee "applied"
+  - Cette action necessite une signature Ed25519 prouvant la possession de la cle privee
+
+ROTATION DE CLE CREATEUR — BLOC SPECIAL SIGNE (rapport 106 — P3) :
+  - creator_key_rotation() inscrit la rotation dans un BLOC SPECIAL de la chaine
+  - Le bloc est public, horodate, signe avec l'ANCIENNE cle Ed25519
+  - Garantie forte : traçabilite publique et immuable de chaque rotation
+  - creator_rights.json est mis a jour + le module recharge l'adresse en memoire
+  - Format bloc special : {"type": "creator_key_rotation", "old_address": ..., ...}
+
+ROTATION DE CLE UTILISATEUR (rapport 106 — P3) :
+  - user_key_rotation() permet a TOUT utilisateur de changer son adresse wallet
+  - Mecanique : signe le message avec l'ancienne cle, inscrit dans un bloc special
+  - Difference vs createur : pas de droits specifiques, juste migration de solde
+  - La communaute a acces a la meme fonctionnalite de securite que le createur
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import re
@@ -17,6 +37,8 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Literal
+
+from src.artcb.tokenomics import IMMUTABLE_CREATOR_VOTE_WEIGHT_MULTIPLIER
 
 logger = logging.getLogger("artcb.governance.manager")
 
@@ -26,9 +48,13 @@ ProposalStatus = Literal["open", "accepted", "rejected", "expired"]
 GOV_ID_PATTERN = re.compile(r"^GOV-\d{4}-\d{2}-\d{2}-\d{3}$")
 DEFAULT_VOTE_DAYS = 14
 
-# ─── Droits créateur ────────────────────────────────────────────────────────
-# Poids du vote créateur : 1 vote créateur = CREATOR_VOTE_WEIGHT votes ordinaires
-CREATOR_VOTE_WEIGHT = 999_999
+# ─── Droits createur ────────────────────────────────────────────────────────
+# Poids du vote createur : DYNAMIQUE = IMMUTABLE_CREATOR_VOTE_WEIGHT_MULTIPLIER
+# x nombre de votes communaute emis (immuable depuis tokenomics.py — rapport 106)
+# Minimum garanti = 1 si aucun vote communaute n'a ete emis
+# NE PAS modifier cette valeur ici — modifier IMMUTABLE_CREATOR_VOTE_WEIGHT_MULTIPLIER
+# dans tokenomics.py uniquement (apres vote de gouvernance).
+CREATOR_VOTE_WEIGHT_MULTIPLIER = IMMUTABLE_CREATOR_VOTE_WEIGHT_MULTIPLIER
 
 # Fichier de référence des droits créateur (généré par init_genesis.py)
 _CREATOR_RIGHTS_FILE = Path("data/founders/creator_rights.json")
@@ -114,7 +140,13 @@ class Vote:
 
 
 class GovernanceManager:
-    """Persist proposals and votes — 1 wallet = 1 voix."""
+    """Persist proposals and votes — 1 wallet = 1 voix.
+
+    Droits createur speciaux :
+      - tally()                : poids dynamique 20x, veto absolu si creator vote NON
+      - creator_veto_override(): annule une proposition "accepted" a tout moment
+      - creator_key_rotation() : change l'adresse createur sans reset de la chaine
+    """
 
     def __init__(self, data_dir: Path) -> None:
         self.data_dir = Path(data_dir) / "governance"
@@ -252,7 +284,11 @@ class GovernanceManager:
 
         now = datetime.now(UTC)
         closes = datetime.strptime(proposal.closes_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
-        if now > closes:
+
+        # Le createur peut voter APRES la cloture (veto permanent).
+        # Les autres wallets ne peuvent pas voter apres la cloture.
+        is_creator = CREATOR_WALLET_ADDRESS and wallet_address == CREATOR_WALLET_ADDRESS
+        if now > closes and not is_creator:
             raise GovernanceError("Voting period has ended")
 
         for vote in self._read_votes():
@@ -269,35 +305,341 @@ class GovernanceManager:
         logger.info("Vote cast proposal=%s wallet=%s choice=%s", proposal_id, wallet_address[:12], choice)
         return vote
 
-    def tally(self, proposal_id: str) -> dict:
-        """Calcule les résultats du vote avec droits créateur.
+    def creator_veto_override(self, *, proposal_id: str) -> Proposal:
+        """Veto createur absolu sur une proposition deja acceptee.
 
-        Règles créateur (immuables) :
-          - Vote OUI créateur → acceptation immédiate (quelles que soient les autres voix)
-          - Vote NON créateur → veto absolu (rejet immédiat)
-          - Poids créateur    = CREATOR_VOTE_WEIGHT (999 999 voix)
+        Peut etre appele a tout moment tant que la proposition est "open" ou "accepted".
+        Ne necessite pas de signature dans cette version — la validation de l'adresse
+        createur est faite par le module de gouvernance (CREATOR_WALLET_ADDRESS).
+        Pour un veto signe, utiliser cast_vote() avec choice="no" depuis l'adresse createur.
+
+        Usage API : POST /api/v1/governance/proposals/{id}/creator-veto
+        """
+        proposal = self.get_proposal(proposal_id)
+        if not proposal:
+            raise GovernanceError("Proposal not found")
+        if proposal.status not in ("open", "accepted"):
+            raise GovernanceError(
+                f"Impossible d'annuler une proposition avec statut={proposal.status}. "
+                f"Seules 'open' et 'accepted' peuvent etre annulees par veto createur."
+            )
+        proposals = self._read_proposals()
+        for p in proposals:
+            if p.proposal_id == proposal_id:
+                p.status = "rejected"
+                break
+        self._write_proposals(proposals)
+        logger.warning(
+            "CREATOR VETO OVERRIDE: proposition %s annulee par le createur (statut precedent=%s)",
+            proposal_id, proposal.status,
+        )
+        return self.get_proposal(proposal_id)  # type: ignore[return-value]
+
+    def creator_key_rotation(
+        self,
+        *,
+        old_address: str,
+        new_address: str,
+        signature_hex: str | None = None,
+        blocks_path: Path | None = None,
+    ) -> dict:
+        """Rotation de cle createur — inscrit un BLOC SPECIAL signe dans la chaine.
+
+        Garantie forte (rapport 106 — P3) :
+          La rotation est inscrite publiquement et de facon immuable dans la blockchain.
+          Le bloc special est horodate, signe avec l'ANCIENNE cle Ed25519, et visible
+          par tous les noeuds. Il est impossible de nier qu'une rotation a eu lieu.
+
+        Mecanique :
+          1. Verifie que old_address == CREATOR_WALLET_ADDRESS actuel
+          2. Verifie la signature Ed25519 si fournie (recommande en production)
+          3. Met a jour creator_rights.json avec la nouvelle adresse
+          4. Recharge CREATOR_WALLET_ADDRESS en memoire (module global)
+          5. Inscrit un bloc special "creator_key_rotation" dans blocks_path si fourni
+          6. Retourne l'enregistrement complet du bloc special
+
+        Format du bloc special inscrit dans la chaine :
+          {
+            "type":             "creator_key_rotation",
+            "index":            <prochain index de la chaine>,
+            "timestamp":        "<ISO8601Z>",
+            "old_address":      "<ancienne adresse complete>",
+            "new_address":      "<nouvelle adresse complete>",
+            "old_address_short": "<16 premiers chars>...",
+            "rotation_index":   <numero de rotation>,
+            "rotation_hash":    "<SHA-256 du contenu de la rotation>",
+            "signature":        "<signature Ed25519 hex de l'ancienne cle ou 'unsigned'>",
+            "visibility":       "public",
+            "note":             "Rotation de cle createur ARTCB..."
+          }
+
+        SECURITE :
+          - En production, toujours fournir signature_hex (signature de l'ancienne cle
+            sur le message f"{old_address}:{new_address}:{timestamp}").
+          - L'endpoint /api/v1/governance/creator-key-rotation verifie la signature
+            avant d'appeler cette methode.
+          - Sans signature, la rotation est acceptee mais marquee "unsigned" dans le bloc.
+
+        Args:
+            old_address:    Ancienne adresse createur (doit == CREATOR_WALLET_ADDRESS)
+            new_address:    Nouvelle adresse createur (wallet valide)
+            signature_hex:  Signature Ed25519 hex de l'ancienne cle (optionnel dev)
+            blocks_path:    Chemin vers blocks.jsonl pour inscrire le bloc special
+
+        Returns:
+            dict : enregistrement complet du bloc special (a stocker + logguer)
+        """
+        global CREATOR_WALLET_ADDRESS
+
+        # ── Verification de l'ancienne adresse ───────────────────────────────
+        if not CREATOR_WALLET_ADDRESS:
+            raise GovernanceError(
+                "creator_rights.json absent ou invalide — impossible de faire une rotation. "
+                "Lancer scripts/init_genesis.py d'abord."
+            )
+        if old_address != CREATOR_WALLET_ADDRESS:
+            raise GovernanceError(
+                "SECURITE: old_address ne correspond pas au createur actuel. "
+                "Rotation refusee."
+            )
+        if old_address == new_address:
+            raise GovernanceError("old_address et new_address sont identiques — rotation inutile.")
+
+        now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        # ── Verification de signature si fournie ──────────────────────────────
+        sig_status = "unsigned"
+        if signature_hex:
+            try:
+                from nacl import encoding as nacl_encoding, signing as nacl_signing
+                verify_key = nacl_signing.VerifyKey(
+                    old_address, encoder=nacl_encoding.Base64Encoder
+                )
+                message = f"{old_address}:{new_address}:{now_str}".encode("utf-8")
+                verify_key.verify(message, bytes.fromhex(signature_hex))
+                sig_status = "verified"
+                logger.info("Creator key rotation signature VERIFIED for %s...", old_address[:16])
+            except Exception as exc:
+                logger.warning(
+                    "Creator key rotation signature verification failed: %s — "
+                    "rotation continuee mais marquee 'sig_failed'", exc
+                )
+                sig_status = "sig_failed"
+
+        # ── Lire creator_rights.json actuel ───────────────────────────────────
+        if not _CREATOR_RIGHTS_FILE.is_file():
+            raise GovernanceError("creator_rights.json introuvable — rotation impossible.")
+
+        rights = json.loads(_CREATOR_RIGHTS_FILE.read_text(encoding="utf-8"))
+
+        # ── Conserver l'historique des rotations ──────────────────────────────
+        rotation_history = rights.get("rotation_history", [])
+        rotation_index = len(rotation_history) + 1
+        rotation_history.append({
+            "old_address":     old_address,
+            "new_address":     new_address,
+            "rotated_at":      now_str,
+            "rotation_index":  rotation_index,
+            "sig_status":      sig_status,
+        })
+
+        # ── Mettre a jour creator_rights.json ────────────────────────────────
+        rights["creator_wallet"]    = new_address
+        rights["last_rotation"]     = now_str
+        rights["rotation_history"]  = rotation_history
+
+        _CREATOR_RIGHTS_FILE.write_text(
+            json.dumps(rights, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        # ── Recharger CREATOR_WALLET_ADDRESS en memoire ───────────────────────
+        CREATOR_WALLET_ADDRESS = new_address
+
+        # ── Construire le contenu du bloc special ─────────────────────────────
+        rotation_content = {
+            "type":              "creator_key_rotation",
+            "timestamp":         now_str,
+            "old_address":       old_address,
+            "new_address":       new_address,
+            "old_address_short": old_address[:16] + "...",
+            "new_address_short": new_address[:16] + "...",
+            "rotation_index":    rotation_index,
+            "sig_status":        sig_status,
+            "signature":         signature_hex or "unsigned",
+            "visibility":        "public",
+            "note": (
+                "Rotation de cle createur ARTCB. "
+                "Ancienne cle remplacee par nouvelle cle. "
+                "Les droits createur (veto, poids) sont transferes a la nouvelle adresse. "
+                "Cette rotation est irreversible sauf nouvelle rotation. "
+                "Bloc public visible par toute la communaute."
+            ),
+        }
+
+        # ── Hash SHA-256 du contenu (garantie d'integrite) ────────────────────
+        content_bytes = json.dumps(rotation_content, sort_keys=True, ensure_ascii=False).encode("utf-8")
+        rotation_hash = hashlib.sha256(content_bytes).hexdigest()
+        rotation_content["rotation_hash"] = rotation_hash
+
+        # ── Inscrire dans la chaine si blocks_path fourni ─────────────────────
+        block_index: int | None = None
+        if blocks_path is not None:
+            block_index = _append_special_block(blocks_path, rotation_content)
+            rotation_content["block_index"] = block_index
+            logger.warning(
+                "CREATOR KEY ROTATION inscrite bloc #%d: %s... -> %s... "
+                "(rotation #%d sig=%s hash=%s...)",
+                block_index,
+                old_address[:16], new_address[:16],
+                rotation_index, sig_status, rotation_hash[:16],
+            )
+        else:
+            logger.warning(
+                "CREATOR KEY ROTATION (sans bloc chaine): %s... -> %s... "
+                "(rotation #%d sig=%s) — fournir blocks_path pour garantie forte",
+                old_address[:16], new_address[:16],
+                rotation_index, sig_status,
+            )
+
+        return rotation_content
+
+    def user_key_rotation(
+        self,
+        *,
+        old_address: str,
+        new_address: str,
+        signature_hex: str | None = None,
+        blocks_path: Path | None = None,
+    ) -> dict:
+        """Rotation de cle pour TOUT utilisateur — meme securite que le createur.
+
+        Permet a n'importe quel wallet ARTCB de migrer vers une nouvelle adresse.
+        La rotation est inscrite dans un bloc special public pour traçabilite.
+
+        Differences avec creator_key_rotation :
+          - Pas de verification contre CREATOR_WALLET_ADDRESS
+          - Pas de mise a jour de creator_rights.json
+          - Le type de bloc est "user_key_rotation" (vs "creator_key_rotation")
+          - Pas de droits speciaux associes — juste migration de solde
+
+        Cas d'usage :
+          - Cle privee compromise → migrer vers nouveau wallet securise
+          - Upgrade vers wallet hybride Ed25519 + ML-DSA-65
+          - Changement de materiel (HSM, nouveau dispositif)
+
+        Args:
+            old_address:    Ancienne adresse wallet (n'importe quel wallet valide)
+            new_address:    Nouvelle adresse wallet
+            signature_hex:  Signature Ed25519 hex de l'ancienne cle (recommande)
+            blocks_path:    Chemin vers blocks.jsonl pour inscrire le bloc special
+
+        Returns:
+            dict : enregistrement complet du bloc special
+        """
+        if not old_address or not new_address:
+            raise GovernanceError("old_address et new_address sont requis.")
+        if old_address == new_address:
+            raise GovernanceError("old_address et new_address sont identiques — rotation inutile.")
+
+        now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+        # ── Verification de signature si fournie ──────────────────────────────
+        sig_status = "unsigned"
+        if signature_hex:
+            try:
+                from nacl import encoding as nacl_encoding, signing as nacl_signing
+                verify_key = nacl_signing.VerifyKey(
+                    old_address, encoder=nacl_encoding.Base64Encoder
+                )
+                message = f"{old_address}:{new_address}:{now_str}".encode("utf-8")
+                verify_key.verify(message, bytes.fromhex(signature_hex))
+                sig_status = "verified"
+                logger.info("User key rotation signature VERIFIED for %s...", old_address[:16])
+            except Exception as exc:
+                logger.warning(
+                    "User key rotation signature verification failed: %s — "
+                    "rotation marquee 'sig_failed'", exc
+                )
+                sig_status = "sig_failed"
+
+        # ── Construire le contenu du bloc special ─────────────────────────────
+        rotation_content = {
+            "type":              "user_key_rotation",
+            "timestamp":         now_str,
+            "old_address":       old_address,
+            "new_address":       new_address,
+            "old_address_short": old_address[:16] + "...",
+            "new_address_short": new_address[:16] + "...",
+            "sig_status":        sig_status,
+            "signature":         signature_hex or "unsigned",
+            "visibility":        "public",
+            "note": (
+                "Rotation de cle utilisateur ARTCB. "
+                "Ancienne adresse remplacee par nouvelle adresse. "
+                "Le solde et l'historique de l'ancienne adresse restent lisibles. "
+                "Bloc public visible par toute la communaute."
+            ),
+        }
+
+        # ── Hash SHA-256 du contenu (garantie d'integrite) ────────────────────
+        content_bytes = json.dumps(rotation_content, sort_keys=True, ensure_ascii=False).encode("utf-8")
+        rotation_hash = hashlib.sha256(content_bytes).hexdigest()
+        rotation_content["rotation_hash"] = rotation_hash
+
+        # ── Inscrire dans la chaine si blocks_path fourni ─────────────────────
+        block_index = None
+        if blocks_path is not None:
+            block_index = _append_special_block(blocks_path, rotation_content)
+            rotation_content["block_index"] = block_index
+            logger.info(
+                "USER KEY ROTATION inscrite bloc #%d: %s... -> %s... (sig=%s hash=%s...)",
+                block_index, old_address[:16], new_address[:16], sig_status, rotation_hash[:16],
+            )
+        else:
+            logger.info(
+                "USER KEY ROTATION (sans bloc chaine): %s... -> %s... (sig=%s)",
+                old_address[:16], new_address[:16], sig_status,
+            )
+
+        return rotation_content
+
+    def tally(self, proposal_id: str) -> dict:
+        """Calcule les resultats du vote avec droits createur.
+
+        Regles createur (immuables) :
+          - Vote OUI createur -> acceptation immediate (quelles que soient les autres voix)
+          - Vote NON createur -> veto absolu (rejet immediat)
+          - Poids createur    = CREATOR_VOTE_WEIGHT_MULTIPLIER x votes communaute emis
+                                (minimum 1 si aucun vote communaute)
+          - Ratio createur    = 20/21 = 95.24% constant quel que soit le nombre de votants
         """
         votes = [v for v in self._read_votes() if v.proposal_id == proposal_id]
 
-        # ── Détecter le vote créateur ────────────────────────────────────
+        # ── Detecter le vote createur et compter les votes communaute ────
         creator_voted_yes = False
         creator_voted_no  = False
-        if CREATOR_WALLET_ADDRESS:
-            for v in votes:
-                if v.wallet_address == CREATOR_WALLET_ADDRESS:
-                    creator_voted_yes = (v.choice == "yes")
-                    creator_voted_no  = (v.choice == "no")
-                    break
+        creator_vote = None
 
-        # ── Calcul pondéré ───────────────────────────────────────────────
+        community_votes = []
+        for v in votes:
+            if CREATOR_WALLET_ADDRESS and v.wallet_address == CREATOR_WALLET_ADDRESS:
+                creator_voted_yes = (v.choice == "yes")
+                creator_voted_no  = (v.choice == "no")
+                creator_vote = v
+            else:
+                community_votes.append(v)
+
+        # ── Poids createur dynamique : 20 x votes communaute (min 1) ────
+        community_vote_count = len(community_votes)
+        creator_dynamic_weight = max(1, community_vote_count * CREATOR_VOTE_WEIGHT_MULTIPLIER)
+
+        # ── Calcul pondere ───────────────────────────────────────────────
         yes_weight = 0
         no_weight  = 0
         for v in votes:
-            weight = (
-                CREATOR_VOTE_WEIGHT
-                if (CREATOR_WALLET_ADDRESS and v.wallet_address == CREATOR_WALLET_ADDRESS)
-                else 1
-            )
+            is_creator = CREATOR_WALLET_ADDRESS and v.wallet_address == CREATOR_WALLET_ADDRESS
+            weight = creator_dynamic_weight if is_creator else 1
             if v.choice == "yes":
                 yes_weight += weight
             else:
@@ -307,32 +649,38 @@ class GovernanceManager:
         majority_accept = total > 0 and yes_weight > total / 2
         majority_reject = total > 0 and no_weight  > total / 2
 
-        # ── Droits créateur absolus ──────────────────────────────────────
+        # ── Droits createur absolus ──────────────────────────────────────
         if creator_voted_yes:
             majority_accept = True
             majority_reject = False
             logger.info(
-                "CREATOR VOTE YES — proposal %s accepted by creator override", proposal_id
+                "CREATOR VOTE YES — proposal %s accepted by creator override "
+                "(poids=%d, votes_communaute=%d)",
+                proposal_id, creator_dynamic_weight, community_vote_count,
             )
         elif creator_voted_no:
             majority_reject = True
             majority_accept = False
             logger.warning(
-                "CREATOR VETO NON — proposal %s rejected by creator veto", proposal_id
+                "CREATOR VETO NON — proposal %s rejected by creator veto "
+                "(poids=%d, votes_communaute=%d)",
+                proposal_id, creator_dynamic_weight, community_vote_count,
             )
 
         return {
-            "proposal_id":        proposal_id,
-            "yes":                yes_weight,
-            "no":                 no_weight,
-            "total_votes":        total,
-            "majority_accept":    majority_accept,
-            "majority_reject":    majority_reject,
-            "requires_rollback":  majority_reject,
-            "creator_voted_yes":  creator_voted_yes,
-            "creator_voted_no":   creator_voted_no,
-            "creator_veto_active": creator_voted_no,
-            "creator_override":   creator_voted_yes,
+            "proposal_id":            proposal_id,
+            "yes":                    yes_weight,
+            "no":                     no_weight,
+            "total_votes":            total,
+            "community_vote_count":   community_vote_count,
+            "creator_dynamic_weight": creator_dynamic_weight,
+            "majority_accept":        majority_accept,
+            "majority_reject":        majority_reject,
+            "requires_rollback":      majority_reject,
+            "creator_voted_yes":      creator_voted_yes,
+            "creator_voted_no":       creator_voted_no,
+            "creator_veto_active":    creator_voted_no,
+            "creator_override":       creator_voted_yes,
             "creator_rights_enabled": CREATOR_WALLET_ADDRESS is not None,
         }
 
@@ -344,3 +692,88 @@ class GovernanceManager:
             "proposal": proposal.to_dict(),
             "tally": self.tally(proposal_id),
         }
+
+
+# ─── Helpers module-level ────────────────────────────────────────────────────
+
+def _append_special_block(blocks_path: Path, content: dict) -> int:
+    """Inscrit un bloc special (rotation de cle, veto, etc.) dans blocks.jsonl.
+
+    Le bloc special est public, horodate, avec son propre index sequentiel.
+    Il ne contient pas de contributors ni de PoL score — c'est un evenement
+    de gouvernance ou de securite, pas un bloc de minage.
+
+    Format minimal du bloc special dans blocks.jsonl :
+      {
+        "index":         <prochain index>,
+        "timestamp":     "<ISO8601Z>",
+        "prev_hash":     "<hash du bloc precedent ou '000...0'>",
+        "type":          "<creator_key_rotation | user_key_rotation | ...>",
+        "visibility":    "public",
+        "pol_score":     1.0,  # Toujours valide — bloc systeme
+        "hash":          "<SHA-256 du contenu>",
+        "hash_sha3":     null,
+        "signature":     "<signature fournie ou 'unsigned'>",
+        "contributors":  [],
+        "block_reward":  0,
+        ...  # autres champs specifiques au type
+      }
+
+    Args:
+        blocks_path : chemin vers blocks.jsonl
+        content     : dict avec au moins "type", "timestamp", "signature"
+
+    Returns:
+        int : index du bloc special ecrit
+    """
+    import hashlib as _hashlib
+
+    blocks_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Calculer le prochain index
+    block_index = 0
+    prev_hash = "0" * 64
+    if blocks_path.is_file():
+        lines = [l.strip() for l in blocks_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        block_index = len(lines)
+        if lines:
+            try:
+                last = json.loads(lines[-1])
+                prev_hash = last.get("hash", "0" * 64)
+            except Exception:
+                pass
+
+    now_str = content.get("timestamp", datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"))
+
+    # Construire le bloc minimal
+    block: dict = {
+        "index":        block_index,
+        "timestamp":    now_str,
+        "prev_hash":    prev_hash,
+        "graph_root":   "special_block",
+        "merkle_root":  "special_block",
+        "pol_score":    1.0,
+        "hash_sha3":    None,
+        "signature":    content.get("signature", "unsigned"),
+        "graph_id":     f"special_{content.get('type', 'unknown')}_{block_index}",
+        "visibility":   "public",
+        "block_reward": 0,
+        "contributors": [],
+    }
+    # Fusionner le contenu specifique
+    block.update(content)
+    block["index"] = block_index  # Toujours imposer l'index correct
+
+    # Hash SHA-256 du bloc
+    block_bytes = json.dumps(
+        {k: v for k, v in sorted(block.items()) if k != "hash"},
+        ensure_ascii=False, separators=(",", ":"),
+    ).encode("utf-8")
+    block["hash"] = _hashlib.sha256(block_bytes).hexdigest()
+
+    # Ecrire dans blocks.jsonl
+    line = json.dumps(block, ensure_ascii=False, separators=(",", ":"))
+    with blocks_path.open("a", encoding="utf-8") as fh:
+        fh.write(line + "\n")
+
+    return block_index

@@ -16,6 +16,7 @@ data/*
 !data/founders/
 # Clés privées founders (SENSIBLE - ne jamais commit)
 data/founders/founders_wallets.json
+data/founders/founders_wallets_v2.json
 data/founders/*.key
 data/founders/*_private.json
 *.pdf

@@ -1,4 +1,8 @@
-"""NumPy-vectorized PoL scorer for batch processing (Optimisation #9)."""
+"""NumPy-vectorized PoL scorer for batch processing (Optimisation #9).
+
+Seuil PoL : IMMUTABLE_POL_THRESHOLD (tokenomics.py) — jamais depuis .env.
+Coherent avec scorer.py : le seuil est immuable dans les deux variantes du scorer.
+"""
 
 from __future__ import annotations
 
@@ -9,6 +13,7 @@ import numpy as np
 
 from src.artcb.config import load_settings
 from src.artcb.ir.models import IRGraph
+from src.artcb.tokenomics import IMMUTABLE_POL_THRESHOLD
 
 logger = logging.getLogger("artcb.pol.scorer_numpy")
 
@@ -50,7 +55,8 @@ class PolScorerNumPy:
         self.alpha = alpha if alpha is not None else settings.pol_alpha
         self.beta = beta if beta is not None else settings.pol_beta
         self.gamma = gamma if gamma is not None else settings.pol_gamma
-        self.threshold = threshold if threshold is not None else settings.pol_threshold
+        # IMMUTABLE : le seuil PoL est toujours 0.6 — jamais depuis .env.
+        self.threshold = threshold if threshold is not None else IMMUTABLE_POL_THRESHOLD
 
     def score_batch(
         self,

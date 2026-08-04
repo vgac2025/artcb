@@ -1,4 +1,18 @@
-"""Detection materielle multi-plateforme — CPU, RAM, GPU, disque."""
+"""Detection materielle multi-plateforme — CPU, RAM, GPU, disque, reseau.
+
+Mesure de bande passante reseau (rapport 113 — 2026-08-04) :
+  measure_network_bandwidth() mesure la bande passante reelle sur 1 seconde.
+  Cette valeur alimente compute_max_contributors_for_network() dans optimizer.py
+  pour calculer dynamiquement combien de contributeurs un bloc peut contenir
+  sans saturer le reseau du noeud.
+
+  Classes reseau :
+    TRES_FAIBLE : < 0.5 Mbps  — connexion tres lente (mobile 2G, satellite)
+    FAIBLE      : < 5 Mbps    — connexion lente (mobile 3G, ADSL faible)
+    MOYENNE     : < 50 Mbps   — connexion normale (ADSL, 4G)
+    BONNE       : < 500 Mbps  — connexion rapide (fibre, 5G)
+    EXCELLENTE  : >= 500 Mbps — datacenter, fibre 1G+
+"""
 
 from __future__ import annotations
 
@@ -7,10 +21,18 @@ import os
 import platform
 import shutil
 import subprocess
+import time
 from dataclasses import dataclass, field
 from typing import Any
 
 logger = logging.getLogger("artcb.system.hardware")
+
+# Classes reseau — utilisees pour calculer max_contributors dynamiquement
+NETWORK_CLASS_TRES_FAIBLE = "TRES_FAIBLE"   # < 0.5 Mbps
+NETWORK_CLASS_FAIBLE      = "FAIBLE"         # < 5 Mbps
+NETWORK_CLASS_MOYENNE     = "MOYENNE"        # < 50 Mbps
+NETWORK_CLASS_BONNE       = "BONNE"          # < 500 Mbps
+NETWORK_CLASS_EXCELLENTE  = "EXCELLENTE"     # >= 500 Mbps
 
 
 @dataclass
@@ -30,6 +52,9 @@ class HardwareProfile:
     gpus: list[dict[str, Any]] = field(default_factory=list)
     faiss_gpu_count: int = 0
     cuda_visible: bool = False
+    # Bande passante reseau mesuree (ajoutee rapport 113)
+    network_bandwidth_mbps: float = 0.0
+    network_class: str = NETWORK_CLASS_MOYENNE
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -56,6 +81,10 @@ class HardwareProfile:
             "gpus": self.gpus,
             "faiss_gpu_count": self.faiss_gpu_count,
             "cuda_visible": self.cuda_visible,
+            "network": {
+                "bandwidth_mbps": round(self.network_bandwidth_mbps, 2),
+                "class": self.network_class,
+            },
         }
 
 
@@ -144,6 +173,65 @@ def detect_hardware() -> HardwareProfile:
     )
 
 
+def measure_network_bandwidth(sample_seconds: float = 1.0) -> tuple[float, str]:
+    """Mesure la bande passante reseau reelle sur sample_seconds secondes.
+
+    Retourne (bandwidth_mbps, network_class).
+
+    Classes :
+      TRES_FAIBLE : < 0.5 Mbps  — mobile 2G, satellite, connexion degradee
+      FAIBLE      : < 5 Mbps    — ADSL faible, 3G
+      MOYENNE     : < 50 Mbps   — ADSL, 4G, fibre debutante
+      BONNE       : < 500 Mbps  — fibre standard, 5G
+      EXCELLENTE  : >= 500 Mbps — datacenter, fibre 1G+
+
+    NOTE : mesure le trafic du noeud entier (entrant + sortant), pas seulement P2P.
+    Pour une mesure plus precise, utiliser un ping/throughput vers un pair connu.
+    Cette mesure sert d'estimation pour calibrer max_contributors_per_block.
+    Si psutil n'est pas disponible ou si la mesure echoue, retourne une valeur
+    conservative (MOYENNE = 50 Mbps) pour ne pas bloquer le demarrage.
+    """
+    try:
+        import psutil as _psutil
+
+        net1 = _psutil.net_io_counters()
+        time.sleep(sample_seconds)
+        net2 = _psutil.net_io_counters()
+
+        # Utiliser le max entre montant et descendant — le goulot est la direction la plus lente
+        bytes_up   = net2.bytes_sent - net1.bytes_sent
+        bytes_down = net2.bytes_recv - net1.bytes_recv
+        total_bytes = max(bytes_up, bytes_down)
+
+        # Convertir en Mbps (bits par seconde / 1 000 000)
+        mbps = (total_bytes * 8) / (sample_seconds * 1_000_000)
+
+        # Si trafic trop faible pour mesurer (< 10 KB/s), considerer comme EXCELLENTE
+        # car cela signifie que le noeud est au repos, pas qu'il est lent
+        if total_bytes < 10_000:
+            # Pas assez de trafic pour mesurer — supposer une bonne connexion par defaut
+            mbps = 100.0
+
+    except Exception as exc:
+        logger.debug("Network bandwidth measurement failed: %s", exc)
+        mbps = 50.0  # Valeur conservative par defaut
+
+    # Classifier
+    if mbps < 0.5:
+        cls = NETWORK_CLASS_TRES_FAIBLE
+    elif mbps < 5.0:
+        cls = NETWORK_CLASS_FAIBLE
+    elif mbps < 50.0:
+        cls = NETWORK_CLASS_MOYENNE
+    elif mbps < 500.0:
+        cls = NETWORK_CLASS_BONNE
+    else:
+        cls = NETWORK_CLASS_EXCELLENTE
+
+    logger.debug("Network bandwidth measured: %.2f Mbps -> class=%s", mbps, cls)
+    return mbps, cls
+
+
 def live_metrics() -> dict[str, Any]:
     """Metriques temps reel (CPU%, RAM%, reseau)."""
     import psutil
@@ -158,6 +246,7 @@ def live_metrics() -> dict[str, Any]:
     except Exception:
         disk = psutil.disk_usage("/")
     net = psutil.net_io_counters()
+    bw_mbps, bw_class = measure_network_bandwidth(sample_seconds=0.5)
 
     return {
         "cpu": {
@@ -178,9 +267,11 @@ def live_metrics() -> dict[str, Any]:
             "percent": disk.percent,
         },
         "network": {
-            "bytes_sent_mb": round(net.bytes_sent / (1024**2), 2),
-            "bytes_recv_mb": round(net.bytes_recv / (1024**2), 2),
-            "packets_sent": net.packets_sent,
-            "packets_recv": net.packets_recv,
+            "bytes_sent_mb":    round(net.bytes_sent / (1024**2), 2),
+            "bytes_recv_mb":    round(net.bytes_recv / (1024**2), 2),
+            "packets_sent":     net.packets_sent,
+            "packets_recv":     net.packets_recv,
+            "bandwidth_mbps":   round(bw_mbps, 2),
+            "bandwidth_class":  bw_class,
         },
     }

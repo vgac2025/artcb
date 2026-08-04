@@ -1,4 +1,9 @@
-"""Proof-of-Learning scorer — CDC §3.2.4."""
+"""Proof-of-Learning scorer — CDC §3.2.4.
+
+Seuil PoL : IMMUTABLE_POL_THRESHOLD (tokenomics.py) — jamais depuis .env.
+Coefficients alpha, beta, gamma : configurables via .env pour le dev uniquement.
+En production, seul le fondateur peut les modifier via vote de gouvernance.
+"""
 
 from __future__ import annotations
 
@@ -6,6 +11,7 @@ from dataclasses import dataclass
 
 from src.artcb.config import load_settings
 from src.artcb.ir.models import IRGraph
+from src.artcb.tokenomics import IMMUTABLE_POL_THRESHOLD
 
 
 @dataclass(frozen=True)
@@ -40,7 +46,10 @@ class PolScorer:
         self.alpha = alpha if alpha is not None else settings.pol_alpha
         self.beta = beta if beta is not None else settings.pol_beta
         self.gamma = gamma if gamma is not None else settings.pol_gamma
-        self.threshold = threshold if threshold is not None else settings.pol_threshold
+        # IMMUTABLE : le seuil PoL est toujours 0.6 — jamais depuis .env.
+        # Le parametre threshold (si fourni explicitement en test) est accepte
+        # pour les tests unitaires uniquement — pas en production.
+        self.threshold = threshold if threshold is not None else IMMUTABLE_POL_THRESHOLD
 
     def score(
         self,

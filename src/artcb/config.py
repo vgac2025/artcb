@@ -1,4 +1,20 @@
-"""Environment configuration loader — secrets from .env only (never committed)."""
+"""Environment configuration loader — secrets from .env only (never committed).
+
+REGLES D'USAGE (rapport 112 — 2026-08-04) :
+  .env et Doppler sont EXCLUSIVEMENT pour l'usage personnel du fondateur
+  et les phases de developpement. Ils ne contiennent JAMAIS de parametres
+  affectant les regles du protocole en production.
+
+  Parametres dans .env/Doppler (OK) :
+    - Cles API tierces (BOB_API_KEY, GITHUB_TOKEN, GRADIUM_API_KEY, etc.)
+    - Parametres d'infrastructure (ports, chemins, mode debug)
+    - Coefficients PoL alpha/beta/gamma (dev uniquement)
+
+  Parametres INTERDITS dans .env/Doppler (protocole immutable) :
+    - ARTCB_POL_THRESHOLD  -> remplace par IMMUTABLE_POL_THRESHOLD dans tokenomics.py
+    - Supply max           -> IMMUTABLE_MAX_SUPPLY_ARTCB dans tokenomics.py
+    - Droits createur      -> graves dans genesis block, jamais dans .env
+"""
 
 from __future__ import annotations
 
@@ -31,7 +47,9 @@ class ArtcbSettings:
     pol_alpha: float
     pol_beta: float
     pol_gamma: float
-    pol_threshold: float
+    # NOTE : pol_threshold est RETIRE de ArtcbSettings.
+    # Utiliser IMMUTABLE_POL_THRESHOLD depuis src/artcb/tokenomics.py.
+    # La variable ARTCB_POL_THRESHOLD dans .env est ignoree par le scorer.
 
 
 def load_settings() -> ArtcbSettings:
@@ -62,5 +80,5 @@ def load_settings() -> ArtcbSettings:
         pol_alpha=float(os.getenv("ARTCB_POL_ALPHA", "0.4")),
         pol_beta=float(os.getenv("ARTCB_POL_BETA", "0.3")),
         pol_gamma=float(os.getenv("ARTCB_POL_GAMMA", "0.3")),
-        pol_threshold=float(os.getenv("ARTCB_POL_THRESHOLD", "0.6")),
+        # pol_threshold SUPPRIME — utiliser IMMUTABLE_POL_THRESHOLD de tokenomics.py
     )

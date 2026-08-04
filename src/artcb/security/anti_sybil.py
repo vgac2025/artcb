@@ -1,20 +1,23 @@
 """
-Anti-Sybil Validator — Détection attaques Sybil sur réseau ARTCB
+Anti-Sybil Validator — Detection attaques Sybil sur reseau ARTCB
 
-Mesures implémentées :
-1. Vérification PoL minimum (seuil 0.6)
-2. Détection patterns suspects (même IP, même signature)
-3. Limite contributeurs par bloc
-4. Historique réputation par adresse
-5. [STUDY MODE] Compteur métriques — mesure l'usage réel sans limiter les IA
-   → permet de calibrer les limites futures sur données réelles
+Mesures implementees :
+1. Verification PoL minimum (seuil 0.6)
+2. Detection patterns suspects (meme IP, meme signature)
+3. Limite contributeurs par bloc — DYNAMIQUE (rapport 113)
+   compute_max_contributors() recalcule la limite a chaque bloc selon :
+   - Dimension 1 : wallets actifs dans les 30 derniers jours (adoption)
+   - Dimension 2 : bande passante reseau mesuree en temps reel
+4. Historique reputation par adresse
+5. [STUDY MODE] Compteur metriques — mesure l'usage reel sans limiter les IA
+   -> permet de calibrer les limites futures sur donnees reelles
 
 Variables d'environnement :
-  ARTCB_MIN_BLOCK_INTERVAL_SEC   Intervalle min entre blocs (défaut: 60s)
+  ARTCB_MIN_BLOCK_INTERVAL_SEC   Intervalle min entre blocs (defaut: 60s)
   ARTCB_ANTI_SYBIL_AI_BYPASS     "true" = bypass rate-limit pour blocs IA
-                                  (ne désactive PAS PoL min ni blacklist)
+                                  (ne desactive PAS PoL min ni blacklist)
   ARTCB_ANTI_SYBIL_STUDY_MODE   "true" = log tout sans rejeter pour rate-limit
-                                  (utile pendant le dev pour mesurer l'usage réel)
+                                  (utile pendant le dev pour mesurer l'usage reel)
 """
 
 import logging
@@ -25,6 +28,9 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
+
+from src.artcb.system.optimizer import compute_max_contributors
+from src.artcb.system.hardware import measure_network_bandwidth
 
 logger = logging.getLogger(__name__)
 
@@ -231,24 +237,27 @@ class AntiSybilMetrics:
 
 class AntiSybilValidator:
     """
-    Validateur Anti-Sybil pour prévenir attaques réseau.
+    Validateur Anti-Sybil pour prevenir attaques reseau.
 
-    Règles actives :
-    - PoL minimum 0.6 par bloc                         → TOUJOURS actif
-    - Maximum 10 contributeurs par bloc                → TOUJOURS actif
-    - Blacklist / réputation suspecte                  → TOUJOURS actif
-    - Rate-limit (1 bloc / ARTCB_MIN_BLOCK_INTERVAL_SEC) →
-        * Désactivé pour blocs IA si ARTCB_ANTI_SYBIL_AI_BYPASS=true
-        * Logué même si bypassé (métriques)
-        * Désactivé pour TOUS si ARTCB_ANTI_SYBIL_STUDY_MODE=true
+    Regles actives :
+    - PoL minimum 0.6 par bloc                              -> TOUJOURS actif
+    - Max contributeurs par bloc — DYNAMIQUE (rapport 113)  -> TOUJOURS actif
+      Recalcule a chaque validate_block() via compute_max_contributors()
+      Dimension 1 : wallets actifs 30j (adoption)
+      Dimension 2 : bande passante reseau mesuree en temps reel
+    - Blacklist / reputation suspecte                       -> TOUJOURS actif
+    - Rate-limit (1 bloc / ARTCB_MIN_BLOCK_INTERVAL_SEC)   ->
+        * Desactive pour blocs IA si ARTCB_ANTI_SYBIL_AI_BYPASS=true
+        * Logue meme si bypasse (metriques)
+        * Desactive pour TOUS si ARTCB_ANTI_SYBIL_STUDY_MODE=true
 
-    En mode bypass/study : le slashing est aussi supprimé pour les memos IA.
+    En mode bypass/study : le slashing est aussi supprime pour les memos IA.
     """
 
     def __init__(
         self,
         min_pol_score: float = 0.6,
-        max_contributors_per_block: int = 10,
+        max_contributors_per_block: int | None = None,
         min_block_interval_seconds: int | None = None,
         reputation_file: Path | None = None,
     ):
@@ -256,7 +265,6 @@ class AntiSybilValidator:
             min_block_interval_seconds = int(os.getenv("ARTCB_MIN_BLOCK_INTERVAL_SEC", "60"))
 
         self.min_pol_score = min_pol_score
-        self.max_contributors_per_block = max_contributors_per_block
         self.min_block_interval = timedelta(seconds=min_block_interval_seconds)
         self.reputation_file = reputation_file or Path("data/reputation.json")
 
@@ -264,21 +272,63 @@ class AntiSybilValidator:
         self.ai_bypass: bool = os.getenv("ARTCB_ANTI_SYBIL_AI_BYPASS", "false").lower() == "true"
         self.study_mode: bool = os.getenv("ARTCB_ANTI_SYBIL_STUDY_MODE", "false").lower() == "true"
 
-        # Cache réputation en mémoire
+        # Cache reputation en memoire
         self.reputation: dict[str, ReputationScore] = {}
 
-        # Métriques
+        # Compteur de wallets actifs dans les 30 derniers jours (mis a jour par record_valid_block)
+        # Cle : adresse wallet, Valeur : timestamp du dernier bloc valide
+        self._last_active: dict[str, float] = {}
+
+        # Metriques
         self.metrics = AntiSybilMetrics()
 
+        # Limite dynamique initiale (sera recalculee a chaque bloc)
+        # Si max_contributors_per_block fourni, utiliser comme valeur fixe (tests / override)
+        self._fixed_max_contributors: int | None = max_contributors_per_block
+        self.max_contributors_per_block: int = (
+            max_contributors_per_block
+            if max_contributors_per_block is not None
+            else self._compute_dynamic_max_contributors()
+        )
+
         logger.info(
-            "AntiSybilValidator initialized: min_pol=%.2f max_contributors=%d "
+            "AntiSybilValidator initialized: min_pol=%.2f max_contributors=%d (dynamic=%s) "
             "min_interval=%ds ai_bypass=%s study_mode=%s",
             min_pol_score,
-            max_contributors_per_block,
+            self.max_contributors_per_block,
+            self._fixed_max_contributors is None,
             min_block_interval_seconds,
             self.ai_bypass,
             self.study_mode,
         )
+
+    def _count_wallets_active_30d(self) -> int:
+        """Compte les wallets ayant mine un bloc dans les 30 derniers jours."""
+        cutoff = time.time() - (30 * 86_400)
+        return sum(1 for ts in self._last_active.values() if ts >= cutoff)
+
+    def _compute_dynamic_max_contributors(self) -> int:
+        """Calcule la limite dynamique en combinant adoption + bande passante reseau.
+
+        Appele a chaque validate_block() pour adapter la limite en temps reel.
+        Utilise compute_max_contributors() depuis optimizer.py (rapport 113).
+        """
+        wallets_active = self._count_wallets_active_30d()
+        try:
+            bw_mbps, bw_class = measure_network_bandwidth(sample_seconds=0.1)
+        except Exception:
+            bw_mbps, bw_class = 50.0, "MOYENNE"
+
+        limit = compute_max_contributors(
+            wallets_active_30d=wallets_active,
+            network_bandwidth_mbps=bw_mbps,
+            network_class=bw_class,
+        )
+        logger.debug(
+            "Dynamic max_contributors recalculated: wallets_30d=%d bw=%.1fMbps class=%s -> limit=%d",
+            wallets_active, bw_mbps, bw_class, limit,
+        )
+        return limit
 
     def validate_block(
         self,
@@ -305,9 +355,16 @@ class AntiSybilValidator:
             logger.warning("Block %d rejected: %s", block_index, reason)
             return False, reason
 
-        # ── Règle 2 : Nombre contributeurs (TOUJOURS actif) ────────────────
+        # ── Règle 2 : Nombre contributeurs — DYNAMIQUE (TOUJOURS actif) ────
+        # Recalculer la limite a chaque bloc si mode dynamique (pas de valeur fixee)
+        if self._fixed_max_contributors is None:
+            self.max_contributors_per_block = self._compute_dynamic_max_contributors()
+
         if len(contributors) > self.max_contributors_per_block:
-            reason = f"{len(contributors)} contributors > max {self.max_contributors_per_block}"
+            reason = (
+                f"{len(contributors)} contributors > max {self.max_contributors_per_block} "
+                f"(dynamic limit: wallets_30d={self._count_wallets_active_30d()})"
+            )
             logger.warning("Block %d rejected: %s", block_index, reason)
             return False, reason
 
@@ -391,6 +448,7 @@ class AntiSybilValidator:
         block_index: int,
     ) -> None:
         now = datetime.now(UTC)
+        now_ts = time.time()
         for contributor in contributors:
             address = contributor.get("address", "")
             contrib_pol = contributor.get("pol_score", 0.0)
@@ -400,6 +458,8 @@ class AntiSybilValidator:
             rep.total_blocks += 1
             rep.total_pol_score += contrib_pol
             rep.last_block_time = now
+            # Mettre a jour le timestamp d'activite pour le calcul wallets_active_30d
+            self._last_active[address] = now_ts
         logger.debug("Block %d recorded in reputation for %d contributors", block_index, len(contributors))
 
     def _record_rejection(self, address: str, reason: str) -> None:
