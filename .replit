@@ -1,9 +1,10 @@
 run = "bash scripts/replit_start.sh"
 language = "python3"
 entrypoint = "src/api/main.py"
+modules = ["python-3.11", "nodejs-20", "bash", "web"]
 
 [nix]
-channel = "stable-23_11"
+channel = "stable-25_05"
 
 [env]
 PYTHONPATH = "/home/runner/${REPL_SLUG}"
@@ -15,12 +16,34 @@ ARTCB_LLM_ENABLED = "false"
 ARTCB_ANTI_SYBIL_AI_BYPASS = "true"
 
 [deployment]
-# Port 5000 : requis pour Replit webview (pas 8000)
-# NOTE Autoscale : build et run = conteneurs DISTINCTS → venv du build absent au run
-# Solution : run recrée son propre venv (cache pip = rapide après 1er déploiement)
-run = ["sh", "-c", "python3 -m venv $HOME/venv && $HOME/venv/bin/pip install -r requirements.txt -q && PYTHONPATH=/home/runner/${REPL_SLUG} $HOME/venv/bin/python3 -m uvicorn src.api.main:app --host 0.0.0.0 --port 5000"]
+# Uses the same validated startup script as the interactive workflow
+run = ["bash", "scripts/replit_start.sh"]
 deploymentTarget = "autoscale"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/replit_start.sh"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"

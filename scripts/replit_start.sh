@@ -27,12 +27,14 @@ fi
 export PATH="$VENV/bin:$PATH"
 PIP="$VENV/bin/pip"
 PYTHON="$VENV/bin/python3"
+# Override Replit global pip.conf (user = yes) which breaks venv installs
+export PIP_USER=false
 
 # ── 2. Installation des dépendances via venv ──────────────────────
 echo "[2/6] Installation des dépendances Python..."
-$PIP install -r requirements.txt -q 2>&1 | grep -v "^Requirement already" | tail -5 || true
+$PIP install --no-user -r requirements.txt -q 2>&1 | grep -v "^Requirement already" | tail -5 || true
 # Fallback : litellm-ibm-bob souvent absent sur PyPI public
-$PIP show litellm-ibm-bob &>/dev/null || $PIP install "litellm>=1.0.0" -q 2>/dev/null || true
+$PIP show litellm-ibm-bob &>/dev/null || $PIP install --no-user "litellm>=1.0.0" -q 2>/dev/null || true
 
 # ── 3. Patch oqs.py — évite l'auto-install bloquant ──────────────
 # oqs.py lève SystemExit (BaseException) quand le .so natif manque —
@@ -54,67 +56,65 @@ for p in sys.path:
         break
 " 2>/dev/null || echo "  (patch oqs.py ignoré)"
 
-# ── 4. Installer Doppler CLI + injecter secrets ───────────────────
-if ! command -v doppler &>/dev/null; then
-  echo "[4/6] Installation Doppler CLI..."
-  curl -Ls --tlsv1.2 --proto "=https" --retry 3 \
-    https://cli.doppler.com/install.sh | sh 2>/dev/null || true
-else
-  echo "[4/6] Doppler CLI $(doppler --version 2>/dev/null | head -1)"
-fi
-
-if [ -n "$DOPPLER_TOKEN" ]; then
-  echo "      Injection secrets Doppler (projet artcb-blockchain)..."
-  doppler configure set token "$DOPPLER_TOKEN" 2>/dev/null || true
+# ── 4. Injecter secrets Doppler (si token disponible) ────────────
+# Replit expose le token sous DOPPLER_TOKEN ou DOPPLER_TOKEN_REPLIT
+_DTOKEN="${DOPPLER_TOKEN:-${DOPPLER_TOKEN_REPLIT:-}}"
+if [ -n "$_DTOKEN" ] && command -v doppler &>/dev/null; then
+  echo "[4/6] Injection secrets Doppler..."
+  doppler configure set token "$_DTOKEN" 2>/dev/null || true
   doppler configure set project artcb-blockchain 2>/dev/null || true
   doppler configure set config dev 2>/dev/null || true
   eval "$(doppler secrets download --no-file --format env 2>/dev/null | grep -v '^#' || true)"
   echo "      Secrets Doppler injectés"
 else
-  echo "      DOPPLER_TOKEN absent — variables Replit utilisées"
+  echo "[4/6] Doppler ignoré — variables Replit utilisées"
 fi
 
 # ── 5. Compiler libartcb_chain.so si absent ───────────────────────
 echo "[5/6] Compilation libartcb_chain.so..."
 if [ ! -f "src/c/libartcb_chain.so" ]; then
-  # Chercher un compilateur C fonctionnel
-  CC_CMD=""
-  for candidate in cc gcc "$(find /nix/store -name 'cc' -path '*/bin/cc' 2>/dev/null | grep runtime | head -1)"; do
-    if command -v "$candidate" &>/dev/null 2>&1; then
-      CC_CMD="$candidate"
-      break
-    fi
-  done
+  # Paths connus sur Replit NixOS (évite find /nix/store qui est très lent)
+  NIX_CC="/nix/store/a0d7m3zn9p2dfa1h7ag9h2wzzr2w25sn-gcc-wrapper-14.2.1.20250322/bin/cc"
+  NIX_SSL="/nix/store/2cwpdm6fcc53f8jgxmagransrfp0igbl-openssl-3.4.1/lib/libcrypto.so"
+  NIX_INC="/nix/store/2cwpdm6fcc53f8jgxmagransrfp0igbl-openssl-3.4.1/include"
+  CC_CMD=""; OPENSSL_LIB=""; OPENSSL_INC=""
+  # Prefer known Nix paths, fall back to PATH
+  if [ -x "$NIX_CC" ] && [ -f "$NIX_SSL" ]; then
+    CC_CMD="$NIX_CC"; OPENSSL_LIB="$NIX_SSL"; OPENSSL_INC="$NIX_INC"
+  elif command -v cc &>/dev/null && [ -f "/lib/x86_64-linux-gnu/libcrypto.so.3" ]; then
+    CC_CMD="cc"; OPENSSL_LIB="/lib/x86_64-linux-gnu/libcrypto.so.3"; OPENSSL_INC="/usr/include"
+  fi
 
-  if [ -n "$CC_CMD" ]; then
-    # Chercher OpenSSL : d'abord le système, sinon le store Nix
-    OPENSSL_LIB="/lib/x86_64-linux-gnu/libcrypto.so.3"
-    OPENSSL_INC="/usr/include"
-    if [ ! -f "$OPENSSL_LIB" ]; then
-      OPENSSL_LIB="$(find /nix/store -name 'libcrypto.so' -not -name '*.drv' 2>/dev/null | head -1)"
-      OPENSSL_INC="$(find /nix/store -name 'openssl' -path '*/include/*' -not -name '*.drv' 2>/dev/null | head -1 | xargs dirname 2>/dev/null)"
-    fi
-
-    if [ -f "$OPENSSL_LIB" ]; then
-      $CC_CMD -Wall -O2 -fPIC \
-        -I"$OPENSSL_INC" \
-        src/c/libartcb_chain.c -o src/c/libartcb_chain.so -shared \
-        "$OPENSSL_LIB" 2>/dev/null \
-        && echo "  libartcb_chain.so compilé ✅" \
-        || echo "  ⚠️ Compilation libartcb_chain.so échouée — mode fallback Python"
-    else
-      echo "  ⚠️ OpenSSL non trouvé — compilation libartcb_chain.so ignorée"
-    fi
+  if [ -n "$CC_CMD" ] && [ -f "$OPENSSL_LIB" ]; then
+    $CC_CMD -Wall -O2 -fPIC \
+      -I"$OPENSSL_INC" \
+      src/c/libartcb_chain.c -o src/c/libartcb_chain.so -shared \
+      "$OPENSSL_LIB" 2>/dev/null \
+      && echo "  libartcb_chain.so compilé ✅" \
+      || echo "  ⚠️ Compilation libartcb_chain.so échouée — mode fallback Python"
   else
-    echo "  ⚠️ Compilateur C non trouvé — libartcb_chain.so ignoré"
+    echo "  ⚠️ Compilateur/OpenSSL non trouvé — mode fallback Python"
   fi
 else
   echo "  libartcb_chain.so déjà présent ✅"
 fi
 
-# ── 6. Pull GitHub + lancer l'API ────────────────────────────────
+# ── 6. Build frontend si dist absent ou sources plus récentes ────
+echo "[6/7] Frontend React..."
+FRONTEND_DIST="$REPL_DIR/frontend/dist/index.html"
+FRONTEND_SRC="$REPL_DIR/frontend/src"
+if [ ! -f "$FRONTEND_DIST" ] || [ -n "$(find "$FRONTEND_SRC" -newer "$FRONTEND_DIST" 2>/dev/null | head -1)" ]; then
+  echo "  Build frontend (npm install + vite build)..."
+  (cd "$REPL_DIR/frontend" && npm install -q && npm run build 2>&1 | tail -5) \
+    && echo "  Frontend buildé ✅" \
+    || echo "  ⚠️ Build frontend échoué — API seule disponible"
+else
+  echo "  dist/ à jour ✅"
+fi
+
+# ── 7. Pull GitHub + lancer l'API ────────────────────────────────
 if [ -d .git ] && git remote -v 2>/dev/null | grep -q github; then
-  echo "[6/6] Pull GitHub..."
+  echo "[7/7] Pull GitHub..."
   git pull origin "${GITHUB_BRANCH:-main}" 2>/dev/null || true
 fi
 
