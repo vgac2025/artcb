@@ -173,6 +173,21 @@ def detect_hardware() -> HardwareProfile:
     )
 
 
+def psutil_available() -> bool:
+    """Verifie si psutil est installe et fonctionnel.
+
+    psutil est une dependance OBLIGATOIRE de ARTCB (pyproject.toml + requirements.txt).
+    Cette fonction est utilisee par les tests pour verifier que psutil est bien present.
+    Si psutil est absent, le noeud tourne en mode degrade sans mesure reseau reelle.
+    """
+    try:
+        import psutil as _p
+        _p.cpu_percent(interval=0)  # Appel reel pour verifier que la lib est chargeable
+        return True
+    except Exception:
+        return False
+
+
 def measure_network_bandwidth(sample_seconds: float = 1.0) -> tuple[float, str]:
     """Mesure la bande passante reseau reelle sur sample_seconds secondes.
 
@@ -188,11 +203,17 @@ def measure_network_bandwidth(sample_seconds: float = 1.0) -> tuple[float, str]:
     NOTE : mesure le trafic du noeud entier (entrant + sortant), pas seulement P2P.
     Pour une mesure plus precise, utiliser un ping/throughput vers un pair connu.
     Cette mesure sert d'estimation pour calibrer max_contributors_per_block.
-    Si psutil n'est pas disponible ou si la mesure echoue, retourne une valeur
-    conservative (MOYENNE = 50 Mbps) pour ne pas bloquer le demarrage.
+
+    DEPENDANCE OBLIGATOIRE : psutil>=5.9.0 (pyproject.toml + requirements.txt).
+    Si psutil n'est pas installe, log un WARNING visible et retourne une valeur
+    conservative (MOYENNE = 50 Mbps). Ce n'est PAS silencieux — l'operateur du noeud
+    DOIT installer psutil pour que la mesure reseau soit reelle.
+    Pour installer : pip install psutil>=5.9.0 (ou pip install -r requirements.txt)
     """
+    psutil_ok = False
     try:
         import psutil as _psutil
+        psutil_ok = True
 
         net1 = _psutil.net_io_counters()
         time.sleep(sample_seconds)
@@ -206,15 +227,30 @@ def measure_network_bandwidth(sample_seconds: float = 1.0) -> tuple[float, str]:
         # Convertir en Mbps (bits par seconde / 1 000 000)
         mbps = (total_bytes * 8) / (sample_seconds * 1_000_000)
 
-        # Si trafic trop faible pour mesurer (< 10 KB/s), considerer comme EXCELLENTE
-        # car cela signifie que le noeud est au repos, pas qu'il est lent
+        # Si trafic trop faible pour mesurer (< 10 KB/s), supposer connexion au repos
+        # -> utiliser 100 Mbps (BONNE) comme estimation par defaut
         if total_bytes < 10_000:
-            # Pas assez de trafic pour mesurer — supposer une bonne connexion par defaut
             mbps = 100.0
 
+    except ImportError:
+        # psutil ABSENT — WARNING visible, pas silencieux
+        logger.warning(
+            "AVERTISSEMENT : psutil n'est pas installe. "
+            "La mesure de bande passante reseau est DESACTIVEE. "
+            "max_contributors_per_block utilisera la valeur conservative (50 Mbps = MOYENNE). "
+            "Pour une mesure reelle : pip install psutil>=5.9.0 "
+            "ou : pip install -r requirements.txt"
+        )
+        mbps = 50.0
     except Exception as exc:
-        logger.debug("Network bandwidth measurement failed: %s", exc)
-        mbps = 50.0  # Valeur conservative par defaut
+        if psutil_ok:
+            logger.warning(
+                "Mesure bande passante echouee malgre psutil : %s — "
+                "fallback 50 Mbps (MOYENNE). Verifier les droits d'acces reseau.", exc
+            )
+        else:
+            logger.debug("Network bandwidth measurement failed: %s", exc)
+        mbps = 50.0
 
     # Classifier
     if mbps < 0.5:
