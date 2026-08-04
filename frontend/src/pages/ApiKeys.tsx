@@ -89,12 +89,12 @@ export function ApiKeys() {
       {/* Alerte token — affiché UNE seule fois */}
       {newToken && (
         <div className="panel" style={{ border: "2px solid var(--mc-gold)" }}>
-          <h2 className="mc-gold-text">⚠ {t('api_keys_token_warning')}</h2>
+          <h2 className="mc-gold-text">[!] {t('api_keys_token_warning')}</h2>
           <p className="mc-mono" style={{ wordBreak: "break-all", fontSize: "0.85rem" }}>
             {newToken}
           </p>
           <button className="mc-btn" onClick={handleCopy}>
-            {copied ? "✓ Copié !" : "Copier"}
+            {copied ? "[OK] Copie !" : "Copier"}
           </button>
           <button
             className="mc-btn-sm"

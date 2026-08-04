@@ -211,7 +211,7 @@ python3 -m pytest tests/ --tb=short # avec détail erreurs
 
 ## Licence
 
-**Titulaire : VGACTech (Société)**
+**Titulaire : ARTCB (Société)**
 
 | Réseau | Licence |
 |--------|---------|
@@ -220,7 +220,7 @@ python3 -m pytest tests/ --tb=short # avec détail erreurs
 | Dépôt (défaut) | [LICENSE](LICENSE) |
 
 Politique complète : [LICENCE_ARTCB.md](LICENCE_ARTCB.md)  
-Contact : vgacofficiel@gmail.com
+Contact : contact@artcb.io
 
 ---
 

@@ -1,0 +1,10 @@
+{
+  "schema": "artcb-creator-rights-v1",
+  "creator_wallet": "yRUitWXQQ2Ri/ykV8oOWL8mY+PpRQxmdz/WGGRhSLMQ=",
+  "creator_veto_enabled": true,
+  "creator_vote_weight": 999999,
+  "immutable": true,
+  "genesis_block_hash": "genesis-artcb-v2",
+  "established_at": "2026-08-04T00:02:31Z",
+  "description": "L'adresse ci-dessus est le compte créateur permanent de la blockchain ARTCB. Son vote a un poids de 999 999 voix. Son vote NON invalide toute proposition de gouvernance. Ces droits sont gravés dans le genesis block et ne peuvent pas etre modifies."
+}

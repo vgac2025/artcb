@@ -102,7 +102,7 @@ export function AgentMemory() {
         session_id: memoSession,
         visibility: "private",
       }, auth);
-      setSuccess(`✅ Mémo gravé — bloc #${(r as Record<string, number>).block_index}`);
+      setSuccess(`Memo grave — bloc #${(r as Record<string, number>).block_index}`);
       setMemoContent("");
       setTab("memos");
       loadMemos();
@@ -134,7 +134,7 @@ export function AgentMemory() {
     clear(); setLoading(true);
     try {
       await registerWebhook({ url: whUrl, label: whLabel, events: ["block_stored"] }, auth);
-      setSuccess("✅ Webhook enregistré");
+      setSuccess("Webhook enregistre");
       setWhUrl(""); setWhLabel("");
       loadWebhooks();
     } catch (e) { setError(String(e)); }
@@ -156,7 +156,7 @@ export function AgentMemory() {
     wsRef.current = ws;
     ws.onopen = () => {
       setStreamStatus("open");
-      setStreamLog(prev => [...prev, "🟢 Connexion WebSocket ouverte"]);
+      setStreamLog(prev => [...prev, "[OK] Connexion WebSocket ouverte"]);
       ws.send(JSON.stringify({ type: "start", agent_id: auth ? "bob_agent" : "anonymous", memo_type: "reasoning" }));
     };
     ws.onmessage = (e) => {
@@ -165,13 +165,13 @@ export function AgentMemory() {
         setStreamLog(prev => [...prev.slice(-50), `  … ${msg.count} tokens en buffer`]);
       } else if (msg.type === "committed") {
         setStreamStatus("done");
-        setStreamLog(prev => [...prev, `✅ ${msg.message}`]);
+        setStreamLog(prev => [...prev, `[OK] ${msg.message}`]);
       } else {
         setStreamLog(prev => [...prev, JSON.stringify(msg)]);
       }
     };
-    ws.onclose = () => setStreamLog(prev => [...prev, "🔴 Connexion fermée"]);
-    ws.onerror = () => setStreamLog(prev => [...prev, "❌ Erreur WebSocket"]);
+    ws.onclose = () => setStreamLog(prev => [...prev, "[CLOSED] Connexion fermée"]);
+    ws.onerror = () => setStreamLog(prev => [...prev, "[ERR] Erreur WebSocket"]);
   };
 
   const sendTokens = () => {
@@ -180,7 +180,7 @@ export function AgentMemory() {
     for (const w of words) {
       wsRef.current.send(JSON.stringify({ type: "token", text: w + " " }));
     }
-    setStreamLog(prev => [...prev, `📤 ${words.length} tokens envoyés`]);
+    setStreamLog(prev => [...prev, `[SEND] ${words.length} tokens envoyes`]);
     setStreamInput("");
   };
 
@@ -200,13 +200,13 @@ export function AgentMemory() {
   };
 
   const tabs: { id: Tab; label: string }[] = [
-    { id: "status", label: `🤖 ${t('agent_memory_tab_status')}` },
-    { id: "memos", label: `🧠 ${t('agent_memory_tab_memos')}` },
-    { id: "memo_new", label: `✍️ ${t('agent_memory_tab_new')}` },
-    { id: "search", label: `🔍 ${t('agent_memory_tab_search')}` },
-    { id: "export", label: `📦 ${t('agent_memory_tab_export')}` },
-    { id: "webhooks", label: `🪝 ${t('agent_memory_tab_webhooks')}` },
-    { id: "stream", label: `🌊 ${t('agent_memory_tab_stream')}` },
+    { id: "status", label: t('agent_memory_tab_status') },
+    { id: "memos", label: t('agent_memory_tab_memos') },
+    { id: "memo_new", label: t('agent_memory_tab_new') },
+    { id: "search", label: t('agent_memory_tab_search') },
+    { id: "export", label: t('agent_memory_tab_export') },
+    { id: "webhooks", label: t('agent_memory_tab_webhooks') },
+    { id: "stream", label: t('agent_memory_tab_stream') },
   ];
 
   const inp: React.CSSProperties = {
@@ -220,7 +220,7 @@ export function AgentMemory() {
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: "0 auto", fontFamily: "system-ui, sans-serif" }}>
-      <h2 style={{ marginBottom: 4 }}>🤖 {t('agent_memory_title')}</h2>
+      <h2 style={{ marginBottom: 4 }}>{t('agent_memory_title')}</h2>
       <p style={{ color: "#57606a", fontSize: 14, marginBottom: 16 }}>
         Interface complète pour que Bob/Cursor/ChatGPT utilise ARTCB comme mémoire persistante
       </p>
@@ -261,7 +261,7 @@ export function AgentMemory() {
       {/* STATUS */}
       {tab === "status" && (
         <div>
-          <button style={btn()} onClick={loadStatus} disabled={loading}>🔄 Rafraîchir</button>
+          <button style={btn()} onClick={loadStatus} disabled={loading}>Rafraichir</button>
           {status && (
             <pre style={{ background: "#f7f8fa", border: "1px solid #e5e7eb", borderRadius: 8, padding: 16, marginTop: 12, fontSize: 13, overflow: "auto" }}>
               {JSON.stringify(status, null, 2)}
@@ -273,7 +273,7 @@ export function AgentMemory() {
       {/* MÉMOIRE */}
       {tab === "memos" && (
         <div>
-          <button style={btn()} onClick={loadMemos} disabled={loading}>🔄 Rafraîchir</button>
+          <button style={btn()} onClick={loadMemos} disabled={loading}>Rafraichir</button>
           <div style={{ marginTop: 12 }}>
             {memos.length === 0 && <p style={{ color: "#57606a" }}>Aucun mémo IA gravé pour l'instant.</p>}
             {memos.map(m => (
@@ -313,7 +313,7 @@ export function AgentMemory() {
             <input style={{ ...inp, flex: 1 }} placeholder="Session ID" value={memoSession} onChange={e => setMemoSession(e.target.value)} />
           </div>
           <button style={btn("#7c5cd8")} onClick={submitMemo} disabled={loading || !memoContent.trim()}>
-            🧠 Graver dans la blockchain
+            Graver dans la blockchain
           </button>
         </div>
       )}
@@ -345,9 +345,9 @@ export function AgentMemory() {
               <option value="jsonl">JSONL (RAG)</option>
               <option value="json">JSON complet</option>
             </select>
-            <button style={btn()} onClick={doExport} disabled={loading}>📦 Exporter</button>
+            <button style={btn()} onClick={doExport} disabled={loading}>Exporter</button>
             {exportData && (
-              <button style={btn("#16a34a")} onClick={() => navigator.clipboard?.writeText(exportData)}>📋 Copier</button>
+              <button style={btn("#16a34a")} onClick={() => navigator.clipboard?.writeText(exportData)}>Copier</button>
             )}
           </div>
           {exportData && (
@@ -372,7 +372,7 @@ export function AgentMemory() {
                 <b>{String(h.label)}</b> <span style={{ color: "#57606a", fontSize: 12 }}>{String(h.url)}</span>
                 <div style={{ fontSize: 12, color: "#57606a" }}>Events: {(h.events as string[])?.join(", ")}</div>
               </div>
-              <button style={{ ...btn("#dc2626"), padding: "4px 12px" }} onClick={() => removeWebhook(String(h.hook_id))}>✕</button>
+              <button style={{ ...btn("#dc2626"), padding: "4px 12px" }} onClick={() => removeWebhook(String(h.hook_id))}>X</button>
             </div>
           ))}
         </div>
@@ -385,15 +385,15 @@ export function AgentMemory() {
             Connecte un WebSocket <code>/ws/stream_thought</code> — envoie des tokens en temps réel → grave le raisonnement complet en un seul bloc PoL.
           </p>
           <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-            {streamStatus === "idle" && <button style={btn("#16a34a")} onClick={openStream}>🌊 Ouvrir le stream</button>}
+            {streamStatus === "idle" && <button style={btn("#16a34a")} onClick={openStream}>Ouvrir le stream</button>}
             {streamStatus === "open" && <>
-              <input style={{ ...inp, flex: 1 }} placeholder="Texte à streamer…" value={streamInput} onChange={e => setStreamInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendTokens()} />
-              <button style={btn()} onClick={sendTokens}>📤 Envoyer tokens</button>
-              <button style={btn("#7c5cd8")} onClick={commitStream}>💾 Graver</button>
-              <button style={btn("#dc2626")} onClick={abortStream}>✕ Annuler</button>
+              <input style={{ ...inp, flex: 1 }} placeholder="Texte a streamer..." value={streamInput} onChange={e => setStreamInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendTokens()} />
+              <button style={btn()} onClick={sendTokens}>Envoyer tokens</button>
+              <button style={btn("#7c5cd8")} onClick={commitStream}>Graver</button>
+              <button style={btn("#dc2626")} onClick={abortStream}>Annuler</button>
             </>}
             {(streamStatus === "done" || streamStatus === "committing") && (
-              <button style={btn("#57606a")} onClick={() => { setStreamStatus("idle"); setStreamLog([]); if (wsRef.current) wsRef.current.close(); }}>🔄 Réinitialiser</button>
+              <button style={btn("#57606a")} onClick={() => { setStreamStatus("idle"); setStreamLog([]); if (wsRef.current) wsRef.current.close(); }}>Reinitialiser</button>
             )}
           </div>
           <div style={{ background: "#0d1117", borderRadius: 8, padding: 12, minHeight: 120, maxHeight: 300, overflow: "auto", fontFamily: "monospace", fontSize: 13, color: "#e6edf3" }}>

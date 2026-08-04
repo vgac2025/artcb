@@ -1,11 +1,11 @@
-# LICENCE ARTCB — Politique VGACTech (privé / groupe / public)
+# LICENCE ARTCB — Politique ARTCB (privé / groupe / public)
 
-**Titulaire :** VGACTech (Société)  
-**Contact :** vgacofficiel@gmail.com  
+**Titulaire :** ARTCB (Société)  
+**Contact :** contact@artcb.io  
 **Horodatage :** 2026-07-08T22:00:00Z  
 **Décision :** ordre utilisateur — , passage licences fermées  
-**Autorité licence :** **VGACTech uniquement**, par décision écrite  
-**Autorité code :** VGACTech modifie à tout moment — **rollback si majorité rejette** une MAJ majeure (voir `GOUVERNANCE_ARTCB.md`)
+**Autorité licence :** **ARTCB uniquement**, par décision écrite  
+**Autorité code :** ARTCB modifie à tout moment — **rollback si majorité rejette** une MAJ majeure (voir `GOUVERNANCE_ARTCB.md`)
 
 ---
 
@@ -13,9 +13,9 @@
 
 | Réseau | Exemple | Licence du **logiciel** | Les autres peuvent copier/modifier ? |
 |--------|---------|-------------------------|--------------------------------------|
-| **PRIVÉ** | Ma mémoire perso sur mon wallet | **Propriétaire** | **Non** (sans accord VGACTech) |
-| **GROUPE** | Projet d'équipe, join-request, ACL | **Propriétaire** | **Non** (sans accord VGACTech) |
-| **PUBLIC** | Blocs `visibility=public` sur la chaîne | **BSL 1.1** (SSPL possible si VGACTech le décide) | **Limité** — voir LICENSE-PUBLIC-BSL.md |
+| **PRIVÉ** | Ma mémoire perso sur mon wallet | **Propriétaire** | **Non** (sans accord ARTCB) |
+| **GROUPE** | Projet d'équipe, join-request, ACL | **Propriétaire** | **Non** (sans accord ARTCB) |
+| **PUBLIC** | Blocs `visibility=public` sur la chaîne | **BSL 1.1** (SSPL possible si ARTCB le décide) | **Limité** — voir LICENSE-PUBLIC-BSL.md |
 
 **Le dépôt GitHub entier** est **propriétaire par défaut** (`LICENSE`).  
 Seul le volet **réseau public** a une licence plus permissive (BSL) pour consultation et R&D non-production.
@@ -26,7 +26,7 @@ Seul le volet **réseau public** a une licence plus permissive (BSL) pour consul
 
 | Fichier | Rôle |
 |---------|------|
-| `LICENSE` | Licence **défaut** — propriétaire VGACTech (tout le dépôt) |
+| `LICENSE` | Licence **défaut** — propriétaire ARTCB (tout le dépôt) |
 | `LICENSE-PROPRIETAIRE.md` | Détail réseaux **privé** et **groupe** |
 | `LICENSE-PUBLIC-BSL.md` | Réseau **public** — Business Source License 1.1 |
 | `LICENCE_ARTCB.md` | Ce document — politique globale |
@@ -39,16 +39,16 @@ Seul le volet **réseau public** a une licence plus permissive (BSL) pour consul
 
 ### Licences (copier, utiliser, vendre le logiciel)
 
-**Uniquement VGACTech** — pas un vote des utilisateurs. Voir sections 1–2 et `LICENSE-*.md`.
+**Uniquement ARTCB** — pas un vote des utilisateurs. Voir sections 1–2 et `LICENSE-*.md`.
 
 ### Code (mises à jour du programme)
 
 | Règle | Détail |
 |-------|--------|
-| VGACTech modifie le code | **À tout moment**, sans vote préalable |
-| Engagement rollback | Si **majorité des utilisateurs votants** **rejette** une mise à jour **majeure**, VGACTech **corrige** (revient en arrière ou publie un correctif) |
+| ARTCB modifie le code | **À tout moment**, sans vote préalable |
+| Engagement rollback | Si **majorité des utilisateurs votants** **rejette** une mise à jour **majeure**, ARTCB **corrige** (revient en arrière ou publie un correctif) |
 | Vote automatique | **Pas encore codé** — règle actée dans `GOUVERNANCE_ARTCB.md` |
-| Contact | vgacofficiel@gmail.com |
+| Contact | contact@artcb.io |
 
 Les utilisateurs :
 - gardent le contrôle de **leurs données** (wallet, clés privées) ;
@@ -85,7 +85,7 @@ Tout le reste (groupes, join-request, wallets privés, dashboard interne, tokeno
 
 ## 6. SSPL (alternative future)
 
-Si VGACTech publie un **service en ligne** (SaaS) basé sur le réseau public, la **SSPL v1** pourra s'appliquer à ce service sur décision écrite, en complément ou remplacement du BSL pour la partie hébergée.
+Si ARTCB publie un **service en ligne** (SaaS) basé sur le réseau public, la **SSPL v1** pourra s'appliquer à ce service sur décision écrite, en complément ou remplacement du BSL pour la partie hébergée.
 
 Tant qu'aucun fichier `LICENSE-PUBLIC-SSPL.md` n'est publié, **BSL seul** régit le public.
 
@@ -96,9 +96,9 @@ Tant qu'aucun fichier `LICENSE-PUBLIC-SSPL.md` n'est publié, **BSL seul** régi
 | Date | Événement |
 |------|-----------|
 | 2026-07-04 | CDC NF-09 : intention « open source » (hackathon) |
-| 2026-07-08 | Hackathon terminé — VGACTech : **propriétaire** (privé+groupe) + **BSL** (public) |
+| 2026-07-08 | Hackathon terminé — ARTCB : **propriétaire** (privé+groupe) + **BSL** (public) |
 | 2026-07-08 | Gouvernance : modif code libre + rollback si majorité rejette — `GOUVERNANCE_ARTCB.md` |
 
 ---
 
-**© 2026 VGACTech — vgacofficiel@gmail.com**
+**© 2026 ARTCB — contact@artcb.io**

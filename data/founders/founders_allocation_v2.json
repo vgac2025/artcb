@@ -1,0 +1,24 @@
+{
+  "version": "2.0",
+  "schema": "artcb-founders-allocation-v2",
+  "genesis_date": "2026-08-03T23:45:40.662437+00:00",
+  "total_supply_artcb": 21000000,
+  "founders": [
+    {
+      "name": "ARTCB Createur",
+      "address": "yRUitWXQQ2Ri/ykV8oOWL8mY+PpRQxmdz/WGGRhSLMQ=",
+      "allocation_artcb": 1000000,
+      "allocation_satoshi": 100000000000000,
+      "is_creator": true,
+      "vote_weight": 999999
+    },
+    {
+      "name": "ARTCB Developpement",
+      "address": "/G2Q2jSUkiICEu6Bm2cZbj+CCc5MKdOe+xG7GUopogE=",
+      "allocation_artcb": 1000000,
+      "allocation_satoshi": 100000000000000,
+      "is_creator": false,
+      "vote_weight": 1
+    }
+  ]
+}

@@ -19,7 +19,7 @@ class CreateProposalRequest(BaseModel):
     description: str = Field(min_length=3)
     version: str = Field(min_length=1, max_length=32)
     vote_days: int = Field(default=14, ge=1, le=90)
-    created_by: str = "VGACTech"
+    created_by: str = "ARTCB"
     proposal_id: str | None = None
 
 
@@ -65,7 +65,7 @@ def get_proposal(proposal_id: str, request: Request) -> dict:
 
 @router.post("/proposals")
 def create_proposal(body: CreateProposalRequest, request: Request) -> dict:
-    """VGACTech crée une proposition de mise à jour majeure."""
+    """ARTCB crée une proposition de mise à jour majeure."""
     mgr = _governance(request)
     try:
         proposal = mgr.create_proposal(

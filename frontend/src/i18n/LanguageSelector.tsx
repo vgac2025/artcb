@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { Language, getCurrentLanguage, setLanguage } from './translations';
 
 const languages: { code: Language; name: string; flag: string }[] = [
-  { code: 'fr', name: 'Français', flag: '🇫🇷' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'zh', name: '中文', flag: '🇨🇳' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'pt', name: 'Português', flag: '🇵🇹' },
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
+  { code: 'fr', name: 'Français', flag: 'FR' },
+  { code: 'en', name: 'English', flag: 'EN' },
+  { code: 'zh', name: 'Zhongwen', flag: 'ZH' },
+  { code: 'es', name: 'Español', flag: 'ES' },
+  { code: 'pt', name: 'Português', flag: 'PT' },
+  { code: 'it', name: 'Italiano', flag: 'IT' },
+  { code: 'ru', name: 'Russkiy', flag: 'RU' },
 ];
 
 export function LanguageSelector() {
@@ -60,7 +60,7 @@ export function LanguageSelector() {
           e.currentTarget.style.background = 'var(--terminal-bg)';
         }}
       >
-        <span style={{ fontSize: '18px' }}>{currentLanguage.flag}</span>
+        <span style={{ fontSize: '14px', fontWeight: 700 }}>{currentLanguage.flag}</span>
         <span>{currentLanguage.code.toUpperCase()}</span>
         <span style={{ fontSize: '10px' }}>▼</span>
       </button>
@@ -111,10 +111,10 @@ export function LanguageSelector() {
                 }
               }}
             >
-              <span style={{ fontSize: '20px' }}>{lang.flag}</span>
+              <span style={{ fontSize: '13px', fontWeight: 700, minWidth: 24 }}>{lang.flag}</span>
               <span>{lang.name}</span>
               {lang.code === currentLang && (
-                <span style={{ marginLeft: 'auto', color: 'var(--terminal-success)' }}>✓</span>
+                <span style={{ marginLeft: 'auto', color: 'var(--terminal-success)' }}>[OK]</span>
               )}
             </button>
           ))}

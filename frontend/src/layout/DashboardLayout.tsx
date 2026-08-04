@@ -18,24 +18,24 @@ export function DashboardLayout() {
   const NAV = [
     { section: "CORE", items: [
       { to: "/", label: t('nav_dashboard'), icon: "▶" },
-      { to: "/memorize", label: t('nav_memorize'), icon: "✎" },
+      { to: "/memorize", label: t('nav_memorize'), icon: "W" },
       { to: "/graph", label: t('nav_graph'), icon: "◎" },
     ]},
     { section: "CHAIN", items: [
       { to: "/chain", label: t('nav_chain'), icon: "▣" },
       { to: "/wallets", label: t('nav_wallets'), icon: "◇" },
-      { to: "/mining", label: t('nav_mining'), icon: "⛏" },
+      { to: "/mining", label: t('nav_mining'), icon: "#" },
     ]},
     { section: "SYSTEM", items: [
       { to: "/system", label: t('nav_system'), icon: "F3" },
-      { to: "/logs", label: t('nav_logs'), icon: "≡" },
-      { to: "/console", label: t('nav_console'), icon: "⌨" },
-      { to: "/integrations", label: t('nav_integrations'), icon: "⚙" },
-      { to: "/network", label: t('nav_network'), icon: "⇄" },
-      { to: "/governance", label: t('nav_governance'), icon: "⚖" },
-      { to: "/groups", label: t('nav_groups'), icon: "👥" },
-      { to: "/api-keys", label: t('nav_api_keys'), icon: "🔑" },
-      { to: "/agent-memory", label: t('nav_agent_memory'), icon: "🤖" },
+      { to: "/logs", label: t('nav_logs'), icon: "=" },
+      { to: "/console", label: t('nav_console'), icon: ">" },
+      { to: "/integrations", label: t('nav_integrations'), icon: "+" },
+      { to: "/network", label: t('nav_network'), icon: "~" },
+      { to: "/governance", label: t('nav_governance'), icon: "G" },
+      { to: "/groups", label: t('nav_groups'), icon: "[G]" },
+      { to: "/api-keys", label: t('nav_api_keys'), icon: "K" },
+      { to: "/agent-memory", label: t('nav_agent_memory'), icon: "AI" },
     ]},
   ];
 
@@ -99,7 +99,7 @@ export function DashboardLayout() {
           </label>
           <LanguageSelector />
           <span className="badge-debug">DEBUG</span>
-          <Link to="/console" className="mc-console-link">⌨ CONSOLE</Link>
+          <Link to="/console" className="mc-console-link">CONSOLE</Link>
         </div>
       </header>
 

@@ -85,7 +85,7 @@ export function Governance() {
     <div className="mc-page" aria-label="Page gouvernance">
       <h1 className="dashboard-title">{t('nav_governance')}</h1>
       <p className="mc-hint">
-        1 wallet = 1 voix. Les mises à jour majeures VGACTech peuvent être acceptées ou rejetées par la communauté.
+        1 wallet = 1 voix. Les mises à jour majeures ARTCB peuvent être acceptées ou rejetées par la communauté.
       </p>
       {loading && <p className="mc-muted" aria-live="polite">{t('loading')}</p>}
       {error && <p className="mc-error" role="alert">{error}</p>}
@@ -125,7 +125,7 @@ export function Governance() {
       </section>
 
       <section className="mc-card">
-        <h2>Nouvelle proposition (VGACTech)</h2>
+        <h2>Nouvelle proposition (ARTCB)</h2>
         <label>Titre<input value={title} onChange={(e) => setTitle(e.target.value)} /></label>
         <label>Description<textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} /></label>
         <label>Version<input value={version} onChange={(e) => setVersion(e.target.value)} /></label>

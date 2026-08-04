@@ -310,14 +310,14 @@ Alice crée 1000 comptes → mine avec tous → prend 99% des rewards
 
 ### Q5.5 : Qui contrôle ARTCB ?
 
-**R :** **VGACTech** détient le logiciel (licence propriétaire pour privé/groupe).  
+**R :** **ARTCB** détient le logiciel (licence propriétaire pour privé/groupe).  
 Le réseau **public** est en BSL 1.1 (voir `LICENCE_ARTCB.md`).  
 Les **données** restent contrôlées par chaque détenteur de wallet.
 
 **Gouvernance :**
-- Code : **VGACTech** modifie à tout moment — voir `GOUVERNANCE_ARTCB.md`
+- Code : **ARTCB** modifie à tout moment — voir `GOUVERNANCE_ARTCB.md`
 - Rollback si **majorité rejette** une mise à jour majeure (vote à implémenter)
-- Contact : vgacofficiel@gmail.com
+- Contact : contact@artcb.io
 
 ---
 

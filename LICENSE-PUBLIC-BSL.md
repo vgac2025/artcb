@@ -1,13 +1,13 @@
 # Business Source License 1.1 — réseau PUBLIC ARTCB
 
-**Licensor :** VGACTech  
+**Licensor :** ARTCB  
 **Licensed Work :** ARTCB Public Network Components  
 **Additional Use Grant :** Non-production evaluation and research on `visibility=public` blocks only.  
 **Change Date :** 2030-07-08  
-**Change License :** Proprietary VGACTech (see LICENSE-PROPRIETAIRE.md) or successor license designated by VGACTech in writing.
+**Change License :** Proprietary ARTCB (see LICENSE-PROPRIETAIRE.md) or successor license designated by ARTCB in writing.
 
 > La date et la licence de changement peuvent être **reportées ou modifiées**
-> uniquement par **décision écrite de VGACTech**. Voir LICENCE_ARTCB.md.
+> uniquement par **décision écrite de ARTCB**. Voir LICENCE_ARTCB.md.
 
 ---
 
@@ -26,7 +26,7 @@ S'applique aux fonctionnalités et au code explicitement marqués « PUBLIC » d
 
 ## Alternative SSPL
 
-Pour un **service hébergé** (SaaS) exposant le réseau public ARTCB, VGACTech se réserve le droit d'appliquer **SSPL v1** (Server Side Public License) à la place de BSL sur décision écrite.  
+Pour un **service hébergé** (SaaS) exposant le réseau public ARTCB, ARTCB se réserve le droit d'appliquer **SSPL v1** (Server Side Public License) à la place de BSL sur décision écrite.  
 Tant qu'aucune notice SSPL distincte n'est publiée, **BSL 1.1** prévaut pour le réseau public.
 
 ---
@@ -38,16 +38,16 @@ Business Source License 1.1
 
 Parameters
 
-Licensor:             VGACTech
+Licensor:             ARTCB
 Licensed Work:        ARTCB Public Network Components
-                      The Licensed Work is (c) 2026 VGACTech
+                      The Licensed Work is (c) 2026 ARTCB
 Additional Use Grant:  You may use the Licensed Work for non-production
                       evaluation, research, and development relating to
                       public visibility blocks (visibility=public) only.
 Change Date:          2030-07-08
-Change License:       Proprietary terms as defined by VGACTech in
+Change License:       Proprietary terms as defined by ARTCB in
                       LICENSE-PROPRIETAIRE.md, or a successor license
-                      designated in writing by VGACTech.
+                      designated in writing by ARTCB.
 
 Terms
 
@@ -80,4 +80,4 @@ For the full BSL 1.1 text, see https://mariadb.com/bsl11/
 
 ---
 
-**© 2026 VGACTech**
+**© 2026 ARTCB**

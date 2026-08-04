@@ -20,7 +20,7 @@ TEAM STATION F
 **Réponse** :
 ```
 FOUNDER 1 : Victor Gabriel Araujo Chaves
-Email     : vgacofficiel@gmail.com
+Email     : contact@artcb.io
 Identifiant : Vgactech
 
 FOUNDER 2 : Deyi ZHAO

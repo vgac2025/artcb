@@ -7,7 +7,7 @@ name = "artcb"
 version = "0.1.0"
 description = "AI Reasoning Trace & Cognitive Blockchain — IR Engine"
 readme = "README.md"
-license = { text = "Proprietary - VGACTech. See LICENSE and LICENCE_ARTCB.md" }
+license = { text = "Proprietary - ARTCB. See LICENSE and LICENCE_ARTCB.md" }
 requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.7.0",
