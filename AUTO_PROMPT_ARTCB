@@ -770,3 +770,37 @@ assert "Wailly" in text  # garanti avec le fix
 - P2 : Tester 2 nœuds sur machines réelles distinctes (coefficient Nakamoto)
 - P2 : SDK JavaScript/TypeScript (jalon 13.9)
 - P3 : Whitepaper scientifique
+
+## [2026-08-04T12:00:00Z] Setup Replit + Déploiement production — agent cloud
+
+### Contexte
+Import GitHub → Replit. Déploiement autoscale réussi. Rapport 100 créé.
+
+### Problèmes résolus (Replit NixOS spécifique)
+- **PIP_USER=yes global** (`/nix/store/.../pip.conf`) → `export PIP_USER=false` + `--no-user` dans replit_start.sh
+- **find /nix/store hang** (>5min) → chemins hardcodés :
+  - GCC : `/nix/store/a0d7m3zn9p2dfa1h7ag9h2wzzr2w25sn-gcc-wrapper-14.2.1.20250322/bin/cc`
+  - OpenSSL 64-bit : `/nix/store/2cwpdm6fcc53f8jgxmagransrfp0igbl-openssl-3.4.1/` (ATTENTION: `0w2cdbrgm5gr8vyl5sik40zqh84ic13j` = 32-bit i386 — NE PAS UTILISER)
+- **liboqs-python cmake auto-build** (>10min) → commenté dans requirements.txt, fallback Ed25519/X25519 actif
+- **DOPPLER_TOKEN_REPLIT** → variable Replit = `DOPPLER_TOKEN_REPLIT` (pas `DOPPLER_TOKEN`)
+- **frontend/dist absent** → step 6/7 ajouté dans replit_start.sh : build si dist absent ou src plus récent
+- **[deployment].run inline** → remplacé par `["bash", "scripts/replit_start.sh"]` (même path que workflow)
+- **Nix channel** : `stable-23_11` → `stable-25_05`
+
+### État nœud Replit production (2026-08-04)
+- node_id : `node_57ee00fe2d5b`
+- kem_public_key_hex : `f4f9707d9e58ce3ab854cfa5e45acaf7b9c55f6b8654d106b0d17f74aa88eb48`
+- p2p_port : 18444 (non exposé extérieur — REST only via port 5000)
+- Blocs : 0 (éphémère — autoscale repart à zéro)
+- Crypto : Ed25519 fallback (ML-DSA-65 désactivé)
+
+### Attention pour l'agent local PC
+- Les 3 IPs dans les logs (35.195.213.250, 35.233.29.19, 34.77.42.93) = autoscale Replit, PAS des nœuds P2P
+- Pour tests multi-nœuds réels : voir rapport 100 §6 (guide complet)
+- Sur PC local : `pip install liboqs-python` fonctionne (cmake disponible)
+- Utiliser `ARTCB_DATA_DIR=./data_local` pour éviter conflit de données avec nœud Replit
+- Port recommandé nœud local : 8001 (Replit utilise 5000/8000)
+- ARTCB_PUBLIC_HOST requis pour P2P entrant (ngrok si pas d'IP publique fixe)
+
+### Avancement global : 60% (déployé sur Replit, multi-nœuds à tester)
+- **Rapport :** `rapports/100_audit_replit_setup_deployment_2026-08-04.md`
