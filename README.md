@@ -2,7 +2,7 @@
 
 **Mémoire persistante pour agents IA** : chaque pensée devient un nœud signé dans un graphe, compressible sans perte, retrouvable à l'identique.
 
-[![Tests](https://img.shields.io/badge/tests-303%2F303%20passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-478%2F478%20passing-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
 

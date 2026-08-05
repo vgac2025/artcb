@@ -804,3 +804,29 @@ Import GitHub → Replit. Déploiement autoscale réussi. Rapport 100 créé.
 
 ### Avancement global : 60% (déployé sur Replit, multi-nœuds à tester)
 - **Rapport :** `rapports/100_audit_replit_setup_deployment_2026-08-04.md`
+
+## [2026-08-05T16:00:00Z] Rapport 116 — Audit "unsigned" dead-code + tests réels Replit N2 + 478 tests
+
+### Faille résiduelle corrigée — "unsigned" dead-code
+
+**Contexte :**
+La session 115 avait rendu `sig_status="unsigned"` impossible (signature obligatoire → GovernanceError si absente). Mais le code contenait encore :
+- Ligne 510 `manager.py` : `"signature": signature_hex or "unsigned"` (dead code trompeur)
+- Ligne 653 `manager.py` : `"signature": signature_hex or "unsigned"` (dead code trompeur)
+- Ligne 798 `manager.py` : commentaire docstring `"signature fournie ou 'unsigned'"` (obsolète)
+
+**Correction :**
+- Remplacé par `signature_hex` direct + commentaire explicatif (jamais unsigned — vérifié avant)
+- Commentaire docstring mis à jour : `"signature hybride verifiee — jamais unsigned"`
+
+### Tests réels Replit N2 (nouveau déploiement 2026-08-05)
+
+- **478/478 PASS** locaux + 8 skipped bridges live (intentionnels)
+- **25/25 P2P Replit** : N1 (node_57ee00fe2d5b) ↔ N2 (node_1eb8e5ca44e4)
+- Tous les endpoints nouveaux (`/chain/status`, `/chain/blocks`, `/node/status`, `/ir/learn`, `/creator-key-rotation`, `/user-key-rotation`) répondent correctement
+
+### Règle absolue sécurité confirmée
+
+**AUCUN mode dev / debug n'accepte une rotation non signée.** La vérification est dans la logique métier (manager.py), pas dans un middleware conditionnel. Debug=True n'affecte que le niveau de log.
+
+### Avancement global : 96 %

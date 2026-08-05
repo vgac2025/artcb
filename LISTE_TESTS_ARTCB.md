@@ -12,7 +12,7 @@
 
 | ID | Commande | Attendu | Statut | Dernière exec |
 |----|----------|---------|--------|---------------|
-| T-B01 | `python3 -m pytest tests/ -q` | 234/234 passed | [x] | 2026-07-28 234/234 ✅ |
+| T-B01 | `python3 -m pytest tests/ -q` | 478/478 passed | [x] | 2026-08-05 478/478 ✅ (8 skipped bridges live intentionnels) |
 | T-B02 | `python3 -m pytest tests/test_wallet_rewards.py -q` | all pass, reward 1 ARTCB | [x] | 2026-07-07 |
 | T-B03 | `python3 -m pytest tests/test_pol.py -q` | split 1.0 ARTCB | [x] | 2026-07-07 |
 | T-B04 | `python3 -m pytest tests/test_api.py -q` | API OK | [x] | 2026-07-07 |
@@ -171,3 +171,50 @@
 | **Wikipedia** | connector dans sources.py | **100 %** | T-071-13 |
 | **Tests totaux** | 234 pytest passent | **100 %** | T-071-01 |
 | **Global Rapport 071** | P0 i18n + P0 API Keys + P1 tests + IA autonome | **~95 %** | tous |
+
+---
+
+## 10. Tests sécurité rotation de clé + endpoints manquants (2026-08-05)
+
+> Session rapport 115/116 — fixes sécurité critiques appliqués et testés en production (Replit N1+N2).
+
+| ID | Commande / scénario | Attendu | Statut | Dernière exec |
+|----|---------------------|---------|--------|---------------|
+| T-SEC-01 | `pytest tests/test_governance_rotation.py` | 16/16 PASS — sans-signature → GovernanceError | [x] | 2026-08-05 16/16 ✅ |
+| T-SEC-02 | `POST /api/v1/governance/creator-key-rotation` sans signature | HTTP 422 (Pydantic min_length=1) | [x] | 2026-08-05 ✅ |
+| T-SEC-03 | `POST /api/v1/governance/user-key-rotation` sans signature | HTTP 422 (Pydantic min_length=1) | [x] | 2026-08-05 ✅ |
+| T-SEC-04 | `POST /api/v1/governance/creator-key-rotation` signature invalide | HTTP 400 GOVERNANCE_ERROR | [x] | 2026-08-05 ✅ |
+| T-SEC-05 | `GET /api/v1/chain/status` sur Replit N2 | HTTP 200 `{"status":"ok",...}` | [x] | 2026-08-05 ✅ |
+| T-SEC-06 | `GET /api/v1/chain/blocks` sur Replit N2 | HTTP 200 `{"blocks":[...],...}` | [x] | 2026-08-05 ✅ |
+| T-SEC-07 | `GET /api/v1/node/status` sur Replit N2 | HTTP 200 `{"node_id":"node_1eb8e5ca44e4",...}` — pas matché par /node/{id} | [x] | 2026-08-05 ✅ |
+| T-SEC-08 | `POST /api/v1/ir/learn` wallet + content | HTTP 200 bloc grave, pol_score > 0 | [x] | 2026-08-05 ✅ |
+| T-SEC-09 | `scripts/test_replit_p2p_reel.py` — 2 nœuds Replit production | 25/25 PASS — N1 blocs=1, N2 sync=0, blocs prives non propagés | [x] | 2026-08-05 25/25 ✅ |
+| T-SEC-10 | `scripts/replay_qa_platform.py` | 478/478 PASS | [x] | 2026-08-05 478/478 ✅ |
+| T-SEC-11 | `grep "unsigned" src/**/*.py` dans le code exécutable | Aucune occurrence dans logique fonctionnelle | [x] | 2026-08-05 ✅ |
+
+**Résumé sécurité :**
+- `sig_status="unsigned"` : **physiquement impossible** — rotation sans signature lève `GovernanceError` immédiatement
+- `signature_hex or "unsigned"` : **dead code supprimé** — remplacé par `signature_hex` direct (commenté)
+- Aucun mode dev / mode laxiste : la règle s'applique dans TOUS les environnements
+
+---
+
+## 11. Tests P2P Replit production (2026-08-05)
+
+| ID | Scénario | Nœuds | Attendu | Statut | Dernière exec |
+|----|----------|-------|---------|--------|---------------|
+| T-P2P-01 | N1+N2 health | Replit N1+N2 | `status=ok`, `debug=true` | [x] | 2026-08-05 ✅ |
+| T-P2P-02 | Wallet création N1 + N2 | Replit N1+N2 | adresse `artcb1...` | [x] | 2026-08-05 ✅ |
+| T-P2P-03 | N1 add N2 peer | Replit N1→N2 | peers=1 sur les deux | [x] | 2026-08-05 ✅ |
+| T-P2P-04 | `POST /ir/learn` N1 | Replit N1 | bloc public index=0 | [x] | 2026-08-05 ✅ |
+| T-P2P-05 | `POST /p2p/sync` N2 depuis N1 | Replit N2 | sync OK | [x] | 2026-08-05 ✅ |
+| T-P2P-06 | Bloc privé N1 NOT propagé | Replit N2 | N2 blocs=0 | [x] | 2026-08-05 ✅ |
+
+---
+
+## Journal d'exécution — 2026-08-05
+
+| Date UTC | Session | Tests passés | Notes |
+|----------|---------|--------------|-------|
+| 2026-08-05T16:00Z | Audit sécurité "unsigned" + endpoints | 478/478 pytest + 25/25 P2P Replit | Rapport 116 |
+

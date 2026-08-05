@@ -9,7 +9,7 @@ Tu es l'agent Replit chargé de travailler en **parallèle** avec l'agent Bob (l
 
 - Repo GitHub : `https://github.com/vgac2025/lvx`
 - Branche : `main`
-- Dernière version stable : commit `dc2d5f2` — 371/371 tests PASS
+- Dernière version stable : commit `c3db48e` — 478/478 tests PASS (8 skipped bridges live intentionnels)
 
 ---
 
@@ -75,10 +75,10 @@ python3 -c "import oqs; print('liboqs OK:', oqs.get_enabled_sig_mechanisms()[:3]
 ## ÉTAPE 3 — LANCER TOUS LES TESTS
 
 ```bash
-# Lancer les 371 tests avec les secrets Doppler injectés
+# Lancer les 478 tests avec les secrets Doppler injectés
 doppler run -- python3 -m pytest tests/ -x -q --tb=short 2>&1 | tee replit_test_results.txt
 
-# Résultat attendu : 371 passed
+# Résultat attendu : 478 passed, 8 skipped (bridges live intentionnels)
 tail -3 replit_test_results.txt
 ```
 
@@ -102,6 +102,7 @@ echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) | $(tail -1 replit_test_results.txt)" >> re
 
 # 4. Si des tests échouent, créer un rapport d'échec
 python3 -m pytest tests/ -q --tb=long 2>&1 | grep -A 20 "FAILED\|ERROR" > replit_failures.txt
+# NOTE : 8 skips pour tests/test_bridges_live.py sont NORMAUX (nécessitent ARTCB_LIVE_TESTS=1 ou --live)
 ```
 
 ---
@@ -184,7 +185,7 @@ Après chaque run, crée un fichier `replit_report_YYYYMMDD_HHMMSS.txt` avec :
 === RAPPORT REPLIT ===
 Date : <timestamp>
 Commit testé : <git rev-parse HEAD>
-Tests : <N>/371 PASS | <M> FAIL
+Tests : <N>/478 PASS | <M> FAIL | <S> SKIP (8 bridges live = NORMAL)
 Environnement : Python <version> | liboqs <present/absent>
 Echecs :
   - <test_name> : <erreur courte>
@@ -247,5 +248,24 @@ Ces tâches sont planifiées — **ne pas les implémenter sans instruction de B
 
 ---
 
-*Projet ARTCB — v0.3.0 — commit dc2d5f2 — 2026-08-01*
+*Projet ARTCB — v0.3.1 — commit c3db48e — 2026-08-05*
 *Token Doppler Replit : fourni séparément par le propriétaire du projet (ne pas committer)*
+
+---
+
+## ENDPOINTS NOUVEAUX (ajoutés 2026-08-05)
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/api/v1/chain/status` | GET | État de la chaîne (hauteur, validité, PQC) |
+| `/api/v1/chain/blocks` | GET | Liste paginée des blocs |
+| `/api/v1/node/status` | GET | État du nœud courant (node_id, version, debug) |
+| `/api/v1/ir/learn` | POST | Encode + grave un bloc public (wallet_address + content) |
+| `/api/v1/governance/creator-key-rotation` | POST | Rotation clé créateur — signature OBLIGATOIRE |
+| `/api/v1/governance/user-key-rotation` | POST | Rotation clé utilisateur — signature OBLIGATOIRE |
+
+## RÈGLE DE SÉCURITÉ ABSOLUE (rapport 115)
+
+> **Toute rotation de clé sans signature valide est REJETÉE — dans TOUS les environnements.**
+> Il n'existe PAS de mode dev / debug qui accepterait une rotation non signée.
+> `GovernanceError` immédiat si `signature_hex` absente ou invalide.

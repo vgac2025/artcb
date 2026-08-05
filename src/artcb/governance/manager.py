@@ -507,7 +507,7 @@ class GovernanceManager:
             "sig_format":        "hybrid:ed25519+ML-DSA-65" if (
                 signature_hex and signature_hex.startswith("hybrid:")
             ) else "ed25519",
-            "signature":         signature_hex or "unsigned",
+            "signature":         signature_hex,  # obligatoire — jamais unsigned (verifie ligne 461)
             "pqc_enabled":       pqc_enabled(),
             "visibility":        "public",
             "note": (
@@ -650,7 +650,7 @@ class GovernanceManager:
             "sig_format":        "hybrid:ed25519+ML-DSA-65" if (
                 signature_hex and signature_hex.startswith("hybrid:")
             ) else "ed25519",
-            "signature":         signature_hex or "unsigned",
+            "signature":         signature_hex,  # obligatoire — jamais unsigned (verifie ligne 635)
             "pqc_enabled":       pqc_enabled(),
             "visibility":        "public",
             "note": (
@@ -795,7 +795,7 @@ def _append_special_block(blocks_path: Path, content: dict) -> int:
         "pol_score":     1.0,  # Toujours valide — bloc systeme
         "hash":          "<SHA-256 du contenu>",
         "hash_sha3":     null,
-        "signature":     "<signature fournie ou 'unsigned'>",
+        "signature":     "<signature hybride verifiee — jamais unsigned>",
         "contributors":  [],
         "block_reward":  0,
         ...  # autres champs specifiques au type
