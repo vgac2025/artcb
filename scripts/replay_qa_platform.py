@@ -36,46 +36,38 @@ def banner():
 
 def run_pytest() -> dict:
     """Lance pytest et collecte les résultats JSON."""
+    import re
     print(f"{B}[1/3] Lancement pytest tests/ ...{E}")
     t0 = time.time()
-    # Tenter avec json-report (optionnel)
-    cmd_base = [sys.executable, "-m", "pytest", "tests/", "-q", "--tb=short"]
-    cmd_json = cmd_base + ["--json-report", "--json-report-file=/tmp/artcb_pytest_report.json"]
-    result = subprocess.run(cmd_json, capture_output=True, text=True, cwd=Path(__file__).parent.parent)
-    # Si json-report pas disponible, relancer sans
-    if "unrecognized arguments" in result.stderr or "no such option" in result.stderr or result.returncode == 4:
-        result = subprocess.run(cmd_base, capture_output=True, text=True, cwd=Path(__file__).parent.parent)
+    # Une seule commande : -v pour avoir les noms, --tb=short pour les échecs
+    cmd = [sys.executable, "-m", "pytest", "tests/", "-q", "--tb=short", "--no-header"]
+    result = subprocess.run(cmd, capture_output=True, text=True, cwd=Path(__file__).parent.parent)
     elapsed = time.time() - t0
 
-    # Lire le rapport JSON si disponible
-    report_path = Path("/tmp/artcb_pytest_report.json")
-    report = {}
-    if report_path.exists():
-        try:
-            report = json.loads(report_path.read_text())
-        except Exception:
-            pass
-
-    # Parser la sortie texte
+    # Parser la ligne de résumé pytest : "478 passed, 8 skipped in 576.09s"
     lines = result.stdout.splitlines()
-    summary_line = next((l for l in reversed(lines) if "passed" in l or "failed" in l or "error" in l), "")
+    summary_line = ""
+    for l in reversed(lines):
+        if re.search(r"\d+ passed", l) or re.search(r"\d+ failed", l) or re.search(r"\d+ error", l):
+            summary_line = l
+            break
 
-    passed = 0; failed = 0; errors = 0
-    if "passed" in summary_line:
-        parts = summary_line.split()
-        for i, p in enumerate(parts):
-            if p == "passed": passed = int(parts[i-1])
-            elif p == "failed": failed = int(parts[i-1])
-            elif p == "error": errors = int(parts[i-1])
+    passed = 0; failed = 0; errors = 0; skipped = 0
+    m = re.search(r"(\d+) passed", summary_line)
+    if m: passed = int(m.group(1))
+    m = re.search(r"(\d+) failed", summary_line)
+    if m: failed = int(m.group(1))
+    m = re.search(r"(\d+) error", summary_line)
+    if m: errors = int(m.group(1))
+    m = re.search(r"(\d+) skipped", summary_line)
+    if m: skipped = int(m.group(1))
 
-    status = "pass" if failed == 0 and errors == 0 else "fail"
+    status = "pass" if failed == 0 and errors == 0 and passed > 0 else "fail"
     color = G if status == "pass" else R
     mark = "✅" if status == "pass" else "❌"
 
-    print(f"  {color}{mark} {passed} passed, {failed} failed, {errors} errors — {elapsed:.1f}s{E}")
+    print(f"  {color}{mark} {passed} passed, {skipped} skipped, {failed} failed, {errors} errors — {elapsed:.1f}s{E}")
     if failed > 0 or errors > 0:
-        # Afficher les échecs
-        in_fail = False
         for l in lines:
             if "FAILED" in l or "ERROR" in l:
                 print(f"  {R}{l}{E}")
@@ -84,12 +76,13 @@ def run_pytest() -> dict:
         "passed": passed,
         "failed": failed,
         "errors": errors,
+        "skipped": skipped,
         "elapsed_s": round(elapsed, 2),
         "status": status,
         "summary": summary_line.strip(),
-        "pytest_report": report,
         "stdout_tail": "\n".join(lines[-20:]),
         "timestamp": datetime.now(UTC).isoformat(),
+        "returncode": result.returncode,
     }
 
 def upload_to_replay(run_data: dict) -> bool:

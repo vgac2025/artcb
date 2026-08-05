@@ -350,7 +350,7 @@ class GovernanceManager:
         *,
         old_address: str,
         new_address: str,
-        signature_hex: str | None = None,
+        signature_hex: str,
         blocks_path: Path | None = None,
     ) -> dict:
         """Rotation de cle createur — inscrit un BLOC SPECIAL signe dans la chaine.
@@ -362,7 +362,7 @@ class GovernanceManager:
 
         Mecanique :
           1. Verifie que old_address == CREATOR_WALLET_ADDRESS actuel
-          2. Verifie la signature Ed25519 si fournie (recommande en production)
+          2. Verifie la signature Ed25519 obligatoire (standard hybride ARTCB)
           3. Met a jour creator_rights.json avec la nouvelle adresse
           4. Recharge CREATOR_WALLET_ADDRESS en memoire (module global)
           5. Inscrit un bloc special "creator_key_rotation" dans blocks_path si fourni
@@ -378,28 +378,35 @@ class GovernanceManager:
             "old_address_short": "<16 premiers chars>...",
             "rotation_index":   <numero de rotation>,
             "rotation_hash":    "<SHA-256 du contenu de la rotation>",
-            "signature":        "<signature Ed25519 hex de l'ancienne cle ou 'unsigned'>",
+            "signature":        "<signature hybride Ed25519 ou hybrid:ed25519+ML-DSA-65>",
             "visibility":       "public",
             "note":             "Rotation de cle createur ARTCB..."
           }
 
         SECURITE :
-          - En production, toujours fournir signature_hex (signature de l'ancienne cle
-            sur le message f"{old_address}:{new_address}:{timestamp}").
-          - L'endpoint /api/v1/governance/creator-key-rotation verifie la signature
-            avant d'appeler cette methode.
-          - Sans signature, la rotation est acceptee mais marquee "unsigned" dans le bloc.
+          - signature_hex est OBLIGATOIRE — rotation refusee si absente ou invalide.
+          - Format attendu : "ed25519:HEX" ou "hybrid:ed25519:HEX|mldsa65:HEX"
+          - Message a signer : f"{old_address}:{new_address}:{timestamp}"
+            ou le timestamp est fourni par l'appelant dans signature_timestamp.
+          - Une signature invalide (sig_failed) entraine un GovernanceError immediat.
 
         Args:
             old_address:    Ancienne adresse createur (doit == CREATOR_WALLET_ADDRESS)
             new_address:    Nouvelle adresse createur (wallet valide)
-            signature_hex:  Signature Ed25519 hex de l'ancienne cle (optionnel dev)
+            signature_hex:  Signature hybride obligatoire de l'ancienne cle
             blocks_path:    Chemin vers blocks.jsonl pour inscrire le bloc special
 
         Returns:
             dict : enregistrement complet du bloc special (a stocker + logguer)
         """
         global CREATOR_WALLET_ADDRESS
+
+        # ── Signature obligatoire ─────────────────────────────────────────────
+        if not signature_hex:
+            raise GovernanceError(
+                "SECURITE: signature_hex obligatoire pour la rotation de cle createur. "
+                "Signer f\"{old_address}:{new_address}:{timestamp}\" avec l'ancienne cle."
+            )
 
         # ── Verification de l'ancienne adresse ───────────────────────────────
         if not CREATOR_WALLET_ADDRESS:
@@ -417,41 +424,45 @@ class GovernanceManager:
 
         now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # ── Verification de signature hybride Ed25519+ML-DSA-65 si fournie ───
+        # ── Verification de signature hybride Ed25519+ML-DSA-65 ───────────────
         # Standard blockchain ARTCB : "hybrid:ed25519:HEX|mldsa65:HEX" ou "ed25519:HEX"
         # Meme format que chain/manager.py — verify_hybrid() accepte les deux formats.
-        sig_status = "unsigned"
-        if signature_hex:
-            try:
-                from nacl import encoding as nacl_encoding, signing as nacl_signing
-                # Extraire la cle publique Ed25519 depuis l'adresse Base64
-                raw_pubkey = nacl_signing.VerifyKey(
-                    old_address, encoder=nacl_encoding.Base64Encoder
-                ).encode()
-                message = f"{old_address}:{new_address}:{now_str}".encode("utf-8")
-                # verify_hybrid accepte "hybrid:..." ET "ed25519:..." ET hex brut
-                ok = verify_hybrid(
-                    message=message,
-                    signature_value=signature_hex,
-                    ed25519_public_key=raw_pubkey,
-                    pqc_public_key=b"",  # PQC leg optionnel — Ed25519 seul suffit
+        sig_status = "sig_failed"
+        try:
+            from nacl import encoding as nacl_encoding, signing as nacl_signing
+            # Extraire la cle publique Ed25519 depuis l'adresse Base64
+            raw_pubkey = nacl_signing.VerifyKey(
+                old_address, encoder=nacl_encoding.Base64Encoder
+            ).encode()
+            message = f"{old_address}:{new_address}:{now_str}".encode("utf-8")
+            # verify_hybrid accepte "hybrid:..." ET "ed25519:..." ET hex brut
+            ok = verify_hybrid(
+                message=message,
+                signature_value=signature_hex,
+                ed25519_public_key=raw_pubkey,
+                pqc_public_key=b"",  # PQC leg optionnel — Ed25519 seul suffit
+            )
+            sig_status = "verified" if ok else "sig_failed"
+            if ok:
+                logger.info(
+                    "Creator key rotation signature VERIFIED (hybrid standard) for %s...",
+                    old_address[:16],
                 )
-                sig_status = "verified" if ok else "sig_failed"
-                if ok:
-                    logger.info(
-                        "Creator key rotation signature VERIFIED (hybrid standard) for %s...",
-                        old_address[:16],
-                    )
-                else:
-                    logger.warning(
-                        "Creator key rotation signature INVALID for %s...", old_address[:16]
-                    )
-            except Exception as exc:
+            else:
                 logger.warning(
-                    "Creator key rotation signature verification failed: %s — "
-                    "rotation continuee mais marquee 'sig_failed'", exc
+                    "Creator key rotation signature INVALID for %s...", old_address[:16]
                 )
-                sig_status = "sig_failed"
+        except Exception as exc:
+            logger.warning(
+                "Creator key rotation signature verification failed: %s — rotation refusee", exc
+            )
+            sig_status = "sig_failed"
+
+        if sig_status != "verified":
+            raise GovernanceError(
+                "SECURITE: signature invalide ou non verifiable — rotation createur refusee. "
+                "Verifier que la signature couvre f\"{old_address}:{new_address}:{timestamp}\"."
+            )
 
         # ── Lire creator_rights.json actuel ───────────────────────────────────
         if not _CREATOR_RIGHTS_FILE.is_file():
@@ -541,7 +552,7 @@ class GovernanceManager:
         *,
         old_address: str,
         new_address: str,
-        signature_hex: str | None = None,
+        signature_hex: str,
         blocks_path: Path | None = None,
     ) -> dict:
         """Rotation de cle pour TOUT utilisateur — meme securite que le createur.
@@ -560,10 +571,16 @@ class GovernanceManager:
           - Upgrade vers wallet hybride Ed25519 + ML-DSA-65
           - Changement de materiel (HSM, nouveau dispositif)
 
+        SECURITE :
+          - signature_hex est OBLIGATOIRE — rotation refusee si absente ou invalide.
+          - Format attendu : "ed25519:HEX" ou "hybrid:ed25519:HEX|mldsa65:HEX"
+          - Message a signer : f"{old_address}:{new_address}:{timestamp}"
+          - Une signature invalide (sig_failed) entraine un GovernanceError immediat.
+
         Args:
             old_address:    Ancienne adresse wallet (n'importe quel wallet valide)
             new_address:    Nouvelle adresse wallet
-            signature_hex:  Signature Ed25519 hex de l'ancienne cle (recommande)
+            signature_hex:  Signature hybride obligatoire de l'ancienne cle
             blocks_path:    Chemin vers blocks.jsonl pour inscrire le bloc special
 
         Returns:
@@ -574,41 +591,52 @@ class GovernanceManager:
         if old_address == new_address:
             raise GovernanceError("old_address et new_address sont identiques — rotation inutile.")
 
+        # ── Signature obligatoire ─────────────────────────────────────────────
+        if not signature_hex:
+            raise GovernanceError(
+                "SECURITE: signature_hex obligatoire pour la rotation de cle utilisateur. "
+                "Signer f\"{old_address}:{new_address}:{timestamp}\" avec l'ancienne cle."
+            )
+
         now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # ── Verification de signature hybride Ed25519+ML-DSA-65 si fournie ───
+        # ── Verification de signature hybride Ed25519+ML-DSA-65 ───────────────
         # Standard blockchain ARTCB : "hybrid:ed25519:HEX|mldsa65:HEX" ou "ed25519:HEX"
         # Meme format que creator_key_rotation et chain/manager.py.
-        sig_status = "unsigned"
-        if signature_hex:
-            try:
-                from nacl import encoding as nacl_encoding, signing as nacl_signing
-                raw_pubkey = nacl_signing.VerifyKey(
-                    old_address, encoder=nacl_encoding.Base64Encoder
-                ).encode()
-                message = f"{old_address}:{new_address}:{now_str}".encode("utf-8")
-                ok = verify_hybrid(
-                    message=message,
-                    signature_value=signature_hex,
-                    ed25519_public_key=raw_pubkey,
-                    pqc_public_key=b"",
+        sig_status = "sig_failed"
+        try:
+            from nacl import encoding as nacl_encoding, signing as nacl_signing
+            raw_pubkey = nacl_signing.VerifyKey(
+                old_address, encoder=nacl_encoding.Base64Encoder
+            ).encode()
+            message = f"{old_address}:{new_address}:{now_str}".encode("utf-8")
+            ok = verify_hybrid(
+                message=message,
+                signature_value=signature_hex,
+                ed25519_public_key=raw_pubkey,
+                pqc_public_key=b"",
+            )
+            sig_status = "verified" if ok else "sig_failed"
+            if ok:
+                logger.info(
+                    "User key rotation signature VERIFIED (hybrid standard) for %s...",
+                    old_address[:16],
                 )
-                sig_status = "verified" if ok else "sig_failed"
-                if ok:
-                    logger.info(
-                        "User key rotation signature VERIFIED (hybrid standard) for %s...",
-                        old_address[:16],
-                    )
-                else:
-                    logger.warning(
-                        "User key rotation signature INVALID for %s...", old_address[:16]
-                    )
-            except Exception as exc:
+            else:
                 logger.warning(
-                    "User key rotation signature verification failed: %s — "
-                    "rotation marquee 'sig_failed'", exc
+                    "User key rotation signature INVALID for %s...", old_address[:16]
                 )
-                sig_status = "sig_failed"
+        except Exception as exc:
+            logger.warning(
+                "User key rotation signature verification failed: %s — rotation refusee", exc
+            )
+            sig_status = "sig_failed"
+
+        if sig_status != "verified":
+            raise GovernanceError(
+                "SECURITE: signature invalide ou non verifiable — rotation utilisateur refusee. "
+                "Verifier que la signature couvre f\"{old_address}:{new_address}:{timestamp}\"."
+            )
 
         # ── Construire le contenu du bloc special ─────────────────────────────
         rotation_content = {
@@ -808,7 +836,7 @@ def _append_special_block(blocks_path: Path, content: dict) -> int:
         "merkle_root":  "special_block",
         "pol_score":    1.0,
         "hash_sha3":    None,
-        "signature":    content.get("signature", "unsigned"),
+        "signature":    content["signature"],
         "graph_id":     f"special_{content.get('type', 'unknown')}_{block_index}",
         "visibility":   "public",
         "block_reward": 0,

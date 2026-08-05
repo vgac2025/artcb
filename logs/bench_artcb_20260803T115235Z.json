@@ -1,0 +1,97 @@
+{
+  "timestamp": "20260803T115235Z",
+  "python": "3.12.3",
+  "platform": "linux",
+  "pqc_algo": "ML-DSA-65",
+  "kem_algo": "ML-KEM-768",
+  "kem_native": true,
+  "results": [
+    {
+      "label": "ML-DSA-65 generate_keypair()",
+      "avg_ms": 0.14,
+      "med_ms": 0.117,
+      "min_ms": 0.115,
+      "max_ms": 0.43,
+      "rounds": 50
+    },
+    {
+      "label": "ML-DSA-65 sign_message(296B)",
+      "avg_ms": 0.279,
+      "med_ms": 0.229,
+      "min_ms": 0.139,
+      "max_ms": 0.646,
+      "rounds": 50
+    },
+    {
+      "label": "ML-DSA-65 verify_message(296B)",
+      "avg_ms": 0.121,
+      "med_ms": 0.108,
+      "min_ms": 0.105,
+      "max_ms": 0.185,
+      "rounds": 50
+    },
+    {
+      "label": "KEM generate_kem_keypair()",
+      "avg_ms": 0.062,
+      "med_ms": 0.057,
+      "min_ms": 0.054,
+      "max_ms": 0.112,
+      "rounds": 50
+    },
+    {
+      "label": "KEM encapsulate()",
+      "avg_ms": 0.067,
+      "med_ms": 0.054,
+      "min_ms": 0.053,
+      "max_ms": 0.38,
+      "rounds": 50
+    },
+    {
+      "label": "KEM decapsulate()",
+      "avg_ms": 0.063,
+      "med_ms": 0.056,
+      "min_ms": 0.055,
+      "max_ms": 0.188,
+      "rounds": 50
+    },
+    {
+      "label": "append_block() sans s\u00e9curit\u00e9",
+      "avg_ms": 2.587,
+      "med_ms": 2.446,
+      "min_ms": 1.246,
+      "max_ms": 4.326,
+      "rounds": 30
+    },
+    {
+      "label": "verify() cha\u00eene compl\u00e8te",
+      "avg_ms": 4.475,
+      "med_ms": 4.357,
+      "min_ms": 4.149,
+      "max_ms": 5.126,
+      "rounds": 20
+    },
+    {
+      "label": "append_block() + Anti-Sybil (2 contributors)",
+      "avg_ms": 2.34,
+      "med_ms": 2.391,
+      "min_ms": 1.072,
+      "max_ms": 3.544,
+      "rounds": 20
+    },
+    {
+      "label": "WalletManager.create_wallet()",
+      "avg_ms": 132.227,
+      "med_ms": 131.487,
+      "min_ms": 128.309,
+      "max_ms": 139.873,
+      "rounds": 20
+    },
+    {
+      "label": "TPS blocs (200 appends)",
+      "tps": 90.0,
+      "elapsed_ms": 2222.3,
+      "n_blocks": 200
+    }
+  ],
+  "tps_blocks": 90.0
+}

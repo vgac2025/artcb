@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
@@ -27,6 +28,34 @@ class CastVoteRequest(BaseModel):
     proposal_id: str = Field(min_length=8)
     wallet_address: str = Field(min_length=8)
     choice: Literal["yes", "no"]
+
+
+class CreatorKeyRotationRequest(BaseModel):
+    """Rotation de cle createur — signature obligatoire."""
+    old_address: str = Field(min_length=8, description="Ancienne adresse createur")
+    new_address: str = Field(min_length=8, description="Nouvelle adresse createur")
+    signature_hex: str = Field(
+        min_length=1,
+        description=(
+            "Signature hybride de l'ancienne cle. "
+            "Format : 'ed25519:HEX' ou 'hybrid:ed25519:HEX|mldsa65:HEX'. "
+            "Message signe : f'{old_address}:{new_address}:{timestamp_ISO8601Z}'"
+        ),
+    )
+
+
+class UserKeyRotationRequest(BaseModel):
+    """Rotation de cle utilisateur — signature obligatoire."""
+    old_address: str = Field(min_length=8, description="Ancienne adresse wallet")
+    new_address: str = Field(min_length=8, description="Nouvelle adresse wallet")
+    signature_hex: str = Field(
+        min_length=1,
+        description=(
+            "Signature hybride de l'ancienne cle. "
+            "Format : 'ed25519:HEX' ou 'hybrid:ed25519:HEX|mldsa65:HEX'. "
+            "Message signe : f'{old_address}:{new_address}:{timestamp_ISO8601Z}'"
+        ),
+    )
 
 
 def _state(request: Request):
@@ -96,5 +125,66 @@ def cast_vote(body: CastVoteRequest, request: Request) -> dict:
             "tally": mgr.tally(body.proposal_id),
             "requires_rollback": mgr.tally(body.proposal_id)["requires_rollback"],
         }
+    except GovernanceError as exc:
+        raise _gov_http_error(exc) from exc
+
+
+@router.post("/creator-key-rotation", summary="Rotation de clé créateur (signature obligatoire)")
+def creator_key_rotation(body: CreatorKeyRotationRequest, request: Request) -> dict:
+    """Rotation de cle createur ARTCB — inscrit un bloc special signe dans la chaine.
+
+    SECURITE : signature_hex est OBLIGATOIRE.
+    Format : 'ed25519:HEX' ou 'hybrid:ed25519:HEX|mldsa65:HEX'.
+    Message a signer : f'{old_address}:{new_address}:{timestamp_ISO8601Z}'
+    (timestamp au format '2026-08-05T12:00:00Z' — utiliser la seconde courante).
+
+    Retourne 400 si signature absente, invalide ou si old_address ne correspond
+    pas au createur actuel.
+    """
+    mgr = _governance(request)
+    state = _state(request)
+    try:
+        result = mgr.creator_key_rotation(
+            old_address=body.old_address,
+            new_address=body.new_address,
+            signature_hex=body.signature_hex,
+            blocks_path=state.chain.blocks_path if hasattr(state, "chain") else None,
+        )
+        logger.warning(
+            "API CREATOR KEY ROTATION: %s... -> %s... sig=%s",
+            body.old_address[:16], body.new_address[:16],
+            result.get("sig_status", "?"),
+        )
+        return result
+    except GovernanceError as exc:
+        raise _gov_http_error(exc) from exc
+
+
+@router.post("/user-key-rotation", summary="Rotation de clé utilisateur (signature obligatoire)")
+def user_key_rotation(body: UserKeyRotationRequest, request: Request) -> dict:
+    """Rotation de cle utilisateur ARTCB — inscrit un bloc special signe dans la chaine.
+
+    SECURITE : signature_hex est OBLIGATOIRE.
+    Format : 'ed25519:HEX' ou 'hybrid:ed25519:HEX|mldsa65:HEX'.
+    Message a signer : f'{old_address}:{new_address}:{timestamp_ISO8601Z}'
+    (timestamp au format '2026-08-05T12:00:00Z' — utiliser la seconde courante).
+
+    Retourne 400 si signature absente ou invalide.
+    """
+    mgr = _governance(request)
+    state = _state(request)
+    try:
+        result = mgr.user_key_rotation(
+            old_address=body.old_address,
+            new_address=body.new_address,
+            signature_hex=body.signature_hex,
+            blocks_path=state.chain.blocks_path if hasattr(state, "chain") else None,
+        )
+        logger.info(
+            "API USER KEY ROTATION: %s... -> %s... sig=%s",
+            body.old_address[:16], body.new_address[:16],
+            result.get("sig_status", "?"),
+        )
+        return result
     except GovernanceError as exc:
         raise _gov_http_error(exc) from exc

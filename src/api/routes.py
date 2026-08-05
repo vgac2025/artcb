@@ -44,6 +44,14 @@ class StoreRequest(BaseModel):
     wallet_name: str | None = Field(default=None, description="Wallet pour signature minage raisonnement")
 
 
+class IrLearnRequest(BaseModel):
+    """POST /ir/learn — encode + grave un bloc public."""
+    wallet_address: str = Field(min_length=8, description="Adresse wallet du mineur")
+    content: str = Field(min_length=1, description="Contenu a encoder et graver")
+    visibility: str = Field(default="public", description="public | private | group")
+    session_id: str = "sess_default"
+
+
 class AgentRunRequest(BaseModel):
     text: str = Field(min_length=1)
     session_id: str = "sess_default"
@@ -336,6 +344,53 @@ def chain_verify(request: Request) -> dict:
     return state.chain.verify()
 
 
+@router.get("/chain/status")
+def chain_status(request: Request) -> dict:
+    """Etat courant de la chaine — hauteur, dernier hash, timestamp."""
+    state = _state(request)
+    blocks = state.chain.list_blocks()
+    height = len(blocks)
+    last_block = blocks[-1] if blocks else {}
+    return {
+        "height": height,
+        "block_count": height,
+        "last_hash": last_block.get("hash", "0" * 64),
+        "last_timestamp": last_block.get("timestamp"),
+        "last_index": last_block.get("index", -1),
+        "chain_valid": state.chain.verify().get("valid", False),
+    }
+
+
+@router.get("/chain/blocks")
+def chain_blocks(
+    request: Request,
+    visibility: str | None = Query(None),
+    group_id: str | None = Query(None),
+) -> dict:
+    """Liste des blocs de la chaine — alias de GET /chain."""
+    state = _state(request)
+    blocks = state.chain.list_blocks(visibility=visibility, group_id=group_id)
+    return {"blocks": blocks, "count": len(blocks)}
+
+
+@router.get("/node/status")
+def node_status(request: Request) -> dict:
+    """Etat du noeud courant — node_id, version, mode."""
+    state = _state(request)
+    node_id = "unknown"
+    try:
+        node_id = state.p2p_identity.node_id
+    except AttributeError:
+        import hashlib, socket
+        node_id = "node_" + hashlib.sha256(socket.gethostname().encode()).hexdigest()[:12]
+    return {
+        "node_id": node_id,
+        "version": "0.3.0",
+        "debug": state.settings.debug,
+        "status": "running",
+    }
+
+
 @router.get("/pol/score")
 def pol_score(request: Request) -> dict:
     return _state(request).pol_state
@@ -466,6 +521,74 @@ def wallet_balance_get(address: str, request: Request) -> dict:
     return balance
 
 
+
+
+@router.post("/ir/learn", summary="Encoder + graver un contenu sur la blockchain (POST /ir/learn)")
+async def ir_learn(body: IrLearnRequest, request: Request) -> dict:
+    """Encode un contenu texte et grave un bloc sur la blockchain ARTCB.
+
+    Shortcut combine encode + store pour les tests P2P et les clients externes.
+    Equivalent a : POST /encode puis POST /store.
+
+    Retourne graph_id et block_index si le bloc est grave avec succes.
+    """
+    state = _state(request)
+
+    # Encode
+    graph_id = f"g_{uuid.uuid4().hex[:12]}"
+    from src.artcb.ir.llm_encoder import LLMEncoder
+    llm_encoder = LLMEncoder(encoder=state.encoder)
+    graph = await asyncio.to_thread(
+        lambda: llm_encoder.encode(body.content, use_llm=False, session_id=graph_id)
+    )
+    state.register_graph(graph)
+    state.vectors.index_graph(graph)
+
+    if body.visibility not in ("private", "group", "public"):
+        raise HTTPException(status_code=422, detail="visibility must be private, group, or public")
+
+    # Valider via PoL
+    result = state.dual.critic.validate(graph)
+    pol = result.pol
+    if not pol.block_accepted:
+        state.pol_state["blocks_rejected"] += 1
+        raise HTTPException(
+            status_code=422,
+            detail={"message": "PoL below threshold", "pol": pol.to_dict()},
+        )
+
+    graph_root = sha256_text(graph.checksum).replace("sha256:", "")
+
+    # Construire contributors
+    contributors = None
+    if body.wallet_address:
+        from src.artcb.mining.pipeline import build_contributors
+        contributors = build_contributors(
+            actor_address=body.wallet_address,
+            pol_score=pol.pol_score,
+            wallet=None,
+            graph_root=graph_root,
+        )
+
+    # Graver le bloc
+    block = state.chain.append_block(
+        graph_id=graph.graph_id,
+        graph_root=graph_root,
+        pol_score=pol.pol_score,
+        visibility=body.visibility,
+        contributors=contributors,
+    )
+    state.pol_state["pol_score"] = pol.pol_score
+    state.pol_state["blocks_accepted"] += 1
+
+    return {
+        "graph_id": graph.graph_id,
+        "block_index": block.index,
+        "hash": block.hash,
+        "pol_score": pol.pol_score,
+        "visibility": block.visibility,
+        "block_reward": block.block_reward,
+    }
 
 
 @router.post("/agents/run")
