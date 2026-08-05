@@ -908,3 +908,44 @@ La session 115 avait rendu `sig_status="unsigned"` impossible (signature obligat
 ### Tests réels N1+N2 : 17/17 PASS (wallets test2/test4 inclus)
 ### LoopQA : 17 bugs open (anciens — corrigés dans sessions précédentes, Replit à jour après redémarrage)
 ### Avancement global : 96 %
+
+## [2026-08-05T23:15:00Z] Rapport 104 + 120 — Audit sécurité rotation unsigned + tests flaky + N2 prod
+
+### Réponse à l'alerte "rotation unsigned acceptée mode dev"
+
+**Origine exacte identifiée :** `plan-securite-rotation-signatures-endpoints.md` — décrivait l'ANCIEN état AVANT rapport 115.
+**État actuel du code :** AUCUN bypass mode dev. `debug=True` = UNIQUEMENT niveau de log (config.py L60).
+
+**Règle absolue (immuable) :**
+- `GovernanceError` si `signature_hex` absent ou vide — TOUS les modes (dev, prod, test)
+- `GovernanceError` si `sig_status != "verified"` après vérification — TOUS les modes
+- `sig_status = "unsigned"` = IMPOSSIBLE dans le code actuel (supprimé rapport 116)
+
+### Bug corrigé — Tests flaky `test_governance_rotation.py`
+
+**AVANT (L177 et L397) :**
+```python
+assert result["sig_status"] in ("verified", "sig_failed")  # TROMPEUR
+```
+**Problème :** Si `sig_failed`, `GovernanceError` est levée AVANT d'atteindre l'assert.
+Cette assertion masquait un potentiel timing bug et semblait tolérer `sig_failed`.
+
+**APRÈS :**
+```python
+assert result["sig_status"] == "verified"  # STRICT et CORRECT
+```
+
+### Tests réels N2 Replit 2026-08-05T23:06:40Z
+- N2 : `https://lvx--supermicro20239.replit.app` → **25/25 PASS**
+- Bloc privé N1 → non transmis à N2 ✅
+- Tests locaux : **478/478 PASS**
+
+### Commits
+- `d40e03e` — fix(securite): tests rotation + replit_start v4 + sdk P1-1 + wallet P1-3
+- `a0236c1` — Replit Agent : rapport 119 public (audit déploiement clés test)
+
+### ALERTE (confirmée rapport 119 Replit)
+- Clé `artcb_fc1ad6a9...` exposée dans le chat → **À RÉVOQUER** via `DELETE /api/v1/api-keys/{id}`
+- Token `lqa_acd7ef4...` compromis → **ne pas utiliser**
+
+### Avancement global : 96 %
