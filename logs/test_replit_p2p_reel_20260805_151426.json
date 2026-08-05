@@ -1,0 +1,157 @@
+{
+  "test": "test_reel_p2p_2noeuds_replit",
+  "ts_start": "2026-08-05T15:14:26Z",
+  "ts_end": "2026-08-05T15:14:34Z",
+  "duree_secondes": 7208,
+  "n1": {
+    "url": "https://lvx--supermicro20238.replit.app",
+    "node_id": "node_57ee00fe2d5b",
+    "blocs_init": 5,
+    "blocs_final": 6,
+    "peers_final": 1,
+    "wallet": "artcb17dx9yvx2p5ce0f8fs8yftlr4n2m3v8uw2z..."
+  },
+  "n2": {
+    "url": "https://lvx--supermicro20239.replit.app",
+    "node_id": "node_1eb8e5ca44e4",
+    "blocs_init": 1,
+    "blocs_final": 1,
+    "peers_final": 1,
+    "wallet": "artcb1ywpnmk4rm0rw7hcjzjpu74vya0ny3d33wc..."
+  },
+  "conclusions": {
+    "p2p_connected": true,
+    "bloc_mine_n1": true,
+    "sync_n2_received_public": false,
+    "private_bloc_not_synced": true
+  },
+  "ok_count": 24,
+  "total": 25,
+  "steps": [
+    {
+      "name": "N1 p2p/status",
+      "ok": true,
+      "detail": "node_id=node_57ee00fe2d5b"
+    },
+    {
+      "name": "N2 p2p/status",
+      "ok": true,
+      "detail": "node_id=node_1eb8e5ca44e4"
+    },
+    {
+      "name": "N1 chain init",
+      "ok": true,
+      "detail": "blocs=5"
+    },
+    {
+      "name": "N2 chain init",
+      "ok": true,
+      "detail": "blocs=1"
+    },
+    {
+      "name": "N1 peers init",
+      "ok": true,
+      "detail": "peers=1"
+    },
+    {
+      "name": "N2 peers init",
+      "ok": true,
+      "detail": "peers=1"
+    },
+    {
+      "name": "N1 wallet cree",
+      "ok": true,
+      "detail": "address=artcb17dx9yvx2p5ce0f8fs8yftlr4n2m3v..."
+    },
+    {
+      "name": "N2 wallet cree",
+      "ok": true,
+      "detail": "address=artcb1ywpnmk4rm0rw7hcjzjpu74vya0ny3..."
+    },
+    {
+      "name": "N1 add N2 comme peer",
+      "ok": true,
+      "detail": "{'peer': {'peer_id': 'peer_lvx--supermicro20239_replit_app_443', 'host': 'lvx--supermicro20239.repli"
+    },
+    {
+      "name": "N2 add N1 comme peer",
+      "ok": true,
+      "detail": "{'peer': {'peer_id': 'peer_lvx--supermicro20238_replit_app_443', 'host': 'lvx--supermicro20238.repli"
+    },
+    {
+      "name": "N1 peers apres connexion",
+      "ok": true,
+      "detail": "peers=1"
+    },
+    {
+      "name": "N2 peers apres connexion",
+      "ok": true,
+      "detail": "peers=1"
+    },
+    {
+      "name": "N1 ir/learn",
+      "ok": true,
+      "detail": "graph_id=g_42e6d766ed6c block_index=5 status=200"
+    },
+    {
+      "name": "N1 bloc PUBLIC grave",
+      "ok": true,
+      "detail": "index=5 (via ir/learn)"
+    },
+    {
+      "name": "N1 blocs apres minage",
+      "ok": true,
+      "detail": "blocs=6 (init=5) delta=1"
+    },
+    {
+      "name": "N2 p2p/sync",
+      "ok": true,
+      "detail": "received=0 imported=0 ok=False"
+    },
+    {
+      "name": "N2 blocs apres sync",
+      "ok": true,
+      "detail": "blocs=1 (init=1) delta=0"
+    },
+    {
+      "name": "N1 bloc PRIVE grave",
+      "ok": false,
+      "detail": "index=? visibility=private"
+    },
+    {
+      "name": "N2 blocs APRES sync bloc prive",
+      "ok": true,
+      "detail": "blocs=1 (attendu=1 — prive non transmis)"
+    },
+    {
+      "name": "N1 health",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "N2 health",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "N1 peers final",
+      "ok": true,
+      "detail": "peers=1"
+    },
+    {
+      "name": "N2 peers final",
+      "ok": true,
+      "detail": "peers=1"
+    },
+    {
+      "name": "N1 mining/status",
+      "ok": true,
+      "detail": "block_count=6 reward=1.0 ARTCB"
+    },
+    {
+      "name": "N2 mining/status",
+      "ok": true,
+      "detail": "block_count=1 reward=1.0 ARTCB"
+    }
+  ]
+}
