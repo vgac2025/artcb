@@ -143,7 +143,11 @@ class WalletManager:
         from datetime import datetime
 
         meta_path = self.wallet_dir / f"{name}.json"
+        # P1-3 FIX: stocker le champ "name" dans le JSON metadata du wallet
+        # Avant : name absent du JSON → list_wallets() utilisait meta_path.stem (nom de fichier)
+        # Après : name explicitement dans le JSON pour robustesse + lisibilité
         metadata: dict = {
+            "name": name,
             "address": address,
             "public_key_hex": signing_key.verify_key.encode().hex(),
             "created_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),

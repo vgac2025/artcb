@@ -209,15 +209,18 @@ class ArtcbClient:
 
     def wallets(self) -> list[dict]:
         """Lister tous les wallets."""
-        return self._get("/api/v1/wallets")
+        # P1-1 FIX: route singulier /wallet/list (était /wallets pluriel)
+        return self._get("/api/v1/wallet/list")
 
     def create_wallet(self, name: str) -> dict:
         """Créer un nouveau wallet."""
-        return self._post("/api/v1/wallets", {"name": name})
+        # P1-1 FIX: route singulier /wallet/create (était /wallets pluriel)
+        return self._post("/api/v1/wallet/create", {"name": name})
 
     def balance(self, address: str) -> dict:
         """Solde d'un wallet."""
-        return self._get(f"/api/v1/wallets/{address}/balance")
+        # P1-1 FIX: route singulier /wallet/balance/{address}
+        return self._get(f"/api/v1/wallet/balance/{address}")
 
     # ── Clés API ───────────────────────────────────────────────────────────────
 

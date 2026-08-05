@@ -157,24 +157,31 @@ class TestUserKeyRotation:
         assert balance_new["balance_satoshi"] == 0
 
     def test_user_rotation_signature_ed25519_verifiee(self, tmp_path: Path):
-        """Signature Ed25519 valide -> sig_status = 'verified'."""
+        """Signature Ed25519 valide avec _make_valid_sig -> sig_status DOIT etre 'verified'.
+
+        CORRECTION : on utilise _make_valid_sig() qui genere la signature ET
+        appelle user_key_rotation() dans la meme seconde, garantissant que le
+        timestamp est identique. Si sig_status == 'sig_failed', la GovernanceError
+        est levee — donc le test ne peut pas retourner un resultat "sig_failed".
+        La seule valeur possible en cas de succes est "verified".
+        """
         gm = self._get_manager(tmp_path)
         sk, old_addr = _make_wallet()
         _, new_addr = _make_wallet()
 
-        from datetime import UTC, datetime
-        now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-        sig = _sign_rotation_ed25519(sk, old_addr, new_addr, now_str)
+        # _make_valid_sig() genere signature + timestamp dans la meme seconde
+        sig = _make_valid_sig(sk, old_addr, new_addr)
 
         result = gm.user_key_rotation(
             old_address=old_addr,
             new_address=new_addr,
             signature_hex=sig,
         )
-        # La signature peut etre "verified" ou "sig_failed" selon le timestamp exact
-        # (le timestamp dans la methode peut differer d'une fraction de seconde)
-        # On verifie juste que le champ est present et coherent
-        assert result["sig_status"] in ("verified", "sig_failed")
+        # sig_status DOIT etre "verified" — "sig_failed" leve GovernanceError avant
+        assert result["sig_status"] == "verified", (
+            f"Attendu 'verified', obtenu '{result['sig_status']}' — "
+            "probleme de timing timestamp dans user_key_rotation"
+        )
         assert result["sig_format"] in ("hybrid:ed25519+ML-DSA-65", "ed25519")
 
     def test_user_rotation_sans_signature_refusee(self, tmp_path: Path):
@@ -380,7 +387,12 @@ class TestRotationSignatureHybride:
     """Tests signature hybride Ed25519+ML-DSA-65 dans les rotations."""
 
     def test_signature_format_ed25519_valide_accepte(self, tmp_path: Path):
-        """Signature Ed25519 valide -> sig_format='ed25519' et sig_status='verified'."""
+        """Signature Ed25519 valide -> sig_format='ed25519' et sig_status='verified'.
+
+        CORRECTION : sig_status NE PEUT PAS etre 'sig_failed' en cas de succes —
+        si sig_failed, GovernanceError est levee et on n'atteint jamais l'assert.
+        Le commentaire precedent etait trompeur. 'verified' est la seule valeur possible.
+        """
         from artcb.governance.manager import GovernanceManager
         gm = GovernanceManager(data_dir=tmp_path)
         sk, old_addr = _make_wallet()
@@ -393,8 +405,11 @@ class TestRotationSignatureHybride:
             signature_hex=sig,
         )
         assert result["sig_format"] == "ed25519"
-        # sig_status peut etre "verified" ou "sig_failed" selon delta timestamp
-        assert result["sig_status"] in ("verified", "sig_failed")
+        # sig_status DOIT etre "verified" — "sig_failed" est impossible ici car
+        # GovernanceError serait levee avant d'atteindre ce point
+        assert result["sig_status"] == "verified", (
+            f"Attendu 'verified', obtenu '{result['sig_status']}'"
+        )
 
     def test_signature_format_hybrid_detecte(self, tmp_path: Path):
         """Format 'hybrid:...' avec signature valide -> sig_format='hybrid:ed25519+ML-DSA-65'."""
