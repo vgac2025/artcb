@@ -8,6 +8,7 @@ N1 = "https://lvx--supermicro20238.replit.app"
 N2 = "https://lvx--supermicro20239.replit.app"  # Redeploye 2026-08-05
 results = []
 ts_start = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+ts_suffix = str(int(time.time()))
 
 
 def get(url):
@@ -87,17 +88,11 @@ step("N2 peers init", s == 200, f"peers={n2_peers0}")
 
 # ─── 2. WALLETS ───────────────────────────────────────────────
 print("\n--- [2] WALLETS ---")
-s, d = get(N1 + "/api/v1/wallet/list")
-wallets_n1 = d.get("wallets", [])
-if wallets_n1:
-    n1_addr = wallets_n1[0].get("address", "")
-    step("N1 wallet existant", bool(n1_addr), f"address={n1_addr[:35]}...")
-else:
-    s, d = post(N1 + "/api/v1/wallet/create", {"name": "test_n1_p2p"})
-    n1_addr = d.get("address", "") if s == 200 else ""
-    step("N1 wallet cree", s == 200, f"address={n1_addr[:35]}..." if n1_addr else str(d)[:80])
+# Toujours creer un wallet fresh avec timestamp pour eviter conflits entre runs
+s, d = post(N1 + "/api/v1/wallet/create", {"name": f"test_n1_p2p_{ts_suffix}"})
+n1_addr = d.get("address", "") if s == 200 else ""
+step("N1 wallet cree", s == 200, f"address={n1_addr[:35]}..." if n1_addr else str(d)[:80])
 
-ts_suffix = str(int(time.time()))
 s, d = post(N2 + "/api/v1/wallet/create", {"name": f"test_n2_p2p_{ts_suffix}"})
 n2_addr = d.get("address", "") if s == 200 else ""
 step("N2 wallet cree", s == 200, f"address={n2_addr[:35]}..." if n2_addr else str(d)[:80])
