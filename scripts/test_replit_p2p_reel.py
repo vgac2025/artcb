@@ -199,21 +199,15 @@ step("N2 blocs apres sync", s == 200, f"blocs={n2_blk1} (init={n2_blk0}) delta={
 print("\n--- [7] BLOC PRIVE N1 (ne doit PAS aller sur N2) ---")
 n1_blk1_priv = n1_blk1
 if n1_addr:
+    # /ir/learn grave directement (encode+store combine) — visibility=private
     s, d = post(N1 + "/api/v1/ir/learn", {
         "wallet_address": n1_addr,
         "content": "Contenu prive ARTCB test. Ne pas synchroniser sur N2.",
         "visibility": "private"
     })
-    graph_priv = d.get("graph_id", "") if s == 200 else ""
-    if graph_priv:
-        s2, d2 = post(N1 + "/api/v1/chain/append", {
-            "wallet_address": n1_addr,
-            "graph_id": graph_priv,
-            "visibility": "private"
-        })
-        step("N1 bloc PRIVE grave", s2 == 200, f"index={d2.get('block_index','?')}")
-    else:
-        step("N1 bloc PRIVE grave", False, "pas de graph_id prive")
+    priv_ok = s == 200 and d.get("block_index") is not None
+    priv_idx = d.get("block_index", "?")
+    step("N1 bloc PRIVE grave", priv_ok, f"index={priv_idx} visibility=private")
 
     # Nouvelle sync N2 — le bloc prive NE doit PAS etre recu
     time.sleep(1)

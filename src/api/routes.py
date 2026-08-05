@@ -159,6 +159,24 @@ def get_graph(graph_id: str, request: Request) -> dict:
     return graph.to_canonical_dict()
 
 
+@router.get("/node/status")
+def node_status_inline(request: Request) -> dict:
+    """Etat du noeud courant — node_id, version, mode (alias prioritaire sur /node/{id})."""
+    state = _state(request)
+    node_id = "unknown"
+    try:
+        node_id = state.p2p_identity.node_id
+    except AttributeError:
+        import hashlib as _hl, socket as _sock
+        node_id = "node_" + _hl.sha256(_sock.gethostname().encode()).hexdigest()[:12]
+    return {
+        "node_id": node_id,
+        "version": "0.3.0",
+        "debug": state.settings.debug,
+        "status": "running",
+    }
+
+
 @router.get("/node/{node_id}")
 def get_node(
     node_id: str,
@@ -371,24 +389,6 @@ def chain_blocks(
     state = _state(request)
     blocks = state.chain.list_blocks(visibility=visibility, group_id=group_id)
     return {"blocks": blocks, "count": len(blocks)}
-
-
-@router.get("/node/status")
-def node_status(request: Request) -> dict:
-    """Etat du noeud courant — node_id, version, mode."""
-    state = _state(request)
-    node_id = "unknown"
-    try:
-        node_id = state.p2p_identity.node_id
-    except AttributeError:
-        import hashlib, socket
-        node_id = "node_" + hashlib.sha256(socket.gethostname().encode()).hexdigest()[:12]
-    return {
-        "node_id": node_id,
-        "version": "0.3.0",
-        "debug": state.settings.debug,
-        "status": "running",
-    }
 
 
 @router.get("/pol/score")
