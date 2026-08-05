@@ -811,6 +811,12 @@ textarea {
   outline: 2px solid var(--mc-diamond);
 }
 
+/* UX-1/UX-3 FIX: wallet actif dans la grille — bordure verte */
+.mc-chest-active {
+  border-color: var(--mc-grass, #56c426) !important;
+  background: rgba(86, 196, 38, 0.08) !important;
+}
+
 /* B12 FIX: Skip-to-content WCAG 2.4.1 Level A */
 .skip-link {
   position: absolute;

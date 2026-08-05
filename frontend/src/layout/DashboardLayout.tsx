@@ -9,7 +9,7 @@ import type { ChainBlock } from "../types";
 
 export function DashboardLayout() {
   const { t } = useTranslation();
-  const { visibility, setVisibility, groupId, chainBlock } = useDashboard();
+  const { visibility, setVisibility, groupId, chainBlock, actorAddress, setActorAddress } = useDashboard();
   const [apiOk, setApiOk] = useState<boolean | null>(null);
   const [polScore, setPolScore] = useState<number | null>(null);
   const [blocks, setBlocks] = useState<ChainBlock[]>([]);
@@ -99,6 +99,25 @@ export function DashboardLayout() {
           <span className="mc-header-kpi">▣ Blocs {blocks.length}</span>
           {chainValid !== null && (
             <span className="mc-header-kpi">{chainValid ? "Chain OK" : "Chain X"}</span>
+          )}
+          {/* UX-4 FIX: wallet actif visible dans le header global */}
+          {actorAddress ? (
+            <span className="mc-header-kpi" style={{ color: "var(--mc-grass, #56c426)", cursor: "pointer" }} title={actorAddress}>
+              <Link to="/wallets" style={{ color: "inherit", textDecoration: "none" }}>
+                ◇ {actorAddress.slice(0, 12)}…
+              </Link>
+              <button
+                onClick={() => setActorAddress("")}
+                title="Se déconnecter"
+                style={{ marginLeft: 4, fontSize: 9, padding: "1px 4px", background: "transparent", border: "1px solid var(--mc-redstone, #c0392b)", color: "var(--mc-redstone, #c0392b)", cursor: "pointer", borderRadius: 2 }}
+              >
+                ✕
+              </button>
+            </span>
+          ) : (
+            <Link to="/wallets" className="mc-header-kpi" style={{ color: "var(--mc-gold, #ffd700)", textDecoration: "none" }} title="Aucun wallet actif — cliquez pour en créer un">
+              ◇ Wallet ?
+            </Link>
           )}
         </div>
         <div className="mc-header-right">

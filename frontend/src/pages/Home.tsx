@@ -16,7 +16,7 @@ import type { ChainBlock } from "../types";
 
 export function Home() {
   const { t } = useTranslation();
-  const { checklist, visibility, groupId } = useDashboard();
+  const { checklist, visibility, groupId, actorAddress } = useDashboard();
   const [pol, setPol] = useState<number | null>(null);
   const [blocks, setBlocks] = useState<ChainBlock[]>([]);
   const [walletCount, setWalletCount] = useState(0);
@@ -64,6 +64,23 @@ export function Home() {
   return (
     <div className="mc-page">
       <h1 className="dashboard-title">{t('home_title')}</h1>
+
+      {/* UX-2 FIX: Bandeau onboarding pour les nouveaux utilisateurs sans wallet */}
+      {walletCount === 0 && !actorAddress && (
+        <div className="panel" style={{ borderColor: "var(--mc-gold, #ffd700)", background: "rgba(255,215,0,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
+          <div>
+            <p style={{ margin: 0, color: "var(--mc-gold, #ffd700)", fontWeight: 700 }}>
+              ◇ Bienvenue sur ARTCB — Commencez par créer votre wallet !
+            </p>
+            <p style={{ margin: "4px 0 0", fontSize: 13, color: "var(--muted)" }}>
+              Un wallet est votre identité sur la blockchain. Il vous permet de signer des blocs et de recevoir des récompenses ARTCB.
+            </p>
+          </div>
+          <Link to="/wallets" className="primary" style={{ padding: "0.5rem 1.25rem", background: "var(--mc-gold, #ffd700)", color: "#000", fontWeight: 700, borderRadius: 4, textDecoration: "none", flexShrink: 0 }}>
+            Créer mon wallet →
+          </Link>
+        </div>
+      )}
 
       {alerts.length > 0 && (
         <div className="panel mc-debug-alerts">

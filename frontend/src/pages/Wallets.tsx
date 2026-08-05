@@ -19,7 +19,7 @@ type CreatedWallet = {
 
 export function Wallets() {
   const { t } = useTranslation();
-  const { setActorAddress } = useDashboard();
+  const { actorAddress, setActorAddress } = useDashboard();
   const [wallets, setWallets] = useState<
     Array<{ address: string; name: string; balance?: number; rewards?: number }>
   >([]);
@@ -36,7 +36,9 @@ export function Wallets() {
 
   // ── Wallet créé — affiché à l'utilisateur ─────────────────────────
   const [createdWallet, setCreatedWallet] = useState<CreatedWallet | null>(null);
-  const [copied, setCopied]               = useState(false);
+  const [copied, setCopied] = useState(false);
+  // UX-1: copier depuis la grille (quel wallet est en cours de copie)
+  const [copiedGrid, setCopiedGrid] = useState<string | null>(null);
 
   // ── Import wallet (entrer une adresse existante) ──────────────────
   const [importAddress, setImportAddress] = useState("");
@@ -107,6 +109,28 @@ export function Wallets() {
     });
   };
 
+  // UX-1 FIX: copier une adresse depuis la grille
+  const copyFromGrid = (addr: string) => {
+    navigator.clipboard?.writeText(addr).then(() => {
+      setCopiedGrid(addr);
+      setTimeout(() => setCopiedGrid(null), 2000);
+    }).catch(() => {
+      const el = document.createElement("textarea");
+      el.value = addr;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopiedGrid(addr);
+      setTimeout(() => setCopiedGrid(null), 2000);
+    });
+  };
+
+  // UX-3 FIX: déconnexion — vider actorAddress
+  const handleDisconnect = () => {
+    setActorAddress("");
+  };
+
   // ── Importer un wallet existant ────────────────────────────────────
   const handleImport = async () => {
     const addr = importAddress.trim();
@@ -140,6 +164,32 @@ export function Wallets() {
   return (
     <div className="mc-page">
       <h1 className="dashboard-title">{t('wallets_title')}</h1>
+
+      {/* UX-4 FIX: Wallet actif affiché en haut — avec bouton déconnexion */}
+      {actorAddress ? (
+        <div className="panel" style={{ borderColor: "var(--mc-grass, #56c426)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+          <div>
+            <span style={{ color: "var(--mc-grass, #56c426)", fontWeight: 700, marginRight: 8 }}>◇ Wallet actif :</span>
+            <span className="mc-mono" style={{ fontSize: 13 }}>{actorAddress}</span>
+          </div>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button onClick={() => copyAddress(actorAddress)}>
+              {copied ? "[OK] Copié !" : "Copier"}
+            </button>
+            {/* UX-3 FIX: Bouton déconnexion */}
+            <button onClick={handleDisconnect} style={{ color: "var(--mc-redstone, #c0392b)", borderColor: "var(--mc-redstone, #c0392b)" }}>
+              ✕ Se déconnecter
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* UX-2 FIX: Bandeau onboarding si aucun wallet actif */
+        <div className="panel" style={{ borderColor: "var(--mc-gold, #ffd700)", background: "rgba(255,215,0,0.05)" }}>
+          <p style={{ margin: 0, color: "var(--mc-gold, #ffd700)", fontWeight: 700 }}>
+            ◇ Pas encore de wallet actif — créez-en un ci-dessous ou connectez-vous avec votre adresse existante.
+          </p>
+        </div>
+      )}
 
       {/* ── Panneau : Créer un wallet ─────────────────────────── */}
       <div className="panel">
@@ -239,22 +289,55 @@ export function Wallets() {
 
       {/* ── Grille wallets (coffre) ────────────────────────────── */}
       <div className="panel mc-chest">
+        <h2 style={{ marginBottom: "0.75rem" }}>
+          Vos wallets ({wallets.length})
+          {wallets.length === 0 && <span className="mc-muted" style={{ fontSize: 13, fontWeight: 400, marginLeft: 8 }}>— Créez votre premier wallet ci-dessus ↑</span>}
+        </h2>
+        {/* UX-2 FIX: message explicite quand aucun wallet */}
+        {wallets.length === 0 && (
+          <div style={{ textAlign: "center", padding: "2rem 1rem", color: "var(--muted)" }}>
+            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>◇</div>
+            <p>Vous n'avez pas encore de wallet.</p>
+            <p style={{ fontSize: 13 }}>Un wallet est votre identité sur la blockchain ARTCB — il vous permet de signer des blocs et de recevoir des récompenses ARTCB.</p>
+          </div>
+        )}
         <div className="mc-chest-grid">
           {slots.map((w, i) => (
             <div
               key={i}
-              className={`mc-chest-slot${w ? " mc-chest-filled" : ""}`}
+              className={`mc-chest-slot${w ? " mc-chest-filled" : ""}${w && w.address === actorAddress ? " mc-chest-active" : ""}`}
               onClick={() => w && showRewards(w.address)}
               onKeyDown={(e) => e.key === "Enter" && w && showRewards(w.address)}
               role={w ? "button" : undefined}
               tabIndex={w ? 0 : undefined}
+              title={w ? `${w.name} — ${w.address}` : undefined}
             >
               {w ? (
                 <>
+                  {w.address === actorAddress && <div style={{ fontSize: 8, color: "var(--mc-grass)", textAlign: "center" }}>● ACTIF</div>}
                   <div className="mc-chest-icon">◇</div>
                   <div className="mc-chest-name">{w.name}</div>
                   <div className="mc-gold-text">{(w.balance ?? 0).toFixed(2)} ₳</div>
                   <div className="mc-mono mc-chest-addr">{w.address.slice(0, 8)}…</div>
+                  {/* UX-1 FIX: bouton copier + bouton activer sur chaque wallet */}
+                  <div style={{ display: "flex", gap: 2, marginTop: 4, justifyContent: "center" }} onClick={(e) => e.stopPropagation()}>
+                    <button
+                      style={{ fontSize: 9, padding: "1px 4px" }}
+                      onClick={() => copyFromGrid(w.address)}
+                      title="Copier l'adresse"
+                    >
+                      {copiedGrid === w.address ? "✓" : "⧉"}
+                    </button>
+                    {w.address !== actorAddress && (
+                      <button
+                        style={{ fontSize: 9, padding: "1px 4px", color: "var(--mc-grass)" }}
+                        onClick={() => setActorAddress(w.address)}
+                        title="Activer ce wallet"
+                      >
+                        ▶
+                      </button>
+                    )}
+                  </div>
                 </>
               ) : null}
             </div>

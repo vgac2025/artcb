@@ -871,3 +871,16 @@ La session 115 avait rendu `sig_status="unsigned"` impossible (signature obligat
 - `GET /api/v1/chain HTTP/1.1 200 OK` → N2 répond correctement aux monitors externes
 
 ### Avancement global : 96 %
+
+## [2026-08-05T22:00:00Z] Rapport 102 — UX wallet : copier, onboarding, déconnexion, header
+
+### Bugs corrigés (rapport 102)
+- **UX-1** Wallets.tsx : bouton copier `⧉` sur chaque wallet dans la grille + state `copiedGrid`
+- **UX-2** Home.tsx + Wallets.tsx : bandeau onboarding doré si 0 wallet + grille vide explicative
+- **UX-3** Wallets.tsx + DashboardLayout.tsx : bouton "✕ Se déconnecter" → `setActorAddress("")`
+- **UX-4** DashboardLayout.tsx header : wallet actif `◇ artcb1xxx…` (vert) + `◇ Wallet ?` (or) si absent
+- index.css : `.mc-chest-active` (bordure verte wallet actif dans grille)
+
+### Tests réels N1+N2 : 10/10 PASS
+### Build : 0 erreur TypeScript / 117 modules
+### Avancement global : 96 %
