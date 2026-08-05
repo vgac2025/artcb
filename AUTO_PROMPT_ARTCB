@@ -884,3 +884,27 @@ La session 115 avait rendu `sig_status="unsigned"` impossible (signature obligat
 ### Tests réels N1+N2 : 10/10 PASS
 ### Build : 0 erreur TypeScript / 117 modules
 ### Avancement global : 96 %
+
+## [2026-08-05T23:00:00Z] Rapport 119 — git pull fix + Vite 6.4.3 + liboqs + LoopQA
+
+### RÈGLE PQC UNIFIÉE (annule contradiction rapports 087 vs 100)
+- **RÈGLE ACTIVE :** `liboqs-python>=0.14.0` DÉCOMMENTÉ dans requirements.txt
+- **RÈGLE ANNULÉE :** rapport 100 commentait liboqs (hypothèse cmake absent = FAUSSE — cmake 3.31.6 confirmé dans PATH)
+- **Comportement :** bloc 2b dans replit_start.sh tente pip install si cmake présent → fallback Ed25519 si échec
+
+### Fix critique git pull (replit_start.sh v2→v3)
+- **BUG :** git pull était à l'étape 7 (APRÈS build frontend) → les clones utilisateur recevaient les nouvelles sources APRÈS le build → frontend jamais mis à jour automatiquement
+- **CORRIGÉ :** étape 0 = git pull AVANT tout le reste (venv, pip, build)
+- **Impact :** tout clone Replit importé depuis GitHub se mettra à jour au prochain redémarrage
+
+### Vite 5.4.21 → 6.4.3 (sécurité npm)
+- GHSA-fx2h-pf6j-xcff HIGH CVSS 7.5 → CORRIGÉ
+- GHSA-4w7w-66w2-5vf9 moderate → CORRIGÉ
+- GHSA-v6wh-96g9-6wx3 moderate → CORRIGÉ
+- postcss HIGH → CORRIGÉ
+- react-router 2x moderate restants — risque nul (SPA, pas SSR)
+- Build vite 6.4.3 : 0 erreur TypeScript / 114 modules / 6.10s
+
+### Tests réels N1+N2 : 17/17 PASS (wallets test2/test4 inclus)
+### LoopQA : 17 bugs open (anciens — corrigés dans sessions précédentes, Replit à jour après redémarrage)
+### Avancement global : 96 %

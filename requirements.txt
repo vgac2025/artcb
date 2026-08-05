@@ -16,9 +16,11 @@ aiofiles>=23.2.0
 pynacl>=1.5.0
 cryptography>=42.0.0
 # liboqs-python : ML-DSA-65 + ML-KEM-768 (NIST PQC 2024)
-# NOTE Replit : cmake build takes >10 min — excluded here; app uses Ed25519/X25519 fallback.
-# Install manually if full post-quantum crypto is needed: pip install liboqs-python
-# liboqs-python>=0.14.0
+# cmake + gcc requis pour la compilation. Fallback Ed25519/X25519 automatique si absent.
+# Sur Replit NixOS : cmake 3.31.6 + gcc 14.2.1 disponibles dans replit.nix ✅
+# Sur Docker : cmake installé dans Dockerfile ✅
+# Sur PC local : apt install cmake ou brew install cmake
+liboqs-python>=0.14.0
 
 # ─── IA & LLM ─────────────────────────────────────────────────────────────────
 # litellm-ibm-bob : paquet privé IBM — absent sur PyPI public
