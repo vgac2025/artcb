@@ -571,13 +571,20 @@ async def ir_learn(body: IrLearnRequest, request: Request) -> dict:
         )
 
     # Graver le bloc
-    block = state.chain.append_block(
-        graph_id=graph.graph_id,
-        graph_root=graph_root,
-        pol_score=pol.pol_score,
-        visibility=body.visibility,
-        contributors=contributors,
-    )
+    try:
+        block = state.chain.append_block(
+            graph_id=graph.graph_id,
+            graph_root=graph_root,
+            pol_score=pol.pol_score,
+            visibility=body.visibility,
+            contributors=contributors,
+        )
+    except ValueError as exc:
+        state.pol_state["blocks_rejected"] += 1
+        raise HTTPException(
+            status_code=422,
+            detail={"message": f"Block rejected: {exc}", "reason": str(exc)},
+        ) from exc
     state.pol_state["pol_score"] = pol.pol_score
     state.pol_state["blocks_accepted"] += 1
 
