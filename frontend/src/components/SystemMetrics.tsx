@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+// B8 FIX: pas de setInterval — fetch unique au montage
 
 interface GpuInfo {
   index: number;

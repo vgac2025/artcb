@@ -32,7 +32,7 @@ export function Governance() {
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [version, setVersion] = useState("0.4.0");
+  const [version, setVersion] = useState("");
 
   const reload = async () => {
     try {

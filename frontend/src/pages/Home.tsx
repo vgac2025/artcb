@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import {
   chainQueryParams,
   fetchChain,
-  fetchDemoLiveLog,
   fetchHealth,
   fetchPolScore,
   fetchWallets,
 } from "../api/client";
+// B7 FIX: fetchDemoLiveLog supprimé de Home.tsx — la page Logs gère déjà cet affichage
 import { McBlockRow } from "../components/McBlockRow";
 import { McKpiSlot } from "../components/McKpiSlot";
 import { useDashboard } from "../context/DashboardContext";
@@ -22,23 +22,34 @@ export function Home() {
   const [walletCount, setWalletCount] = useState(0);
   const [chainValid, setChainValid] = useState(false);
   const [alerts, setAlerts] = useState<string[]>([]);
-  const [demoOk, setDemoOk] = useState<boolean | null>(null);
+  const [demoOk] = useState<boolean | null>(null);
+  // B7 FIX: fetchDemoLiveLog supprimé — inutile dans Home.tsx, Logs.tsx gère l'affichage
 
   useEffect(() => {
     const q = chainQueryParams(visibility, groupId);
-    fetchPolScore().then((p) => setPol(p.pol_score)).catch((e) => setAlerts((a) => [...a, `PoL: ${e}`]));
-    fetchChain(q).then(setBlocks).catch((e) => setAlerts((a) => [...a, `Chain: ${e}`]));
-    fetchWallets().then((w) => setWalletCount(w.length)).catch(() => setWalletCount(0));
-    fetchHealth()
-      .then((h) => {
-        const chain = h.chain as { valid?: boolean } | undefined;
+    // Fetches parallèles — cohérent avec la correction B5 du DashboardLayout
+    Promise.allSettled([
+      fetchPolScore(),
+      fetchChain(q),
+      fetchWallets(),
+      fetchHealth(),
+    ]).then(([polR, chainR, walletsR, healthR]) => {
+      if (polR.status === "fulfilled") setPol(polR.value.pol_score);
+      else setAlerts((a) => [...a, `PoL: ${polR.reason}`]);
+
+      if (chainR.status === "fulfilled") setBlocks(chainR.value);
+      else setAlerts((a) => [...a, `Chain: ${chainR.reason}`]);
+
+      if (walletsR.status === "fulfilled") setWalletCount(walletsR.value.length);
+
+      if (healthR.status === "fulfilled") {
+        const chain = healthR.value.chain as { valid?: boolean } | undefined;
         setChainValid(chain?.valid ?? false);
-        if (h.status !== "ok") setAlerts((a) => [...a, "API health not ok"]);
-      })
-      .catch(() => setAlerts((a) => [...a, "API /health timeout"]));
-    fetchDemoLiveLog()
-      .then((d) => setDemoOk(d.content.includes("DEMO COMPLETE")))
-      .catch(() => setDemoOk(false));
+        if (healthR.value.status !== "ok") setAlerts((a) => [...a, "API health not ok"]);
+      } else {
+        setAlerts((a) => [...a, "API /health timeout"]);
+      }
+    });
   }, [visibility, groupId]);
 
   const heatmap = blocks.slice(-14).map((_, i) => (i % 3 === 0 ? "▓" : "░")).join("");

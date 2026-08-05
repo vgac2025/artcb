@@ -810,3 +810,38 @@ textarea {
 .mc-chest-slot[role="button"]:hover {
   outline: 2px solid var(--mc-diamond);
 }
+
+/* B12 FIX: Skip-to-content WCAG 2.4.1 Level A */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent-cyan);
+  color: var(--terminal-bg);
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  z-index: 9999;
+  text-decoration: none;
+  transition: top 0.1s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* B13/B14 FIX: boutons danger — fond assombri + texte blanc pour ratio ≥ 4.5:1 WCAG AA */
+.mc-btn-danger,
+button[class*="danger"],
+button.mc-danger {
+  background: var(--mc-redstone);
+  border-color: var(--mc-redstone);
+  color: #ffffff;
+}
+
+.mc-btn-danger:hover,
+button[class*="danger"]:hover,
+button.mc-danger:hover {
+  background: #a93226;
+  border-color: #a93226;
+  color: #ffffff;
+}

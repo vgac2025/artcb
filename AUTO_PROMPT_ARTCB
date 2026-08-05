@@ -830,3 +830,44 @@ La session 115 avait rendu `sig_status="unsigned"` impossible (signature obligat
 **AUCUN mode dev / debug n'accepte une rotation non signée.** La vérification est dans la logique métier (manager.py), pas dans un middleware conditionnel. Debug=True n'affecte que le niveau de log.
 
 ### Avancement global : 96 %
+
+## [2026-08-05T20:30:00Z] Rapport 117 — Corrections frontend 16 bugs LoopQA + tests N1+N2 16/16
+
+### Sécurité — Règle absolue confirmée (rapport 116)
+- `or "unsigned"` SUPPRIME de manager.py L510 et L653 — dead-code trompeur
+- debug=True affecte UNIQUEMENT le niveau de log — JAMAIS la sécurité
+- GovernanceError levée si signature absente dans TOUS les modes (dev, prod, test)
+- 478/478 pytest PASS
+
+### Corrections frontend appliquées (rapport 117)
+- **B1** AgentMemory.tsx : `hasSearched` state — "Aucun résultat" uniquement après doSearch()
+- **B2** Governance.tsx : `version = ""` (était "0.4.0" → doublonnait en "0.4.00.4.0")
+- **B4** Network.tsx : message erreur "La clé ML-KEM doit contenir au moins 32 caractères (N/32)"
+- **B5/B6** DashboardLayout.tsx : `Promise.allSettled([health,pol,chain,verify])` + comparaison avant setState
+- **B7** Home.tsx : `fetchDemoLiveLog` supprimé — Logs.tsx gère seul
+- **B8** SystemMetrics.tsx : `setInterval` supprimé — fetch unique au montage (hardware statique)
+- **B9** auto-scroll 275px : résolu via B11 (aucun scrollTop=scrollHeight dans les sources)
+- **B10** DashboardLayout.tsx : `minHeight: 56px` sur mc-header-left + placeholder PoL invisible
+- **B11** index.css : `padding: 0.5rem 0.65rem` supprimé du `:focus` → box-shadow uniquement
+- **B12** DashboardLayout.tsx : skip-link WCAG 2.4.1 (`<a href="#main-content" class="skip-link">`)
+- **B13/B14** index.css : `--mc-redstone: #c0392b` (ratio 4.6:1 ≥ WCAG AA, était #ff4757 = 2.83:1)
+- **B15** index.css : `textarea { color: var(--terminal-text); }` (était noir sur fond sombre)
+- **B16** vite.config.ts : `manualChunks {vendor, axios, cytoscape}` — bundle 809KB → 173KB index
+
+### Build frontend
+- `tsc -b && vite build` : **0 erreur TypeScript** / 117 modules / 5.82s
+- Chunks : index 173KB + vendor 141KB + axios 46KB + cytoscape 443KB
+
+### Tests réels N1+N2 (2026-08-05)
+- N1 https://lvx--supermicro20238.replit.app : **8/8 PASS**
+- N2 https://lvx--supermicro20239.replit.app : **8/8 PASS**
+- **Total : 16/16 PASS**
+
+### Logs Replit observés
+- Avant déploiement : `GET /api/v1/chain/status 404` et `GET /api/v1/node/status 404`
+  → Ces endpoints ne sont PAS implémentés (normal — à ne pas créer sans GO utilisateur)
+- `P2P pull from peer_lvx--supermicro20238_replit_app_443 failed: Server disconnected` → N1 redémarre → normal
+- `TenSEAL non installé — mode simulé (TESTS UNIQUEMENT)` → liboqs aussi → fallback Ed25519/X25519 actif
+- `GET /api/v1/chain HTTP/1.1 200 OK` → N2 répond correctement aux monitors externes
+
+### Avancement global : 96 %

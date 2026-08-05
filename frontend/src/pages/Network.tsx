@@ -154,6 +154,12 @@ export function Network() {
         <label>Host<input value={host} onChange={(e) => setHost(e.target.value)} /></label>
         <label>Port API<input value={port} onChange={(e) => setPort(e.target.value)} /></label>
         <label>Clé publique ML-KEM du pair (hex)<textarea value={peerKem} onChange={(e) => setPeerKem(e.target.value)} rows={2} /></label>
+        {/* B4 FIX: message d'erreur explicite quand ML-KEM trop courte */}
+        {peerKem.length > 0 && peerKem.length < 32 && (
+          <p className="mc-error" style={{ margin: "4px 0", fontSize: "0.85rem" }}>
+            La clé ML-KEM doit contenir au moins 32 caractères ({peerKem.length}/32)
+          </p>
+        )}
         <button type="button" className="mc-btn" onClick={handleAddPeer} disabled={peerKem.length < 32}>Ajouter</button>
       </section>
 

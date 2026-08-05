@@ -39,6 +39,7 @@ export function AgentMemory() {
   const [status, setStatus] = useState<Record<string, unknown> | null>(null);
   const [memos, setMemos] = useState<AiMemo[]>([]);
   const [searchQ, setSearchQ] = useState("");
+  const [hasSearched, setHasSearched] = useState(false);
   const [searchResults, setSearchResults] = useState<Record<string, unknown>[]>([]);
   const [exportData, setExportData] = useState<string>("");
   const [exportFmt, setExportFmt] = useState<"jsonl" | "json" | "summary">("summary");
@@ -116,6 +117,7 @@ export function AgentMemory() {
     try {
       const r = await chainSearch(searchQ, { top_k: 10 }, auth);
       setSearchResults(r.results);
+      setHasSearched(true);
     } catch (e) { setError(String(e)); }
     finally { setLoading(false); }
   };
@@ -319,7 +321,7 @@ export function AgentMemory() {
               <div className="mc-muted" style={{ marginTop: 4 }}>{String(r.text ?? r.label ?? "").slice(0, 200)}</div>
             </div>
           ))}
-          {searchResults.length === 0 && searchQ && <p className="mc-muted">Aucun resultat.</p>}
+          {searchResults.length === 0 && hasSearched && <p className="mc-muted">Aucun resultat.</p>}
         </div>
       )}
 

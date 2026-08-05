@@ -4,7 +4,17 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   build: {
-    chunkSizeWarningLimit: 800,
+    // B16 FIX: code-splitting manuel — réduit le bundle initial de 809KB
+    // vendor (~200KB), axios (~50KB), cytoscape (~400KB) chargés séparément
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          axios: ["axios"],
+          cytoscape: ["cytoscape"],
+        },
+      },
+    },
   },
   server: {
     port: 5173,
