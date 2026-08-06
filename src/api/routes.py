@@ -267,6 +267,18 @@ async def store(body: StoreRequest, request: Request) -> dict:
         except FileNotFoundError as exc:
             raise HTTPException(status_code=404, detail=f"wallet not found: {body.wallet_name}") from exc
 
+    # SÉCURITÉ : Si actor_address fourni sans wallet_name, le reward est attribué
+    # SANS vérification cryptographique (aucune signature de l'actor_address).
+    # Cela est acceptable en phase dev/test (un seul serveur, wallets locaux connus).
+    # En production multi-nœuds, utiliser wallet_name pour une attribution signée.
+    # Un avertissement est loggé pour traçabilité.
+    if actor and not wallet:
+        logger.warning(
+            "POST /store: actor_address=%s sans wallet_name — attribution non signée "
+            "(acceptable dev, non recommandé production multi-nœuds)",
+            actor[:16] if actor else "None",
+        )
+
     if actor:
         from src.artcb.mining.pipeline import build_contributors
 

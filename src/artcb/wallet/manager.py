@@ -213,12 +213,23 @@ class WalletManager:
         )
 
     def list_wallets(self) -> list[dict]:
-        """List all wallets with metadata."""
+        """List all wallets with metadata.
+
+        Retourne aussi has_key_file=True/False pour indiquer si la clé privée
+        est présente sur CE serveur. Un wallet sans clé privée (has_key_file=False)
+        est une adresse importée en lecture seule — ne peut PAS signer ni recevoir
+        de rewards validés.
+        """
         wallets = []
         for meta_path in self.wallet_dir.glob("*.json"):
             try:
                 metadata = json.loads(meta_path.read_text())
                 metadata["name"] = meta_path.stem
+                # Indiquer si la clé privée (.key) est présente sur CE serveur
+                # has_key_file=True  → wallet local, peut signer, authentifié
+                # has_key_file=False → adresse importée, lecture seule uniquement
+                key_path = self.wallet_dir / f"{meta_path.stem}.key"
+                metadata["has_key_file"] = key_path.is_file()
                 wallets.append(metadata)
             except (json.JSONDecodeError, OSError) as exc:
                 logger.warning("Failed to load wallet metadata path=%s error=%s", meta_path, exc)

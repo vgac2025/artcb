@@ -21,7 +21,7 @@ export function Wallets() {
   const { t } = useTranslation();
   const { actorAddress, setActorAddress } = useDashboard();
   const [wallets, setWallets] = useState<
-    Array<{ address: string; name: string; balance?: number; rewards?: number }>
+    Array<{ address: string; name: string; balance?: number; rewards?: number; has_key_file?: boolean }>
   >([]);
   const [founders, setFounders] = useState<
     Array<{ founder_id: number; name: string; balance_artcb: number; is_creator?: boolean }>
@@ -328,14 +328,24 @@ export function Wallets() {
                     >
                       {copiedGrid === w.address ? "✓" : "⧉"}
                     </button>
-                    {w.address !== actorAddress && (
+                    {/* Bouton Activer : uniquement si la clé privée est sur CE serveur */}
+                    {w.address !== actorAddress && w.has_key_file !== false && (
                       <button
                         style={{ fontSize: 9, padding: "1px 4px", color: "var(--mc-grass)" }}
                         onClick={() => setActorAddress(w.address)}
-                        title="Activer ce wallet"
+                        title="Activer ce wallet (clé privée disponible sur ce nœud)"
                       >
                         ▶
                       </button>
+                    )}
+                    {/* Wallet importé (lecture seule) — pas de bouton Activer */}
+                    {w.has_key_file === false && w.address !== actorAddress && (
+                      <span
+                        style={{ fontSize: 8, color: "var(--terminal-muted)", padding: "1px 3px" }}
+                        title="Wallet en lecture seule — clé privée absente de ce nœud"
+                      >
+                        👁
+                      </span>
                     )}
                   </div>
                 </>
