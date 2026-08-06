@@ -1,8 +1,9 @@
 # HANDOFF — Pour l'agent suivant (état complet main)
 
-**Horodatage :** 2026-07-04T23:44:00Z  
-**Branche :** `main` — push direct (D-001)  
+**Horodatage :** 2026-08-06T23:45:00Z — **mis à jour rapport 107-108**
+**Commit :** `ea56083` — push direct main
 **Dépôt :** https://github.com/vgac2025/lvx
+**Tests :** 488/488 PASS | 8 skipped bridges live (normaux) | Build TS 0 erreur
 
 ---
 
