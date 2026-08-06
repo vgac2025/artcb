@@ -1,0 +1,253 @@
+{
+  "pytest": {
+    "passed": 500,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 8,
+    "elapsed_s": 241.0,
+    "status": "pass",
+    "summary": "500 passed, 8 skipped in 239.23s (0:03:59)",
+    "stdout_tail": ".......................................................ssssssss......... [ 14%]\n........................................................................ [ 28%]\n........................................................................ [ 42%]\n........................................................................ [ 56%]\n........................................................................ [ 70%]\n........................................................................ [ 85%]\n........................................................................ [ 99%]\n....                                                                     [100%]\n500 passed, 8 skipped in 239.23s (0:03:59)",
+    "timestamp": "2026-08-06T21:49:54.274952+00:00",
+    "returncode": 0
+  },
+  "endpoints": {
+    "base_url": "https://lvx--supermicro20239.replit.app",
+    "results": [
+      {
+        "method": "GET",
+        "path": "/",
+        "status_code": 200,
+        "expected": null,
+        "ok": true,
+        "elapsed_ms": 482,
+        "response_keys": [
+          "_html"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/health",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 1223,
+        "response_keys": [
+          "status",
+          "service",
+          "version"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/health",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 243,
+        "response_keys": [
+          "status",
+          "debug",
+          "llm_enabled",
+          "bob_configured",
+          "demo_book",
+          "chain"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/chain",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 497,
+        "response_keys": [
+          "blocks",
+          "count"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/chain/status",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 182,
+        "response_keys": [
+          "height",
+          "block_count",
+          "last_hash",
+          "last_timestamp",
+          "last_index",
+          "chain_valid"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/chain/blocks",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 185,
+        "response_keys": [
+          "blocks",
+          "count"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/node/status",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 244,
+        "response_keys": [
+          "node_id",
+          "version",
+          "debug",
+          "status"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/p2p/status",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 334,
+        "response_keys": [
+          "network_id",
+          "node_id",
+          "kem_public_key_hex",
+          "kem_algorithm",
+          "p2p_port",
+          "api_port",
+          "peer_count",
+          "public_blocks_local",
+          "public_blocks_incoming",
+          "private_never_synced",
+          "pool_e2e_available",
+          "pool_crypto",
+          "message"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/p2p/peers",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 227,
+        "response_keys": [
+          "peers",
+          "count"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/wallet/list",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 325,
+        "response_keys": [
+          "wallets",
+          "count"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/pol/score",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 178,
+        "response_keys": [
+          "pol_score",
+          "delta_compression",
+          "validation_rate",
+          "retrieval_accuracy",
+          "block_accepted",
+          "blocks_accepted",
+          "blocks_rejected"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/dashboard/mining/status",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 306,
+        "response_keys": [
+          "block_count",
+          "current_reward_artcb",
+          "current_reward_satoshi",
+          "halving_interval",
+          "blocks_until_halving",
+          "next_halving_at",
+          "total_rewards_artcb",
+          "pol_score",
+          "epoch_fixe",
+          "epoch_dynamique",
+          "epoch_total"
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/dashboard/logs/demo-live",
+        "status_code": 200,
+        "expected": 200,
+        "ok": true,
+        "elapsed_ms": 209,
+        "response_keys": [
+          "path",
+          "lines",
+          "line_count",
+          "content"
+        ]
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/wallet/create",
+        "status_code": 0,
+        "expected": 200,
+        "ok": false,
+        "elapsed_ms": 15041,
+        "response_keys": [
+          "error"
+        ]
+      },
+      {
+        "method": "POST",
+        "path": "/api/v1/ir/learn",
+        "status_code": 0,
+        "expected": null,
+        "ok": false,
+        "elapsed_ms": 15043,
+        "response_keys": [
+          "error"
+        ]
+      }
+    ],
+    "ok": 13,
+    "fail": 2,
+    "total": 15,
+    "status": "fail"
+  },
+  "loopqa": {
+    "status": "error",
+    "error": "'str' object has no attribute 'get'"
+  },
+  "loopqa_expl": {
+    "active": 0,
+    "done": 0,
+    "items": []
+  },
+  "bugs_open_count": 0,
+  "runs": [],
+  "timestamp": "2026-08-06T21:50:32.568143+00:00",
+  "loopqa_project": "proj-artcb-replit-n2-live-tests-msgawasn",
+  "target_url": "https://lvx--supermicro20239.replit.app",
+  "loopqa_ui": "https://qa.replay.io/p/proj-artcb-replit-n2-live-tests-msgawasn/overview"
+}
