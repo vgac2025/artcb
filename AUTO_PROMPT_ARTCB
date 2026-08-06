@@ -1028,3 +1028,40 @@ T=23s    : GET / → HTTP 200 → healthcheck PASSE ✅
 - 17 bugs LoopQA : anciens B1-B16 déjà corrigés — pas rejoués sur nouveau déploiement
 
 ### Avancement global : 96 %
+
+## [2026-08-06T21:00:00Z] Rapport 106 + 122 — Audit sécurité wallet + faille actor_address + explication complète
+
+### Faille P1 identifiée et corrigée
+
+**Bouton "Activer wallet" visible sur tous les wallets → permettait attribution de reward à une adresse tierce.**
+
+- `actor_address` dans POST /store était accepté sans vérification cryptographique
+- Un utilisateur pouvait attribuer son bloc miné à l'adresse de quelqu'un d'autre
+- Ce n'est PAS un vol (pas d'accès clé privée), mais une fraude d'attribution PoL
+
+**Corrections `df5fcdc` :**
+1. `manager.py` : `list_wallets()` retourne `has_key_file=True/False`
+2. `Wallets.tsx` : bouton Activer `▶` SEULEMENT si `has_key_file != false`
+   - Wallets importés (lecture seule) : icône `👁` à la place
+3. `routes.py` : log WARNING si `actor_address` sans `wallet_name`
+
+### Règles importantes (à retenir absolument)
+
+| Concept | Ce que c'est | Ce que ça permet |
+|---------|-------------|-----------------|
+| **Clé privée** | 32 octets aléatoires, stockés chiffrés AES-256-GCM sur le serveur | Signer des blocs, prouver propriété |
+| **Clé publique** | Dérivée de la clé privée, visible | Vérifier les signatures |
+| **Adresse `artcb1xxx`** | Raccourci de la clé publique (SHA256→RIPEMD160→Bech32) | Consulter solde, recevoir rewards |
+| **Adresse v2 `artcb2xxx`** | Hash(Ed25519+ML-DSA-65), post-quantique | Idem, résistant ordinateurs quantiques |
+
+**La clé privée ne quitte JAMAIS le serveur.** Elle n'est jamais dans les réponses API ni dans le navigateur.
+
+### Wallet test5 (fourni par utilisateur)
+- Adresse : `artcb1wty7tpgtuxnf4gc0ghan6hn3clvam65rqfyhl0`
+- API Key : `artcb_9f74d7d...` ← **exposée dans le chat → à renouveler**
+- Type : Ed25519 + ML-DSA-65 ✅
+
+### "Autoscale scale-to-zero" — explication simple
+Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s de démarrage. Les GET répondent mais les POST lourds (création wallet = nacl+AES) timeoutent à 15s. **Pas un bug du code** — limitation du plan gratuit Replit.
+
+### Avancement global : 96 %
