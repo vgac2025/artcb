@@ -1199,3 +1199,4 @@
 {"ts": "2026-08-06T22:05:16.618429+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=test6 — user must save it"}
 {"ts": "2026-08-06T22:06:51.919511+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=test7 address=artcb1a2rsaudekue9guqxwajmnkzq84t7qr5swczm9d"}
 {"ts": "2026-08-06T22:06:51.920389+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=test7 — user must save it"}
+{"ts": "2026-08-06T23:00:22.115948+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
