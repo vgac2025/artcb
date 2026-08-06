@@ -724,3 +724,153 @@
 {"ts": "2026-08-06T21:09:09.400915+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
 {"ts": "2026-08-06T21:09:11.269539+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
 {"ts": "2026-08-06T21:09:12.555626+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:21.953283+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:26.408252+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:28.166785+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:29.394016+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:30.619125+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:31.969380+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:33.255519+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:34.595655+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:35.893289+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:37.715680+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:39.861944+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:40.287800+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=cli_test address=artcb1uq00pex7ulejwxg0secwpeukre382xu2rags9r"}
+{"ts": "2026-08-06T21:32:40.288113+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=cli_test — user must save it"}
+{"ts": "2026-08-06T21:32:41.869496+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:43.516129+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:44.260460+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=mine_cli address=artcb1cdej5wt2k7t0djs7uv3trc03jvp3wt434r0n28"}
+{"ts": "2026-08-06T21:32:44.260705+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=mine_cli — user must save it"}
+{"ts": "2026-08-06T21:32:46.094165+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:46.410761+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=alice_test address=artcb1qulegw6z9zuw70guw3d4ayzf69k2gqq9lfu5kd"}
+{"ts": "2026-08-06T21:32:46.411046+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=alice_test — user must save it"}
+{"ts": "2026-08-06T21:32:47.619190+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:47.767042+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=bob_test address=artcb1aeh6s55kq4ud0h728p9gjgy3zt8r9lp3kpwgld"}
+{"ts": "2026-08-06T21:32:47.767219+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=bob_test — user must save it"}
+{"ts": "2026-08-06T21:32:48.956372+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:49.071165+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=carol_test address=artcb18r8lgz9fdyf02q4jjkhfs8mcdp5w8n6kkzzy22"}
+{"ts": "2026-08-06T21:32:49.071367+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=carol_test — user must save it"}
+{"ts": "2026-08-06T21:32:49.226594+00:00", "level": "INFO", "module": "artcb.api.auth", "message": "Login successful: wallet=carol_test address=artcb18r8lgz9fdyf02q4jjkhfs8mcdp5w8n6kkzzy22"}
+{"ts": "2026-08-06T21:32:50.409596+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:51.615100+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:51.734752+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=dave_test address=artcb13y4x96gt480eudxjlatpun8j726ewv0m60nwrj"}
+{"ts": "2026-08-06T21:32:51.737146+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=dave_test — user must save it"}
+{"ts": "2026-08-06T21:32:51.748244+00:00", "level": "DEBUG", "module": "artcb.api.auth", "message": "Challenge issued: 3f7eddbbaa33ad06"}
+{"ts": "2026-08-06T21:32:51.822296+00:00", "level": "INFO", "module": "artcb.api.auth", "message": "Verify OK: address=artcb13y4x96gt48 wallet=dave_test"}
+{"ts": "2026-08-06T21:32:53.019015+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:53.124521+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=eve_test address=artcb1k63fpnapuscpfe7uekhlhvxwgdy0p03tcwf6mv"}
+{"ts": "2026-08-06T21:32:53.124875+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=eve_test — user must save it"}
+{"ts": "2026-08-06T21:32:53.134634+00:00", "level": "DEBUG", "module": "artcb.api.auth", "message": "Challenge issued: 8d3550b4eaf53eee"}
+{"ts": "2026-08-06T21:32:54.409261+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:54.521153+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=frank_test address=artcb1djwpxpa06rku4el09yue2vyzustqgrm7xza0e7"}
+{"ts": "2026-08-06T21:32:54.521339+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=frank_test — user must save it"}
+{"ts": "2026-08-06T21:32:54.532155+00:00", "level": "DEBUG", "module": "artcb.api.auth", "message": "Challenge issued: 40e413692e7a3b76"}
+{"ts": "2026-08-06T21:32:54.627790+00:00", "level": "INFO", "module": "artcb.api.auth", "message": "Verify OK: address=artcb1djwpxpa06r wallet=frank_test"}
+{"ts": "2026-08-06T21:32:55.819441+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:57.020225+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:57.119294+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=grace_test address=artcb17sph4qck27yn6tyrd4le78psn4g8qjlghgzj5h"}
+{"ts": "2026-08-06T21:32:57.119462+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=grace_test — user must save it"}
+{"ts": "2026-08-06T21:32:57.244209+00:00", "level": "INFO", "module": "artcb.api.auth", "message": "Login successful: wallet=grace_test address=artcb17sph4qck27yn6tyrd4le78psn4g8qjlghgzj5h"}
+{"ts": "2026-08-06T21:32:57.250154+00:00", "level": "INFO", "module": "artcb.api.api_keys", "message": "API key created: kid_cf8c4b6271752037 (Mon ChatGPT) owner=grace_test address=artcb17sph4qck27yn6tyrd4le78psn4g8qjlghgzj5h"}
+{"ts": "2026-08-06T21:32:58.435000+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:32:58.543900+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=henry_test address=artcb1sm7da3qj0hplcrnptn8z6l7m8m9rywjeq0479c"}
+{"ts": "2026-08-06T21:32:58.544131+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=henry_test — user must save it"}
+{"ts": "2026-08-06T21:32:58.696382+00:00", "level": "INFO", "module": "artcb.api.auth", "message": "Login successful: wallet=henry_test address=artcb1sm7da3qj0hplcrnptn8z6l7m8m9rywjeq0479c"}
+{"ts": "2026-08-06T21:34:35.857517+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:37.246574+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:38.628590+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:39.951412+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:41.485070+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:42.758780+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:44.031688+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:45.294525+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:46.569255+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:47.824411+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:49.172167+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:49.290404+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=faucet_wallet address=artcb1rwspc9tg55474pf482e9fwjv0kj6yrv80d8e0z"}
+{"ts": "2026-08-06T21:34:49.290616+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=faucet_wallet — user must save it"}
+{"ts": "2026-08-06T21:34:50.495520+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:50.622897+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=bal_wallet address=artcb1g5ecyr4xaquyhntl6wqlu2gp6yxt3692qmrdfm"}
+{"ts": "2026-08-06T21:34:50.623072+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=bal_wallet — user must save it"}
+{"ts": "2026-08-06T21:34:51.846768+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:53.087575+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:54.319365+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:55.718712+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:57.532379+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:34:58.894478+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:00.281391+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:01.644399+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:03.295124+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:03.346550+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_78fe3d2ee463 join_code=D486718F"}
+{"ts": "2026-08-06T21:35:04.857397+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:04.914454+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_995f5aa3a1c2 join_code=7CF07332"}
+{"ts": "2026-08-06T21:35:06.473963+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:06.529902+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_a8e4a34804d0 join_code=98446916"}
+{"ts": "2026-08-06T21:35:08.248902+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:08.331385+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_7cd72a7b12b3 join_code=7B67D203"}
+{"ts": "2026-08-06T21:35:08.560111+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "FOUNDER_IMMUTABLE blocked: Cannot modify founder membership"}
+{"ts": "2026-08-06T21:35:10.154051+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:10.234466+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_907697019fcd join_code=6B9FEBF4"}
+{"ts": "2026-08-06T21:35:11.952179+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:12.023585+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_d811bc60509c join_code=94796921"}
+{"ts": "2026-08-06T21:35:13.764364+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:13.816382+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_510b8a451480 join_code=18743475"}
+{"ts": "2026-08-06T21:35:15.546810+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:15.603989+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_43227fe14956 join_code=88B24EF3"}
+{"ts": "2026-08-06T21:35:17.312549+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:17.362537+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_614596b737b3 join_code=95065D72"}
+{"ts": "2026-08-06T21:35:17.384023+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "POST /store: actor_address=artcb1eq3ynw9v3w sans wallet_name — attribution non signée (acceptable dev, non recommandé production multi-nœuds)"}
+{"ts": "2026-08-06T21:35:19.710067+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:21.107416+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:22.473448+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:24.018617+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:25.776564+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:26.997716+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:29.445474+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:30.941535+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:32.215324+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:44.308969+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:45.541728+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:46.817711+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:48.134536+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:49.404671+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:50.675419+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:50.778732+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pool_wallet address=artcb1grx7j4n4p9e8x7c4c5j26udxm2a9jkksha4xeu"}
+{"ts": "2026-08-06T21:35:50.778926+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=pool_wallet — user must save it"}
+{"ts": "2026-08-06T21:35:52.273465+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:52.385273+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pool_wallet address=artcb1j44zmz820ta78cyr4j8d6xw7gdth7hcjr7420n"}
+{"ts": "2026-08-06T21:35:52.385572+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=pool_wallet — user must save it"}
+{"ts": "2026-08-06T21:35:53.909938+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:54.077068+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=founder_wallet address=artcb1zcsxt3enxdfac3m2e56w6pywps4mnfkaq6qkqz"}
+{"ts": "2026-08-06T21:35:54.077271+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=founder_wallet — user must save it"}
+{"ts": "2026-08-06T21:35:54.104452+00:00", "level": "DEBUG", "module": "artcb.api.groups", "message": "Group created id=g_021537461559 join_code=A0DDCD6E"}
+{"ts": "2026-08-06T21:35:55.612429+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:55.809208+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=local_wallet address=artcb1fkhp5dlk94s0fdh2agad5u2eqqz2ad0v03zdh4"}
+{"ts": "2026-08-06T21:35:55.809386+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=local_wallet — user must save it"}
+{"ts": "2026-08-06T21:35:57.259371+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:58.675299+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:35:59.939444+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:00.041079+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=pipe_wallet address=artcb17lfjv8pcgtnex4dpkn8c4n79c7gz4gqnp9c6ea"}
+{"ts": "2026-08-06T21:36:00.041300+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=pipe_wallet — user must save it"}
+{"ts": "2026-08-06T21:36:01.542789+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:01.659218+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=stress_wallet address=artcb1z0kv8n3sjj22pj3563nqvm2g7juxmpr3524pxm"}
+{"ts": "2026-08-06T21:36:01.659467+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=stress_wallet — user must save it"}
+{"ts": "2026-08-06T21:36:02.913884+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:04.221167+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:04.339827+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=batch_wallet address=artcb14tr8ee0fawznv6t6a60lkayxjky38lncprr3tu"}
+{"ts": "2026-08-06T21:36:04.340004+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=batch_wallet — user must save it"}
+{"ts": "2026-08-06T21:36:06.441332+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:07.702200+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:08.950196+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:10.215709+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:11.465880+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:12.891699+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:14.266244+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:14.374989+00:00", "level": "INFO", "module": "artcb.api.routes", "message": "Created wallet name=sym_wallet address=artcb1t673zwpk53gm0dpnwerpamjuqtzfx2hh0k65kk"}
+{"ts": "2026-08-06T21:36:14.375218+00:00", "level": "WARNING", "module": "artcb.api.routes", "message": "SEED RETURNED once at creation for wallet=sym_wallet — user must save it"}
+{"ts": "2026-08-06T21:36:15.757732+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:16.987607+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:18.242952+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:21.118970+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:22.947748+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
+{"ts": "2026-08-06T21:36:24.165751+00:00", "level": "DEBUG", "module": "artcb.api", "message": "ARTCB API started debug=True"}
