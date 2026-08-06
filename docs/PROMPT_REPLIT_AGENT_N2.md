@@ -140,14 +140,14 @@ LoopQA explore le dashboard de ce nœud en temps réel.
 
 ```bash
 # Voir l'état de l'exploration IA sur le dashboard
-curl -s -H "Authorization: Bearer lqa_e1d739fe4152328d0d7579549754972da625cde4aa6bc02b" \
+curl -s -H "Authorization: Bearer lqa_c13a64b1339ea4e9927f6f365f823b14e947d65b43a9fce5" \
   -H "Content-Type: application/json" \
   -X POST https://qa.replay.io/api/mcp \
   -d '{"jsonrpc":"2.0","method":"tools/call","id":1,"params":{"name":"get_project_status","arguments":{"project_id":"proj-artcb-replit-n2-live-tests-msgawasn"}}}' \
   | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['result']['content'][0]['text'])"
 
 # Lister les bugs détectés par LoopQA IA
-curl -s -H "Authorization: Bearer lqa_e1d739fe4152328d0d7579549754972da625cde4aa6bc02b" \
+curl -s -H "Authorization: Bearer lqa_c13a64b1339ea4e9927f6f365f823b14e947d65b43a9fce5" \
   -H "Content-Type: application/json" \
   -X POST https://qa.replay.io/api/mcp \
   -d '{"jsonrpc":"2.0","method":"tools/call","id":2,"params":{"name":"list_bugs","arguments":{"project_id":"proj-artcb-replit-n2-live-tests-msgawasn","status":"open"}}}' \
@@ -183,7 +183,7 @@ Anomalies  : <liste ou AUCUNE>
 | Variable | Valeur | Rôle |
 |----------|--------|------|
 | `ARTCB_DEBUG` | `true` | Logs détaillés |
-| `LOOPQA_API_TOKEN` | `lqa_e1d739fe4152328d0d7579549754972da625cde4aa6bc02b` | LoopQA |
+| `LOOPQA_API_TOKEN` | `lqa_c13a64b1339ea4e9927f6f365f823b14e947d65b43a9fce5` | LoopQA |
 | `LOOPQA_PROJECT_N2` | `proj-artcb-replit-n2-live-tests-msgawasn` | ID projet |
 | `LOOPQA_API_URL` | `https://qa.replay.io/api/mcp` | Endpoint MCP |
 | `ARTCB_ANTI_SYBIL_AI_BYPASS` | `false` | Sécurité anti-Sybil active |

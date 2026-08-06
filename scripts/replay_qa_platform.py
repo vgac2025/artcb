@@ -36,7 +36,7 @@ from pathlib import Path
 # ─── Configuration ────────────────────────────────────────────────────────────
 LOOPQA_MCP_URL  = os.environ.get("LOOPQA_API_URL",     "https://qa.replay.io/api/mcp")
 LOOPQA_REST_URL = os.environ.get("LOOPQA_REST_URL",    "https://qa.replay.io/api/v1")
-LOOPQA_TOKEN    = os.environ.get("LOOPQA_API_TOKEN",   "lqa_e1d739fe4152328d0d7579549754972da625cde4aa6bc02b")
+LOOPQA_TOKEN    = os.environ.get("LOOPQA_API_TOKEN",   "lqa_c13a64b1339ea4e9927f6f365f823b14e947d65b43a9fce5")
 LOOPQA_PROJECT  = os.environ.get("LOOPQA_PROJECT_N2",  "proj-artcb-replit-n2-live-tests-msgawasn")
 REPLIT_N2_URL   = "https://lvx--supermicro20239.replit.app"
 REPLIT_N1_URL   = "https://lvx--supermicro20238.replit.app"
