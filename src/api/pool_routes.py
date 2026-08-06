@@ -276,6 +276,9 @@ def create_pool_job(body: CreatePoolJobRequest, request: Request) -> dict:
     if len(workers) < 1:
         raise HTTPException(status_code=400, detail="Aucun worker disponible")
     try:
+        # PRE-FILTRE : récupérer anti_sybil depuis l'état de la chaîne
+        state = request.app.state.artcb
+        anti_sybil = getattr(getattr(state, "chain", None), "anti_sybil", None)
         job = pool.create_job(
             body.text,
             visibility=body.visibility,
@@ -285,6 +288,8 @@ def create_pool_job(body: CreatePoolJobRequest, request: Request) -> dict:
             wallet_name=body.wallet_name,
             chunk_chars=body.chunk_chars,
             encrypt_transport=body.encrypt_transport,
+            anti_sybil=anti_sybil,
+            source="mining",
         )
     except PoolError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

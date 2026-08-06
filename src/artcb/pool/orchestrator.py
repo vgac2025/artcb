@@ -68,6 +68,9 @@ def run_distributed_pool(
     contributor_address: str | None,
     sign_fn: Callable[[bytes], str] | None,
 ) -> dict[str, Any]:
+    # PRE-FILTRE : récupérer anti_sybil depuis pool si disponible
+    # Priorité : pré-filtrer les workers AVANT de créer le job
+    anti_sybil = getattr(pool, "_anti_sybil", None)
     job = pool.create_job(
         text,
         visibility=visibility,
@@ -77,6 +80,8 @@ def run_distributed_pool(
         wallet_name=wallet_name,
         chunk_chars=chunk_chars,
         encrypt_transport=True,
+        anti_sybil=anti_sybil,
+        source="mining",
     )
     dispatch_results = None
     if auto_dispatch:

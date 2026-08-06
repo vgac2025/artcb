@@ -330,6 +330,99 @@ class AntiSybilValidator:
         )
         return limit
 
+    def is_eligible(self, address: str, source: str = "unknown") -> tuple[bool, str]:
+        """
+        Vérifie si une adresse est éligible pour RECEVOIR un job de minage.
+
+        Appelé AVANT d'attribuer un chunk ou de construire la liste contributors.
+        Un wallet inéligible ne doit JAMAIS recevoir un job — ni le calculer.
+
+        Returns:
+            (True, "ok") si éligible
+            (False, raison) si inéligible — le wallet est exclu sans erreur globale
+        """
+        now = datetime.now(UTC)
+        is_ai_source = source.startswith("ai:")
+        bypass = self.ai_bypass and is_ai_source or self.study_mode
+
+        if address in self.reputation:
+            rep = self.reputation[address]
+
+            # Vérifier blacklist explicite (patterns "BLACKLISTED:…")
+            # On ne pénalise PAS sur is_suspicious seul car un wallet avec 0 bloc
+            # valide et 0 rejet aurait avg_pol_score=0.0 → is_suspicious=True à tort.
+            is_blacklisted = any(p.startswith("BLACKLISTED:") for p in rep.suspicious_patterns)
+            if is_blacklisted:
+                return False, (
+                    f"wallet {address[:12]}... blacklisté "
+                    f"(raison: {rep.suspicious_patterns[0]})"
+                )
+
+            # Vérifier réputation dégradée uniquement si le wallet a un historique réel
+            if rep.total_blocks > 0 and rep.is_suspicious:
+                return False, (
+                    f"wallet {address[:12]}... suspendu "
+                    f"(taux rejet={rep.rejection_rate:.2f}, "
+                    f"blocs={rep.total_blocks})"
+                )
+
+            # Vérifier le rate-limit
+            if rep.last_block_time and not bypass:
+                elapsed = (now - rep.last_block_time).total_seconds()
+                limit_s = self.min_block_interval.total_seconds()
+                if elapsed < limit_s:
+                    remaining = int(limit_s - elapsed)
+                    return False, (
+                        f"wallet {address[:12]}... en cooldown : "
+                        f"{elapsed:.0f}s écoulées sur {limit_s:.0f}s requises "
+                        f"(encore {remaining}s)"
+                    )
+
+        return True, "ok"
+
+    def filter_eligible_contributors(
+        self,
+        candidates: list[dict],
+        source: str = "unknown",
+    ) -> tuple[list[dict], list[dict]]:
+        """
+        Filtre une liste de candidats contributeurs : retourne les éligibles et les exclus.
+
+        Appelé AVANT de constituer la liste finale pour un job ou un bloc.
+        Les exclus ne reçoivent PAS de job — aucun travail ne leur est attribué.
+
+        Args:
+            candidates: liste de dicts avec au minimum {"address": str, "pol_score": float}
+            source: origine du bloc (pour bypass AI)
+
+        Returns:
+            (eligible_list, excluded_list)
+            excluded_list contient des dicts {"address", "reason"}
+        """
+        eligible: list[dict] = []
+        excluded: list[dict] = []
+
+        for candidate in candidates:
+            address = candidate.get("address", "")
+            ok, reason = self.is_eligible(address, source=source)
+            if ok:
+                eligible.append(candidate)
+            else:
+                excluded.append({"address": address, "reason": reason})
+                logger.info(
+                    "PRE-FILTER: wallet %s exclu avant attribution job — %s",
+                    address[:16], reason,
+                )
+
+        if excluded:
+            logger.warning(
+                "PRE-FILTER: %d/%d candidats exclus avant job attribution : %s",
+                len(excluded), len(candidates),
+                [e["reason"] for e in excluded],
+            )
+
+        return eligible, excluded
+
     def validate_block(
         self,
         contributors: list[dict],

@@ -239,9 +239,16 @@ class PoolService:
         group_id: str | None = None,
         chunk_chars: int = 400,
         encrypt_transport: bool = True,
+        anti_sybil=None,
+        source: str = "unknown",
     ) -> PoolJob:
         """
-        workers: [{node_id, kem_public_hex, base_url?}, ...] — doit inclure au moins ce nœud.
+        workers: [{node_id, kem_public_hex, base_url?, contributor_address?}, ...]
+
+        PRE-FILTRE ANTI-SYBIL :
+        Si anti_sybil est fourni, tout worker dont le contributor_address est en
+        cooldown ou blacklisté est retiré de la rotation AVANT l'attribution des chunks.
+        Un wallet inéligible ne reçoit aucun chunk — il ne travaille pas pour rien.
         """
         if not workers:
             raise PoolError("Au moins un worker requis")
@@ -252,12 +259,38 @@ class PoolService:
         if not encrypt_transport:
             raise PoolError("encrypt_transport obligatoire pour pool distribué")
 
+        # ── PRE-FILTRE WORKERS : exclure les wallets inéligibles ─────────────
+        eligible_workers = workers
+        if anti_sybil is not None:
+            eligible_workers = []
+            for w in workers:
+                addr = w.get("contributor_address") or w.get("node_id", "")
+                ok, reason = anti_sybil.is_eligible(addr, source=source)
+                if ok:
+                    eligible_workers.append(w)
+                else:
+                    logger.warning(
+                        "Pool PRE-FILTER: worker node=%s addr=%s exclu avant job — %s",
+                        w.get("node_id", "?")[:12], addr[:12], reason,
+                    )
+            if not eligible_workers:
+                raise PoolError(
+                    "Aucun worker éligible après pré-filtrage anti-Sybil — "
+                    "tous les wallets candidats sont en cooldown ou suspendus. "
+                    "Attendez la fin du cooldown avant de relancer."
+                )
+            if len(eligible_workers) < len(workers):
+                logger.info(
+                    "Pool PRE-FILTER: %d/%d workers éligibles pour ce job",
+                    len(eligible_workers), len(workers),
+                )
+
         pieces = split_text_chunks(text, chunk_chars=chunk_chars)
         job_id = f"job_{uuid.uuid4().hex[:12]}"
         chunks: list[PoolChunk] = []
 
         for i, piece in enumerate(pieces):
-            worker = workers[i % len(workers)]
+            worker = eligible_workers[i % len(eligible_workers)]
             w_node = worker["node_id"]
             w_kem = worker["kem_public_hex"]
             envelope = encrypt_chunk_payload(piece, w_kem)

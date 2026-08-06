@@ -41,16 +41,23 @@ def build_contributors(
     wallet: Wallet | None = None,
     graph_root: str | None = None,
     extra_contributors: list[dict] | None = None,
+    anti_sybil=None,
+    source: str = "unknown",
 ) -> list[dict]:
     """
     Construit la liste contributeurs pour minage collectif PoL.
 
-  - role ``learner`` : ingestion source externe
-  - role ``reasoner`` : dual-agent Explorateur + Critique (raisonnement)
+    PRE-FILTRE ANTI-SYBIL :
+    Si anti_sybil est fourni, chaque candidat est vérifié AVANT d'être inclus.
+    Un wallet en cooldown ou blacklisté n'est jamais ajouté à la liste —
+    il ne reçoit ni job ni calcul à faire.
+
+    - role ``learner``  : ingestion source externe
+    - role ``reasoner`` : dual-agent Explorateur + Critique (raisonnement)
     """
-    contributors: list[dict] = []
+    candidates: list[dict] = []
     for extra in extra_contributors or []:
-        contributors.append({
+        candidates.append({
             "address": extra["address"],
             "pol_score": float(extra.get("pol_score", pol_score)),
             "signature": extra.get("signature", ""),
@@ -61,15 +68,29 @@ def build_contributors(
     if wallet and graph_root:
         signature = wallet.sign(graph_root.encode("utf-8"))
 
-    if actor_address and not any(c.get("address") == actor_address for c in contributors):
-        contributors.append({
+    if actor_address and not any(c.get("address") == actor_address for c in candidates):
+        candidates.append({
             "address": actor_address,
             "pol_score": pol_score,
             "signature": signature,
             "role": "reasoner",
         })
 
-    return contributors
+    # ── PRE-FILTRE : exclure les wallets inéligibles AVANT attribution ─
+    if anti_sybil is not None and candidates:
+        eligible, excluded = anti_sybil.filter_eligible_contributors(
+            candidates, source=source
+        )
+        if excluded:
+            import logging as _log
+            _log.getLogger("artcb.mining.pipeline").warning(
+                "build_contributors: %d wallet(s) exclus avant attribution job : %s",
+                len(excluded),
+                [e["address"][:12] + "… — " + e["reason"] for e in excluded],
+            )
+        return eligible
+
+    return candidates
 
 
 class MiningPipeline:
@@ -184,12 +205,17 @@ class MiningPipeline:
                 raise ValueError("actor not a group member")
 
             graph_root = sha256_text(graph.checksum).replace("sha256:", "")
+            # PRE-FILTRE : passer l'anti_sybil pour que seuls les wallets
+            # éligibles soient inclus — aucun inéligible ne reçoit un job
+            anti_sybil = getattr(self.chain, "anti_sybil", None)
             contributors = build_contributors(
                 actor_address=actor_address or "",
                 pol_score=pol.pol_score,
                 wallet=wallet,
                 graph_root=graph_root,
                 extra_contributors=extra_contributors,
+                anti_sybil=anti_sybil,
+                source="mining",
             )
 
             public_symbols = graph.orig_symbols if visibility == "public" and graph.orig_symbols else None
