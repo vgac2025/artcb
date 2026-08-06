@@ -187,4 +187,57 @@ curl -s -X POST https://lvx--supermicro20238.replit.app/api/v1/api-keys/generate
 
 ---
 
-*ARTCB — Nœud N1 — v0.3.1 — rapport 107 — 2026-08-06*
+## ÉTAPE 8 — TEST PRÉ-FILTRAGE ANTI-SYBIL (rapport 109 — nouveau)
+
+```bash
+# Test : un wallet récemment actif ne doit PAS recevoir de job
+# (vérifie que l'Anti-Sybil filtre AVANT attribution, pas après)
+
+# 1. Créer deux wallets de test
+curl -s -X POST https://lvx--supermicro20238.replit.app/api/v1/wallet/create \
+  -H "Content-Type: application/json" \
+  -d '{"name":"n1_miner_a"}' | python3 -m json.tool
+# → seed_hex + address
+
+ADDR_A=$(curl -s -X POST https://lvx--supermicro20238.replit.app/api/v1/wallet/create \
+  -H "Content-Type: application/json" \
+  -d '{"name":"n1_miner_b"}' | python3 -c "import sys,json; print(json.load(sys.stdin).get('address',''))")
+
+# 2. Faire miner n1_miner_b une première fois
+curl -s -X POST https://lvx--supermicro20238.replit.app/api/v1/ir/learn \
+  -H "Content-Type: application/json" \
+  -d "{\"wallet_address\":\"$ADDR_A\",\"content\":\"Premier bloc test pré-filtre $(date -u +%s)\"}" \
+  | python3 -m json.tool
+# → block_index=N, pol_score>0
+
+# 3. Immédiatement après (< 60s), tenter un second bloc avec le même wallet
+# Le wallet doit être EXCLU de la liste contributeurs avant d'être invité à travailler
+# Résultat attendu : bloc gravé avec d'autres contributeurs OU erreur "aucun contributeur éligible"
+# Ce qui NE doit PAS arriver : le bloc s'annule à cause d'un contributeur en cooldown
+curl -s -X POST https://lvx--supermicro20238.replit.app/api/v1/ir/learn \
+  -H "Content-Type: application/json" \
+  -d "{\"wallet_address\":\"$ADDR_A\",\"content\":\"Second bloc test pré-filtre $(date -u +%s)\"}" \
+  | python3 -m json.tool
+# Attendu : soit bloc gravé (si autre contributeur disponible), soit
+#   {"detail": "...cooldown..."} — mais JAMAIS un bloc gravé puis annulé
+
+echo "=== RÉSULTAT ANTI-SYBIL PRÉ-FILTRE ==="
+curl -s https://lvx--supermicro20238.replit.app/api/v1/security/anti-sybil/metrics \
+  | python3 -m json.tool
+```
+
+---
+
+## RÈGLES ABSOLUES
+
+1. **Toujours en mode DEBUG** (`debug=true` dans les réponses)
+2. **Jamais de mock** — tous les tests appellent l'API réelle
+3. **Rotation sans signature → HTTP 422** obligatoirement
+4. **8 skipped bridges live** dans pytest = NORMAL (nécessitent `ARTCB_LIVE_TESTS=1`)
+5. Si un endpoint retourne 404, le signaler — ce n'est pas normal pour la liste ci-dessus
+6. **`/api-keys/generate` sans session → HTTP 401** — c'est normal depuis rapport 107
+7. **Wallet en cooldown → exclu AVANT attribution job** — rapport 109
+
+---
+
+*ARTCB — Nœud N1 — v0.3.2 — rapport 109 — commit 9a119ab — 2026-08-06*

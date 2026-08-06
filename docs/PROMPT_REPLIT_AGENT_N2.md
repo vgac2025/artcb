@@ -191,6 +191,38 @@ Anomalies  : <liste ou AUCUNE>
 
 ---
 
+## ÉTAPE 8 — TEST PRÉ-FILTRAGE ANTI-SYBIL (rapport 109 — nouveau)
+
+```bash
+# Vérifier que le pré-filtre anti-Sybil est actif sur N2
+# Un wallet qui vient de miner ne doit PAS recevoir de job — il est filtré AVANT
+
+ADDR=$(curl -s -X POST https://lvx--supermicro20239.replit.app/api/v1/wallet/create \
+  -H "Content-Type: application/json" \
+  -d '{"name":"n2_prefilter_test"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin).get('address',''))")
+echo "Wallet: $ADDR"
+
+# Premier bloc
+curl -s -X POST https://lvx--supermicro20239.replit.app/api/v1/ir/learn \
+  -H "Content-Type: application/json" \
+  -d "{\"wallet_address\":\"$ADDR\",\"content\":\"Bloc N2 pre-filter $(date -u +%s)\"}" \
+  | python3 -m json.tool
+
+# Second bloc immédiat → wallet doit être exclu AVANT calcul, pas après
+curl -s -X POST https://lvx--supermicro20239.replit.app/api/v1/ir/learn \
+  -H "Content-Type: application/json" \
+  -d "{\"wallet_address\":\"$ADDR\",\"content\":\"Bloc N2 pre-filter #2 $(date -u +%s)\"}" \
+  | python3 -m json.tool
+# Attendu : bloc gravé avec liste contributeurs vide ou autre wallet, JAMAIS d'annulation
+
+# Métriques anti-sybil
+curl -s https://lvx--supermicro20239.replit.app/api/v1/security/anti-sybil/metrics \
+  | python3 -m json.tool
+```
+
+---
+
 ## RÈGLES ABSOLUES
 
 1. **debug=true** dans toutes les réponses — le mode debug est PERMANENT
@@ -198,8 +230,10 @@ Anomalies  : <liste ou AUCUNE>
 3. **Rotation sans signature → HTTP 422** — sans exception, jamais en mode dev
 4. **8 skipped pytest** = bridges live intentionnels, NORMAL
 5. **LoopQA explore vraiment le dashboard** — vérifier sur qa.replay.io que les crédits baissent
+6. **`/api-keys/generate` sans session → HTTP 401** — rapport 107
+7. **Wallet en cooldown → exclu AVANT attribution job** — rapport 109
 
 ---
 
-*ARTCB — Nœud N2 — commit bb3d2dc — 2026-08-05*
+*ARTCB — Nœud N2 — v0.3.2 — rapport 109 — commit 9a119ab — 2026-08-06*
 *LoopQA projet : proj-artcb-replit-n2-live-tests-msgawasn*

@@ -10,10 +10,11 @@ Tu es l'agent Replit chargé de travailler en **parallèle** avec l'agent Bob (l
 
 - Repo GitHub : `https://github.com/vgac2025/lvx`
 - Branche : `main`
-- Dernière version stable : commit `latest main` — **488/488 tests PASS** (8 skipped bridges live intentionnels)
+- Dernière version stable : commit `9a119ab` — **500/500 tests PASS** (8 skipped bridges live intentionnels)
 - **NOUVEAU (rapport 107) :** endpoints `/auth/login`, `/auth/challenge`, `/auth/verify`, `/auth/logout`
 - **NOUVEAU (rapport 107) :** `POST /wallet/create` retourne `seed_hex` (clé privée, une seule fois)
 - **NOUVEAU (rapport 107) :** `POST /api-keys/generate` requiert une session auth active (`sess_xxx`)
+- **NOUVEAU (rapport 109) :** pré-filtrage Anti-Sybil — wallets en cooldown exclus AVANT attribution job
 
 ---
 
