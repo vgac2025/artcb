@@ -1,0 +1,152 @@
+{
+  "test": "test_reel_p2p_2noeuds_replit",
+  "ts_start": "2026-08-06T18:30:18Z",
+  "ts_end": "2026-08-06T18:34:16Z",
+  "duree_secondes": 7438,
+  "n1": {
+    "url": "https://lvx--supermicro20238.replit.app",
+    "node_id": "?",
+    "blocs_init": 0,
+    "blocs_final": 0,
+    "peers_final": 0,
+    "wallet": ""
+  },
+  "n2": {
+    "url": "https://lvx--supermicro20239.replit.app",
+    "node_id": "?",
+    "blocs_init": 0,
+    "blocs_final": 0,
+    "peers_final": 0,
+    "wallet": ""
+  },
+  "conclusions": {
+    "p2p_connected": false,
+    "bloc_mine_n1": false,
+    "sync_n2_received_public": false,
+    "private_bloc_not_synced": true
+  },
+  "ok_count": 3,
+  "total": 24,
+  "steps": [
+    {
+      "name": "N1 p2p/status",
+      "ok": false,
+      "detail": "node_id=?"
+    },
+    {
+      "name": "N2 p2p/status",
+      "ok": false,
+      "detail": "node_id=?"
+    },
+    {
+      "name": "N1 chain init",
+      "ok": false,
+      "detail": "blocs=0"
+    },
+    {
+      "name": "N2 chain init",
+      "ok": false,
+      "detail": "blocs=0"
+    },
+    {
+      "name": "N1 peers init",
+      "ok": false,
+      "detail": "peers=0"
+    },
+    {
+      "name": "N2 peers init",
+      "ok": false,
+      "detail": "peers=0"
+    },
+    {
+      "name": "N1 wallet cree",
+      "ok": false,
+      "detail": "{}"
+    },
+    {
+      "name": "N2 wallet cree",
+      "ok": false,
+      "detail": "{}"
+    },
+    {
+      "name": "N1 add N2 comme peer",
+      "ok": false,
+      "detail": "{'error': 'The read operation timed out'}"
+    },
+    {
+      "name": "N2 add N1 comme peer",
+      "ok": false,
+      "detail": "{'error': 'The read operation timed out'}"
+    },
+    {
+      "name": "N1 peers apres connexion",
+      "ok": false,
+      "detail": "peers=0"
+    },
+    {
+      "name": "N2 peers apres connexion",
+      "ok": false,
+      "detail": "peers=0"
+    },
+    {
+      "name": "N1 ir/learn",
+      "ok": false,
+      "detail": "skip — pas de wallet"
+    },
+    {
+      "name": "N1 bloc PUBLIC grave",
+      "ok": false,
+      "detail": "skip"
+    },
+    {
+      "name": "N1 blocs apres minage",
+      "ok": false,
+      "detail": "blocs=0 (init=0) delta=0"
+    },
+    {
+      "name": "N2 p2p/sync",
+      "ok": false,
+      "detail": "{'error': 'The read operation timed out'}"
+    },
+    {
+      "name": "N2 blocs apres sync",
+      "ok": false,
+      "detail": "blocs=0 (init=0) delta=0"
+    },
+    {
+      "name": "N1 bloc PRIVE grave",
+      "ok": false,
+      "detail": "skip — pas de wallet"
+    },
+    {
+      "name": "N1 health",
+      "ok": true,
+      "detail": "ok"
+    },
+    {
+      "name": "N2 health",
+      "ok": false,
+      "detail": "?"
+    },
+    {
+      "name": "N1 peers final",
+      "ok": true,
+      "detail": "peers=0"
+    },
+    {
+      "name": "N2 peers final",
+      "ok": false,
+      "detail": "peers=0"
+    },
+    {
+      "name": "N1 mining/status",
+      "ok": true,
+      "detail": "block_count=1 reward=1.0 ARTCB"
+    },
+    {
+      "name": "N2 mining/status",
+      "ok": false,
+      "detail": "block_count=0 reward=0 ARTCB"
+    }
+  ]
+}

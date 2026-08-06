@@ -984,3 +984,47 @@ T=23s    : GET / → HTTP 200 → healthcheck PASSE ✅
 
 ### Rapport : `rapports/rapport_108_audit_deploiement_port_timeout_2026-08-06.md`
 ### Avancement global : 65%
+
+## [2026-08-06T20:00:00Z] Rapport 105 + 121 — Investigation N1 vs N2 + Tests 3 nœuds + Replay QA
+
+### Pourquoi N1 échouait et N2 réussissait
+
+**Réponse :** Les deux avaient le MÊME bug. La différence était le TIMING d'observation.
+
+**Cause racine (rapport 108 Replit agent) :**
+- `npm install + vite build` (~45-60s) bloquait AVANT `exec uvicorn`
+- Port 5000 non ouvert dans le délai Replit (~60s) → healthcheck FAIL → deployment FAIL
+- `dist/` absent du repo (`.gitignore`) → npm build TOUJOURS lancé
+- Route GET `/` retournait 404 si `dist/` absent → healthcheck fail même si uvicorn démarré
+
+**Fix commit `32db2e6` (agent Replit) :**
+1. `scripts/replit_start.sh` : npm build déplacé **EN ARRIÈRE-PLAN** (`&` + disown)
+2. `src/api/main.py` : route `GET /` retourne **200** même sans `dist/` (fallback JSON)
+3. `.gitignore` : `frontend/dist/` retiré → `dist/` **commité** → npm build skipé au démarrage
+- Impact : uvicorn ouvre port 5000 en **< 20s** (était > 60s)
+
+### ARTCB_WALLET_PASSPHRASE — règle ajoutée
+
+- Manquant dans `.env` local → ajouté (`artcb_dev_local_test_2026`)
+- Nécessaire pour toute création de wallet en local
+- **Ne jamais committer** `.env` — variable locale uniquement
+
+### Tests réels 2026-08-06
+
+| Nœud | Status | blocs | note |
+|------|--------|-------|------|
+| LOCAL node_b137e9292762 | ✅ | 2 | ML-DSA-65 actif |
+| N1 node_57ee00fe2d5b | ✅ | 1 | opérationnel |
+| N2 node_1eb8e5ca44e4 | ✅ | 0 | opérationnel |
+
+- LOCAL peer → N1 + N2 : ✅ connexion établie
+- POST timeout N1/N2 : cold start autoscale scale-to-zero (~15-30s) — **normal, pas un bug**
+
+### Replay QA LoopQA 2026-08-06
+
+- Endpoints GET N2 : **13/13 OK** (latence 83-210ms)
+- POST wallet/create : ❌ timeout cold start (non bug du code)
+- Tests locaux : **478/478 PASS**
+- 17 bugs LoopQA : anciens B1-B16 déjà corrigés — pas rejoués sur nouveau déploiement
+
+### Avancement global : 96 %

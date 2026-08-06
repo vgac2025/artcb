@@ -1,0 +1,118 @@
+{
+  "ts_start": "2026-08-06T18:18:36Z",
+  "ts_end": "2026-08-06T18:21:58Z",
+  "nodes": {
+    "LOCAL": "localhost:8001",
+    "N1": "https://lvx--supermicro20238.replit.app",
+    "N2": "https://lvx--supermicro20239.replit.app"
+  },
+  "ok": 10,
+  "total": 21,
+  "steps": [
+    {
+      "n": "LOCAL blocs_init",
+      "ok": true,
+      "d": "1"
+    },
+    {
+      "n": "LOCAL node_id",
+      "ok": true,
+      "d": "node_b137e9292762"
+    },
+    {
+      "n": "N1 blocs_init",
+      "ok": true,
+      "d": "1"
+    },
+    {
+      "n": "N1 node_id",
+      "ok": true,
+      "d": "node_57ee00fe2d5b"
+    },
+    {
+      "n": "N2 blocs_init",
+      "ok": true,
+      "d": "0"
+    },
+    {
+      "n": "N2 node_id",
+      "ok": true,
+      "d": "node_1eb8e5ca44e4"
+    },
+    {
+      "n": "LOCAL wallet",
+      "ok": true,
+      "d": "artcb1wkpuvu6wp8606mpj7n..."
+    },
+    {
+      "n": "N1 wallet",
+      "ok": false,
+      "d": "The read operation timed out"
+    },
+    {
+      "n": "N2 wallet",
+      "ok": false,
+      "d": "The read operation timed out"
+    },
+    {
+      "n": "LOCAL peer->N1",
+      "ok": false,
+      "d": "The read operation timed out"
+    },
+    {
+      "n": "LOCAL peer->N2",
+      "ok": false,
+      "d": "The read operation timed out"
+    },
+    {
+      "n": "LOCAL mine public",
+      "ok": true,
+      "d": "block_index=1 gid=g_00b735b4ba"
+    },
+    {
+      "n": "N1 ir/learn",
+      "ok": false,
+      "d": "The read operation timed out"
+    },
+    {
+      "n": "LOCAL sync->N1",
+      "ok": false,
+      "d": "HTTP 404 Peer not found"
+    },
+    {
+      "n": "LOCAL sync->N2",
+      "ok": false,
+      "d": "HTTP 404 Peer not found"
+    },
+    {
+      "n": "LOCAL blocs_final",
+      "ok": true,
+      "d": "2"
+    },
+    {
+      "n": "N1 blocs_final",
+      "ok": false,
+      "d": "The read operation timed out"
+    },
+    {
+      "n": "N2 blocs_final",
+      "ok": false,
+      "d": "The read operation timed out"
+    },
+    {
+      "n": "LOCAL peers",
+      "ok": true,
+      "d": "2"
+    },
+    {
+      "n": "N1 peers",
+      "ok": false,
+      "d": "The read operation timed out"
+    },
+    {
+      "n": "N2 peers",
+      "ok": false,
+      "d": "HTTP Error 429: Too Many Requests"
+    }
+  ]
+}
