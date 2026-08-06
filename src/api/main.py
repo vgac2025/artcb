@@ -12,6 +12,7 @@ from fastapi.responses import FileResponse
 
 from src.artcb.logging_config import setup_logging
 from src.api.api_keys_routes import router as api_keys_router
+from src.api.auth_routes import router as auth_router
 from src.api.ai_routes import router_ai, router_chain_ext, router_webhooks
 from src.api.security_routes import router_security
 from src.api.pol_phase11_routes import router as pol_phase11_router
@@ -46,6 +47,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     app.state.artcb = build_app_state()
+    app.include_router(auth_router)       # /api/v1/auth/login|challenge|verify|logout
     app.include_router(api_keys_router)
     app.include_router(api_router)
     app.include_router(devnet_router)

@@ -1,0 +1,25 @@
+{
+  "v": "0.1",
+  "graph_id": "g_00b735b4ba2b",
+  "source_text": "Test 3 noeuds LOCAL+N1+N2 ARTCB 2026-08-06T18:18:36Z",
+  "nodes": [
+    {
+      "id": "n1",
+      "t": "F",
+      "sym": "O1β2",
+      "txt": "Test 3 noeuds LOCAL+N1+N2 ARTCB 2026-08-06T18:18:36Z",
+      "checksum": "sha256:1965a09ee632db71a25c38e57371a48195666c5d5127daa0e088a155249fbec5",
+      "start": 0,
+      "end": 52,
+      "vec": []
+    }
+  ],
+  "edges": [],
+  "macros": {},
+  "orig_symbols": {
+    "test local 3-noeuds 1786035039|2d8ac1bb376810e2": "α1",
+    "test 3 noeuds local+n1+n2 artcb 2026-08-06t18:18:36z|b507be14880cbf33": "β2"
+  },
+  "checksum": "sha256:1965a09ee632db71a25c38e57371a48195666c5d5127daa0e088a155249fbec5",
+  "join_sep": ""
+}

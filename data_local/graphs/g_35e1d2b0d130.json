@@ -1,0 +1,27 @@
+{
+  "v": "0.1",
+  "graph_id": "g_35e1d2b0d130",
+  "source_text": "Alice mine en prétendant être Bob 1786042903",
+  "nodes": [
+    {
+      "id": "n1",
+      "t": "F",
+      "sym": "O1δ4",
+      "txt": "Alice mine en prétendant être Bob 1786042903",
+      "checksum": "sha256:d6aa4eb15c45ef0dd2d9055cdb3cc4fb385427cf54772bf46473d1b5dbb763c9",
+      "start": 0,
+      "end": 44,
+      "vec": []
+    }
+  ],
+  "edges": [],
+  "macros": {},
+  "orig_symbols": {
+    "test local 3-noeuds 1786035039|2d8ac1bb376810e2": "α1",
+    "test 3 noeuds local+n1+n2 artcb 2026-08-06t18:18:36z|b507be14880cbf33": "β2",
+    "test fausse signature 1786042794|0acaac508b2dc14e": "γ3",
+    "alice mine en prétendant être bob 1786042903|384451d201c00730": "δ4"
+  },
+  "checksum": "sha256:d6aa4eb15c45ef0dd2d9055cdb3cc4fb385427cf54772bf46473d1b5dbb763c9",
+  "join_sep": ""
+}

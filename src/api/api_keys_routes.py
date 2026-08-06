@@ -1,4 +1,11 @@
-"""Module API Keys public — génération de clés Bearer pour accès tiers (Cursor, ChatGPT, LangChain…)."""
+"""Module API Keys — génération de clés Bearer pour accès tiers (Cursor, ChatGPT, LangChain…).
+
+PROTOCOLE : La génération d'une API key nécessite d'être authentifié.
+  Flow correct :
+    1. POST /api/v1/auth/login  → session_token (sess_xxx)
+    2. POST /api/v1/api-keys/generate {Authorization: Bearer sess_xxx}  → API key artcb_xxx
+    3. Donner artcb_xxx à ChatGPT / Claude / n8n pour accéder à votre compte
+"""
 
 from __future__ import annotations
 
@@ -12,6 +19,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from pydantic import BaseModel, Field
+from src.api.auth_routes import require_session as _require_session
 
 logger = logging.getLogger("artcb.api.api_keys")
 router = APIRouter(prefix="/api/v1/api-keys", tags=["api-keys"])
@@ -152,11 +160,18 @@ def require_scope(scope: str):
 #  Endpoints
 # --------------------------------------------------------------------------- #
 
-@router.post("/generate", summary="Générer une nouvelle clé API")
-def generate_key(body: GenerateKeyRequest, request: Request) -> dict:
+@router.post("/generate", summary="Générer une nouvelle clé API (authentification requise)")
+def generate_key(
+    body: GenerateKeyRequest,
+    request: Request,
+    session: Annotated[dict, Depends(_require_session)],
+) -> dict:
     """
     Crée une clé API personnelle `artcb_<64hex>`.
     La clé complète n'est retournée **qu'une seule fois** — conservez-la.
+
+    PROTOCOLE : Requiert une session active (POST /auth/login en premier).
+    La clé API générée est liée au wallet de la session en cours.
     """
     path = _keys_path(request)
     keys = _load_keys(path)
@@ -168,20 +183,10 @@ def generate_key(body: GenerateKeyRequest, request: Request) -> dict:
     now = time.time()
     expires_at = now + body.expires_days * 86400 if body.expires_days else None
 
-    # P0-3 — Wallet automatique lié à la clé API
-    auto_wallet_name = f"agent_{body.label.replace(' ', '_').replace('-', '_')[:32]}"
-    wallet_created = False
-    try:
-        from src.artcb.wallet.manager import WalletManager
-        wm = WalletManager()
-        existing = [w["name"] for w in wm.list_wallets()]
-        if auto_wallet_name not in existing:
-            wm.create_wallet(name=auto_wallet_name)
-            wallet_created = True
-            logger.info("Auto-wallet created for key %s: %s", key_id, auto_wallet_name)
-    except Exception as exc:
-        logger.warning("Auto-wallet creation failed for %s: %s", body.label, exc)
-        auto_wallet_name = None
+    # PROTOCOLE : la clé API est liée au wallet de la session authentifiée
+    # (plus de création de wallet fantôme sans propriétaire)
+    owner_wallet = session.get("wallet_name")
+    owner_address = session.get("address")
 
     record = {
         "key_id": key_id,
@@ -193,22 +198,26 @@ def generate_key(body: GenerateKeyRequest, request: Request) -> dict:
         "expires_at": expires_at,
         "last_used_at": None,
         "active": True,
-        "auto_wallet": auto_wallet_name,  # P0-3 wallet lié
+        "owner_wallet": owner_wallet,   # ← lié au compte authentifié
+        "owner_address": owner_address,
     }
     keys.append(record)
     _save_keys(path, keys)
 
-    logger.info("API key created: %s (%s) wallet=%s", key_id, body.label, auto_wallet_name)
+    logger.info(
+        "API key created: %s (%s) owner=%s address=%s",
+        key_id, body.label, owner_wallet, owner_address,
+    )
     return {
         "key_id": key_id,
         "label": body.label,
         "scopes": body.scopes,
-        "token": raw_token,          # ← affiché UNE SEULE FOIS
+        "token": raw_token,           # ← affiché UNE SEULE FOIS
         "key_preview": record["key_preview"],
         "created_at": now,
         "expires_at": expires_at,
-        "auto_wallet": auto_wallet_name,
-        "wallet_created": wallet_created,
+        "owner_wallet": owner_wallet,
+        "owner_address": owner_address,
         "message": "Conservez ce token — il ne sera plus affiché.",
     }
 

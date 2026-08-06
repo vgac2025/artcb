@@ -460,6 +460,11 @@ def system_optimization(request: Request) -> dict:
 
 class CreateWalletRequest(BaseModel):
     name: str = "default"
+    password: str | None = Field(
+        default=None,
+        min_length=8,
+        description="Mot de passe pour chiffrer la seed (optionnel en mode dev)",
+    )
 
 
 class WalletBalanceRequest(BaseModel):
@@ -477,15 +482,28 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
     try:
         wallet = wallet_mgr.create_wallet(name=body.name)
         logger.info("Created wallet name=%s address=%s", body.name, wallet.address)
+        # PROTOCOLE : la seed (clé privée) est retournée UNE SEULE FOIS à la création.
+        # L'utilisateur DOIT la sauvegarder — sans elle, le compte est inaccessible.
+        # Elle n'est JAMAIS stockée en clair et ne sera plus jamais affichée.
+        seed_hex = wallet.signing_key.encode().hex()
         response: dict = {
             "name": body.name,
             "address": wallet.address,
             "public_key_hex": wallet.public_key_hex,
             "public_key_b64": wallet.public_key_b64,
+            "seed_hex": seed_hex,
+            "WARNING": (
+                "SAUVEGARDEZ votre seed_hex MAINTENANT — "
+                "c'est votre clé privée, elle ne sera plus jamais affichée. "
+                "Sans elle, votre compte est définitivement inaccessible."
+            ),
             "hybrid": wallet.is_hybrid,
         }
         if wallet.address_v2:
             response["address_v2"] = wallet.address_v2
+        logger.warning(
+            "SEED RETURNED once at creation for wallet=%s — user must save it", body.name
+        )
         return response
     except FileExistsError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc

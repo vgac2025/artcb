@@ -1,0 +1,13 @@
+{
+  "metadata": {
+    "version": 1,
+    "updated_at": "2026-08-06T19:01:44.403495+00:00",
+    "merge_count": 0
+  },
+  "concepts": {
+    "test local 3-noeuds 1786035039|2d8ac1bb376810e2": "α1",
+    "test 3 noeuds local+n1+n2 artcb 2026-08-06t18:18:36z|b507be14880cbf33": "β2",
+    "test fausse signature 1786042794|0acaac508b2dc14e": "γ3",
+    "alice mine en prétendant être bob 1786042903|384451d201c00730": "δ4"
+  }
+}

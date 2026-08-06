@@ -1,5 +1,6 @@
 # PROMPT — Agent Replit N2 (lvx--supermicro20239.replit.app)
 > Ce prompt est **dédié à l'agent Replit du nœud N2**. Copie-colle-le entier dans l'agent Replit de la Replit `Supermicro20239` (N2).
+> **Mis à jour : 2026-08-06 — v0.3.1 — rapport 107 (authentification, seed_hex)**
 
 ---
 

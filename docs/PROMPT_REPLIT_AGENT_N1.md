@@ -1,5 +1,6 @@
 # PROMPT — Agent Replit N1 (lvx--supermicro20238.replit.app)
 > Ce prompt est **dédié à l'agent Replit du nœud N1**. Copie-colle-le entier dans l'agent Replit de la Replit `Supermicro2026368` (N1).
+> **Mis à jour : 2026-08-06 — v0.3.1 — rapport 107 (authentification, seed_hex)**
 
 ---
 
@@ -146,7 +147,44 @@ Anomalies : <liste ou AUCUNE>
 3. **Rotation sans signature → HTTP 422** obligatoirement
 4. **8 skipped bridges live** dans pytest = NORMAL (nécessitent `ARTCB_LIVE_TESTS=1`)
 5. Si un endpoint retourne 404, le signaler — ce n'est pas normal pour la liste ci-dessus
+6. **`/api-keys/generate` sans session → HTTP 401** — c'est normal depuis rapport 107
 
 ---
 
-*ARTCB — Nœud N1 — commit bb3d2dc — 2026-08-05*
+## ÉTAPE 7 — TEST AUTHENTIFICATION (rapport 107 — nouveau)
+
+```bash
+# Test : créer un wallet → vérifier que seed_hex est retourné
+WALLET_RESP=$(curl -s -X POST https://lvx--supermicro20238.replit.app/api/v1/wallet/create \
+  -H "Content-Type: application/json" \
+  -d '{"name":"n1_auth_test"}')
+echo "$WALLET_RESP" | python3 -m json.tool
+# Attendu : champ "seed_hex" présent (64 hex chars) + champ "WARNING"
+
+# Test : /api-keys/generate SANS session → doit retourner 401
+curl -s -w "\nHTTP_CODE:%{http_code}" -X POST \
+  https://lvx--supermicro20238.replit.app/api/v1/api-keys/generate \
+  -H "Content-Type: application/json" \
+  -d '{"label":"test_sans_auth"}' | tail -1
+# Attendu : HTTP_CODE:401
+
+# Test : login → session token
+SEED=$(echo "$WALLET_RESP" | python3 -c "import sys,json; print(json.load(sys.stdin).get('seed_hex',''))")
+SESSION=$(curl -s -X POST https://lvx--supermicro20238.replit.app/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"name":"n1_auth_test","password":"test"}' \
+  | python3 -c "import sys,json; print(json.load(sys.stdin).get('session_token',''))")
+echo "Session: $SESSION"
+# Attendu : sess_xxx...
+
+# Test : /api-keys/generate AVEC session → doit retourner 200
+curl -s -X POST https://lvx--supermicro20238.replit.app/api/v1/api-keys/generate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $SESSION" \
+  -d '{"label":"N1 ChatGPT test","scopes":["read","write"]}' | python3 -m json.tool
+# Attendu : token artcb_xxx, owner_wallet=n1_auth_test
+```
+
+---
+
+*ARTCB — Nœud N1 — v0.3.1 — rapport 107 — 2026-08-06*

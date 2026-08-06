@@ -1,5 +1,6 @@
 # PROMPT — Agent Replit ARTCB
 > Copie-colle ce prompt entier dans l'agent Replit. Il contient tout ce dont il a besoin.
+> **Mis à jour : 2026-08-06 — v0.3.1 — rapport 107 (authentification utilisateur)**
 
 ---
 
@@ -9,7 +10,10 @@ Tu es l'agent Replit chargé de travailler en **parallèle** avec l'agent Bob (l
 
 - Repo GitHub : `https://github.com/vgac2025/lvx`
 - Branche : `main`
-- Dernière version stable : commit `c3db48e` — 478/478 tests PASS (8 skipped bridges live intentionnels)
+- Dernière version stable : commit `latest main` — **488/488 tests PASS** (8 skipped bridges live intentionnels)
+- **NOUVEAU (rapport 107) :** endpoints `/auth/login`, `/auth/challenge`, `/auth/verify`, `/auth/logout`
+- **NOUVEAU (rapport 107) :** `POST /wallet/create` retourne `seed_hex` (clé privée, une seule fois)
+- **NOUVEAU (rapport 107) :** `POST /api-keys/generate` requiert une session auth active (`sess_xxx`)
 
 ---
 
@@ -264,8 +268,37 @@ Ces tâches sont planifiées — **ne pas les implémenter sans instruction de B
 | `/api/v1/governance/creator-key-rotation` | POST | Rotation clé créateur — signature OBLIGATOIRE |
 | `/api/v1/governance/user-key-rotation` | POST | Rotation clé utilisateur — signature OBLIGATOIRE |
 
+## ENDPOINTS AUTHENTIFICATION (ajoutés 2026-08-06 — rapport 107)
+
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/api/v1/auth/login` | POST | Login classique (name + password) → sess_xxx |
+| `/api/v1/auth/challenge` | GET | Nonce à signer (auth crypto) |
+| `/api/v1/auth/verify` | POST | Vérifier signature Ed25519 → sess_xxx |
+| `/api/v1/auth/logout` | POST | Invalider session |
+
+## PROTOCOLE AUTHENTIFICATION (rapport 107)
+
+```
+FLUX OBLIGATOIRE :
+1. POST /wallet/create  → reçoit seed_hex + WARNING (sauvegarder la clé privée)
+2. POST /auth/login     → reçoit sess_xxx (TTL 24h)
+3. POST /api-keys/generate {Authorization: Bearer sess_xxx} → artcb_xxx lié au compte
+4. ChatGPT / Claude / n8n utilise artcb_xxx pour appeler l'API au nom de l'user
+
+ERREUR COMMUNE : Donner l'adresse ou la clé publique pour "entrer dans son compte"
+→ L'adresse est PUBLIQUE — tout le monde peut la voir, elle n'ouvre rien.
+→ La seed_hex (clé privée) est ce qui prouve l'identité.
+```
+
 ## RÈGLE DE SÉCURITÉ ABSOLUE (rapport 115)
 
 > **Toute rotation de clé sans signature valide est REJETÉE — dans TOUS les environnements.**
 > Il n'existe PAS de mode dev / debug qui accepterait une rotation non signée.
 > `GovernanceError` immédiat si `signature_hex` absente ou invalide.
+
+## RÈGLE DE SÉCURITÉ ABSOLUE (rapport 107)
+
+> **`POST /api-keys/generate` sans session valide → HTTP 401.**
+> L'API key est toujours liée à un wallet authentifié.
+> Jamais de clé générée sans identité vérifiée.

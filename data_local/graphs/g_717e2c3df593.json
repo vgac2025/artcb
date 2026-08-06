@@ -1,0 +1,26 @@
+{
+  "v": "0.1",
+  "graph_id": "g_717e2c3df593",
+  "source_text": "Test fausse signature 1786042794",
+  "nodes": [
+    {
+      "id": "n1",
+      "t": "F",
+      "sym": "O1γ3",
+      "txt": "Test fausse signature 1786042794",
+      "checksum": "sha256:cf41cbf6a638a21b3777d35f0c0ec6636778c90ab87a8d3bc0ee93e1ed4b7eb8",
+      "start": 0,
+      "end": 32,
+      "vec": []
+    }
+  ],
+  "edges": [],
+  "macros": {},
+  "orig_symbols": {
+    "test local 3-noeuds 1786035039|2d8ac1bb376810e2": "α1",
+    "test 3 noeuds local+n1+n2 artcb 2026-08-06t18:18:36z|b507be14880cbf33": "β2",
+    "test fausse signature 1786042794|0acaac508b2dc14e": "γ3"
+  },
+  "checksum": "sha256:cf41cbf6a638a21b3777d35f0c0ec6636778c90ab87a8d3bc0ee93e1ed4b7eb8",
+  "join_sep": ""
+}

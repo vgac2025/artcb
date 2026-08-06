@@ -211,8 +211,31 @@ export async function createWallet(name: string) {
     address_v2?: string;
     public_key_hex: string;
     public_key_b64: string;
+    /** Clé privée (seed Ed25519, 32 bytes en hex). Affichée UNE SEULE FOIS. */
+    seed_hex: string;
+    WARNING: string;
     hybrid: boolean;
   };
+}
+
+// Auth endpoints
+export async function authLogin(name: string, password: string) {
+  const { data } = await api.post("/auth/login", { name, password });
+  return data as { session_token: string; wallet_name: string; address: string; expires_in: number };
+}
+
+export async function authChallenge() {
+  const { data } = await api.get("/auth/challenge");
+  return data as { challenge: string; expires_in: number };
+}
+
+export async function authVerify(address: string, challenge: string, signature: string) {
+  const { data } = await api.post("/auth/verify", { address, challenge, signature });
+  return data as { session_token: string; wallet_name: string; address: string; expires_in: number };
+}
+
+export async function authLogout(sessionToken: string) {
+  await api.post("/auth/logout", {}, { headers: { Authorization: `Bearer ${sessionToken}` } });
 }
 
 export async function fetchBlockDetail(index: number) {

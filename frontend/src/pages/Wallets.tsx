@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  authLogin,
   createWallet,
   fetchFoundersAllocation,
   fetchWalletBalance,
@@ -14,6 +15,9 @@ type CreatedWallet = {
   address: string;
   address_v2?: string;
   public_key_hex: string;
+  /** Clé privée — affichée une seule fois à la création */
+  seed_hex: string;
+  WARNING: string;
   hybrid: boolean;
 };
 
@@ -37,8 +41,17 @@ export function Wallets() {
   // ── Wallet créé — affiché à l'utilisateur ─────────────────────────
   const [createdWallet, setCreatedWallet] = useState<CreatedWallet | null>(null);
   const [copied, setCopied] = useState(false);
+  const [seedCopied, setSeedCopied] = useState(false);
+  const [seedVisible, setSeedVisible] = useState(true);
   // UX-1: copier depuis la grille (quel wallet est en cours de copie)
   const [copiedGrid, setCopiedGrid] = useState<string | null>(null);
+
+  // ── Login par nom + mot de passe ─────────────────────────────────
+  const [loginName, setLoginName] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
 
   // ── Import wallet (entrer une adresse existante) ──────────────────
   const [importAddress, setImportAddress] = useState("");
@@ -89,6 +102,34 @@ export function Wallets() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ── Login par mot de passe ────────────────────────────────────────
+  const handleLogin = async () => {
+    if (!loginName.trim() || !loginPassword.trim()) return;
+    setLoginLoading(true);
+    setLoginError(null);
+    try {
+      const result = await authLogin(loginName.trim(), loginPassword.trim());
+      setSessionToken(result.session_token);
+      setActorAddress(result.address);
+      setLoginError(null);
+      setLoginName("");
+      setLoginPassword("");
+      await reload();
+    } catch (err: unknown) {
+      const axErr = err as { response?: { data?: { detail?: string }; status?: number } };
+      setLoginError(axErr?.response?.data?.detail ?? "Identifiants invalides — vérifiez votre nom et mot de passe.");
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const copySeed = (seed: string) => {
+    navigator.clipboard?.writeText(seed).then(() => {
+      setSeedCopied(true);
+      setTimeout(() => setSeedCopied(false), 3000);
+    }).catch(() => {});
   };
 
   // ── Copier une adresse ─────────────────────────────────────────────
@@ -208,23 +249,46 @@ export function Wallets() {
         {error && <p className="mc-error">{error}</p>}
       </div>
 
-      {/* ── Résultat création : adresse affichée à l'utilisateur ─ */}
+      {/* ── Résultat création : seed_hex + adresse ────────────── */}
       {createdWallet && (
-        <div className="panel" style={{ border: "2px solid var(--mc-grass, #56c426)" }}>
-          <h2 style={{ color: "var(--mc-grass, #56c426)" }}>[OK] Wallet créé — conservez votre adresse !</h2>
-          <p style={{ fontSize: 13, marginBottom: 8, color: "var(--terminal-muted, #8b949e)" }}>
-            <strong>Important :</strong> Cette adresse est votre identité sur la blockchain ARTCB.
-            Copiez-la maintenant — elle ne sera plus affichée en clair après fermeture.
+        <div className="panel" style={{ border: "2px solid var(--mc-redstone, #c0392b)" }}>
+          <h2 style={{ color: "var(--mc-redstone, #c0392b)" }}>⚠ SAUVEGARDEZ VOTRE CLÉ PRIVÉE MAINTENANT</h2>
+          <p style={{ fontSize: 13, marginBottom: 8, background: "rgba(192,57,43,0.1)", padding: "8px 12px", borderRadius: 4 }}>
+            <strong>Cette clé privée (seed_hex) ne sera plus jamais affichée.</strong><br />
+            Sans elle, votre compte est définitivement inaccessible.<br />
+            Copiez-la dans un gestionnaire de mots de passe ou un fichier sécurisé.
           </p>
+
+          {/* SEED HEX — clé privée */}
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontWeight: 700, marginBottom: 4, color: "var(--mc-redstone)" }}>🔑 Clé privée (seed_hex) :</div>
+            {seedVisible ? (
+              <div style={{ background: "#1a1a1a", padding: "10px 12px", borderRadius: 4, fontFamily: "monospace", fontSize: 12, wordBreak: "break-all", border: "1px solid var(--mc-redstone)" }}>
+                {createdWallet.seed_hex}
+              </div>
+            ) : (
+              <div style={{ background: "#1a1a1a", padding: "10px 12px", borderRadius: 4, fontFamily: "monospace", fontSize: 12, color: "var(--terminal-muted)", border: "1px solid #444" }}>
+                ████████████████████████████████████████████████████████████████
+              </div>
+            )}
+            <div className="toolbar" style={{ marginTop: 6 }}>
+              <button className="primary" onClick={() => copySeed(createdWallet.seed_hex)} style={{ borderColor: "var(--mc-redstone)", color: "var(--mc-redstone)" }}>
+                {seedCopied ? "✓ Copié !" : "Copier la clé privée"}
+              </button>
+              <button onClick={() => setSeedVisible((v) => !v)}>
+                {seedVisible ? "Masquer" : "Afficher"}
+              </button>
+            </div>
+          </div>
 
           <table className="mc-table" style={{ marginBottom: 12 }}>
             <tbody>
               <tr>
-                <td style={{ fontWeight: 700, width: 120 }}>Nom</td>
+                <td style={{ fontWeight: 700, width: 140 }}>Nom</td>
                 <td className="mc-mono">{createdWallet.name}</td>
               </tr>
               <tr>
-                <td style={{ fontWeight: 700 }}>Adresse</td>
+                <td style={{ fontWeight: 700 }}>Adresse (publique)</td>
                 <td>
                   <span className="mc-mono mc-gold-text" style={{ wordBreak: "break-all", fontSize: 12 }}>
                     {createdWallet.address}
@@ -233,7 +297,7 @@ export function Wallets() {
               </tr>
               {createdWallet.address_v2 && (
                 <tr>
-                  <td style={{ fontWeight: 700 }}>Adresse v2 (PQC)</td>
+                  <td style={{ fontWeight: 700 }}>Adresse v2 PQC</td>
                   <td>
                     <span className="mc-mono" style={{ wordBreak: "break-all", fontSize: 12, color: "var(--mc-sky, #5bc0de)" }}>
                       {createdWallet.address_v2}
@@ -251,7 +315,7 @@ export function Wallets() {
           </table>
 
           <div className="toolbar">
-            <button className="primary" onClick={() => copyAddress(createdWallet.address)}>
+            <button onClick={() => copyAddress(createdWallet.address)}>
               {copied ? "[OK] Copié !" : "Copier l'adresse"}
             </button>
             {createdWallet.address_v2 && (
@@ -259,29 +323,64 @@ export function Wallets() {
                 Copier adresse v2 (PQC)
               </button>
             )}
-            <button onClick={() => setCreatedWallet(null)} style={{ marginLeft: "auto" }}>
-              Fermer
+            <button onClick={() => { setCreatedWallet(null); setSeedVisible(true); }} style={{ marginLeft: "auto" }}>
+              J'ai sauvegardé ma clé — Fermer
             </button>
           </div>
         </div>
       )}
 
-      {/* ── Panneau : Importer un wallet existant ─────────────── */}
+      {/* ── Panneau : Login — J'ai déjà un compte ─────────────── */}
       <div className="panel">
-        <h2>Connexion — J'ai déjà un wallet</h2>
+        <h2>Connexion — J'ai déjà un compte</h2>
         <p style={{ fontSize: 13, color: "var(--terminal-muted, #8b949e)", marginBottom: 8 }}>
-          Entrez votre adresse ARTCB pour accéder à votre compte et consulter votre solde.
+          Connectez-vous avec le <strong>nom de votre wallet</strong> et votre <strong>mot de passe</strong>.
+          Une fois connecté, vous pourrez générer des clés API pour ChatGPT, Claude, n8n, etc.
+        </p>
+        <div className="toolbar" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
+          <input
+            value={loginName}
+            onChange={(e) => setLoginName(e.target.value)}
+            placeholder="Nom du wallet"
+            style={{ minWidth: 160 }}
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+          />
+          <input
+            type="password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+            placeholder="Mot de passe"
+            style={{ minWidth: 160 }}
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+          />
+          <button className="primary" onClick={handleLogin} disabled={loginLoading || !loginName.trim() || !loginPassword.trim()}>
+            {loginLoading ? "Connexion…" : "Se connecter"}
+          </button>
+        </div>
+        {loginError && <p className="mc-error">{loginError}</p>}
+        {sessionToken && (
+          <p style={{ color: "var(--mc-grass)", fontSize: 12, marginTop: 6 }}>
+            ✓ Connecté — session active (utilisez le dashboard pour générer une API key)
+          </p>
+        )}
+      </div>
+
+      {/* ── Panneau : Importer une adresse (lecture seule) ──────── */}
+      <div className="panel">
+        <h2>Observer un wallet (lecture seule)</h2>
+        <p style={{ fontSize: 13, color: "var(--terminal-muted, #8b949e)", marginBottom: 8 }}>
+          Entrez une adresse ARTCB pour consulter son solde. <strong>L'adresse seule ne donne pas accès au compte.</strong>
         </p>
         <div className="toolbar">
           <input
             value={importAddress}
             onChange={(e) => setImportAddress(e.target.value)}
-            placeholder="artcb1… ou adresse Base64 de votre wallet"
+            placeholder="artcb1…"
             style={{ fontFamily: "monospace", fontSize: 13 }}
             onKeyDown={(e) => e.key === "Enter" && handleImport()}
           />
           <button onClick={handleImport} disabled={!importAddress.trim()}>
-            Se connecter
+            Consulter le solde
           </button>
         </div>
         {importError && <p className="mc-error">{importError}</p>}

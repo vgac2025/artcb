@@ -1,0 +1,26 @@
+{
+  "peers": [
+    {
+      "peer_id": "peer_lvx--supermicro20238_replit_app_443",
+      "host": "lvx--supermicro20238.replit.app",
+      "port": 443,
+      "kem_public_key_hex": "f4f9707d9e58ce3ab854cfa5e45acaf7b9c55f6b8654d106b0d17f74aa88eb48",
+      "label": "",
+      "added_at": "2026-08-06T16:49:17Z",
+      "last_seen": "2026-08-06T16:50:40Z",
+      "last_sync_ok": false,
+      "blocks_received": 0
+    },
+    {
+      "peer_id": "peer_lvx--supermicro20239_replit_app_443",
+      "host": "lvx--supermicro20239.replit.app",
+      "port": 443,
+      "kem_public_key_hex": "bb7d31d9553212a09e58640b07426611168538aa1e92c95a2f4567658ee93326",
+      "label": "",
+      "added_at": "2026-08-06T16:49:17Z",
+      "last_seen": "2026-08-06T16:50:40Z",
+      "last_sync_ok": false,
+      "blocks_received": 0
+    }
+  ]
+}
