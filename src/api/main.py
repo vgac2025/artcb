@@ -95,6 +95,33 @@ def create_app() -> FastAPI:
                 raise HTTPException(status_code=404)
             return FileResponse(os.path.join(_dist, "index.html"))
 
+    else:
+        # FIX DÉPLOIEMENT : frontend pas encore buildé (dist/ absent).
+        # Retourner 200 pour que le healthcheck Replit passe pendant le build en arrière-plan.
+        from fastapi.responses import JSONResponse
+
+        @app.get("/")
+        async def serve_spa_loading():
+            return JSONResponse(
+                status_code=200,
+                content={
+                    "status": "starting",
+                    "service": "ARTCB API",
+                    "version": "0.3.0",
+                    "note": "Frontend build in progress — API fully operational at /api/v1/"
+                }
+            )
+
+        @app.get("/{full_path:path}")
+        async def serve_spa_loading_fallback(full_path: str):
+            if full_path.startswith("api/") or full_path.startswith("ws"):
+                from fastapi import HTTPException
+                raise HTTPException(status_code=404)
+            return JSONResponse(
+                status_code=200,
+                content={"status": "starting", "note": "Frontend loading..."}
+            )
+
     return app
 
 

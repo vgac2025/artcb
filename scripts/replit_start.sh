@@ -103,15 +103,23 @@ else
   echo "  libartcb_chain.so déjà présent ✅"
 fi
 
-# ── 6. Build frontend si dist absent ou sources plus récentes ────
-echo "[6/6] Frontend React..."
+# ── 6. Build frontend EN ARRIÈRE-PLAN si dist absent/obsolète ────
+# CRITIQUE déploiement : npm build (~45s) NE DOIT PAS bloquer uvicorn.
+# Le healthcheck Replit Autoscale timeout à ~60s → uvicorn doit ouvrir
+# le port 5000 AVANT la fin du build. FastAPI retourne 200 sur /
+# même sans dist/ (fallback JSON) le temps que le build se termine.
+echo "[6/6] Frontend React (arrière-plan si nécessaire)..."
 FRONTEND_DIST="$REPL_DIR/frontend/dist/index.html"
 FRONTEND_SRC="$REPL_DIR/frontend/src"
 if [ ! -f "$FRONTEND_DIST" ] || [ -n "$(find "$FRONTEND_SRC" -newer "$FRONTEND_DIST" 2>/dev/null | head -1)" ]; then
-  echo "  Build frontend (npm install + vite build)..."
-  (cd "$REPL_DIR/frontend" && npm install -q && npm run build 2>&1 | tail -5) \
-    && echo "  Frontend buildé ✅" \
-    || echo "  ⚠️ Build frontend échoué — API seule disponible"
+  echo "  ⚡ dist/ absent ou obsolète — build lancé en arrière-plan (non bloquant)"
+  (
+    cd "$REPL_DIR/frontend"
+    npm install -q 2>&1 | tail -2
+    npm run build 2>&1 | tail -5
+    echo "  ✅ Frontend buildé en arrière-plan — rechargez la page"
+  ) &
+  disown 2>/dev/null || true
 else
   echo "  dist/ à jour ✅"
 fi
