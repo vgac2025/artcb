@@ -23,6 +23,7 @@ class MiningPipelineRequest(BaseModel):
     llm_provider: str | None = None
     actor_address: str | None = None
     wallet_name: str | None = None
+    wallet_password: str | None = Field(default=None, description="Mot de passe du wallet")
     visibility: str = "private"
     group_id: str | None = None
     store_block: bool = True
@@ -41,6 +42,7 @@ class BulkMiningRequest(BaseModel):
     batch_size: int = Field(default=100, ge=1, le=1000)
     actor_address: str | None = None
     wallet_name: str | None = None
+    wallet_password: str | None = None
     visibility: str = "private"
     group_id: str | None = None
     use_llm: bool = False
@@ -107,10 +109,10 @@ async def run_mining_pipeline(body: MiningPipelineRequest, request: Request) -> 
         if body.wallet_name:
             from src.artcb.wallet.manager import WalletManager
             try:
-                wallet = WalletManager().load_wallet(name=body.wallet_name)
+                wallet = WalletManager().load_wallet(name=body.wallet_name, user_password=body.wallet_password)
                 addr, sign_fn = wallet.address, wallet.sign
-            except FileNotFoundError as exc:
-                raise HTTPException(status_code=400, detail=f"Wallet introuvable: {body.wallet_name}") from exc
+            except Exception as exc:
+                raise HTTPException(status_code=400, detail=f"Wallet introuvable ou mot de passe incorrect: {body.wallet_name}") from exc
         actor = body.actor_address or addr
 
         chunk_chars = body.chunk_chars

@@ -1,12 +1,14 @@
-"""Tests authentification utilisateur ARTCB — rapport 107.
+"""Tests authentification utilisateur ARTCB — rapports 107, 108, 111.
 
 Protocole testé :
-  1. POST /wallet/create → retourne seed_hex + WARNING
-  2. POST /auth/login → session token
-  3. GET  /auth/challenge + POST /auth/verify → session token (voie crypto)
-  4. POST /api-keys/generate SANS session → 401
-  5. POST /api-keys/generate AVEC session → API key liée au wallet
-  6. POST /auth/logout → session invalide
+  1. POST /wallet/create {name, password} → retourne seed_hex + WARNING
+  2. POST /wallet/create sans password → 422 (champ obligatoire)
+  3. POST /auth/login avec bon mot de passe → session token
+  4. POST /auth/login avec mauvais mot de passe → 401 (pas de fallback)
+  5. GET  /auth/challenge + POST /auth/verify → session token (voie crypto)
+  6. POST /api-keys/generate SANS session → 401
+  7. POST /api-keys/generate AVEC session → API key liée au wallet
+  8. POST /auth/logout → session invalide
 """
 from __future__ import annotations
 
@@ -15,6 +17,8 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 from nacl import encoding, signing
+
+TEST_PASSWORD = "monMotDePasse42!"  # ≥ 8 chars
 
 
 @pytest.fixture
@@ -27,34 +31,40 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
 
 
 # --------------------------------------------------------------------------- #
-#  1. wallet/create retourne seed_hex
+#  1. wallet/create retourne seed_hex — mot de passe obligatoire
 # --------------------------------------------------------------------------- #
 
 def test_wallet_create_returns_seed(client: TestClient) -> None:
     """La clé privée (seed_hex) doit être retournée à la création."""
-    r = client.post("/api/v1/wallet/create", json={"name": "alice_test"})
+    r = client.post("/api/v1/wallet/create", json={"name": "alice_test", "password": TEST_PASSWORD})
     assert r.status_code == 200
     data = r.json()
 
-    # Champs publics toujours présents
     assert "address" in data
     assert data["address"].startswith("artcb1")
     assert "public_key_hex" in data
 
-    # NOUVEAU : seed_hex présent + WARNING
-    assert "seed_hex" in data, "seed_hex DOIT être retourné à la création (rapport 107)"
+    # seed_hex présente + WARNING
+    assert "seed_hex" in data, "seed_hex DOIT être retourné à la création"
     assert len(data["seed_hex"]) == 64, "seed Ed25519 = 32 bytes = 64 hex chars"
-    assert "WARNING" in data, "Le WARNING de sauvegarde doit être présent"
+    assert "WARNING" in data
     assert "SAUVEGARDEZ" in data["WARNING"]
+
+
+def test_wallet_create_without_password_rejected(client: TestClient) -> None:
+    """Créer un wallet sans mot de passe doit retourner 422 — password obligatoire."""
+    r = client.post("/api/v1/wallet/create", json={"name": "no_pwd_wallet"})
+    assert r.status_code == 422, (
+        "POST /wallet/create sans password DOIT retourner 422 — champ obligatoire depuis rapport 111"
+    )
 
 
 def test_wallet_create_seed_is_valid_ed25519(client: TestClient) -> None:
     """La seed retournée doit être une vraie clé Ed25519 qui correspond à l'adresse."""
-    r = client.post("/api/v1/wallet/create", json={"name": "bob_test"})
+    r = client.post("/api/v1/wallet/create", json={"name": "bob_test", "password": TEST_PASSWORD})
     assert r.status_code == 200
     data = r.json()
 
-    # Vérifier que la seed reconstruit la clé publique
     seed = bytes.fromhex(data["seed_hex"])
     sk = signing.SigningKey(seed)
     pub_hex = sk.verify_key.encode().hex()
@@ -68,19 +78,28 @@ def test_wallet_create_seed_is_valid_ed25519(client: TestClient) -> None:
 # --------------------------------------------------------------------------- #
 
 def test_auth_login_success(client: TestClient) -> None:
-    """Login avec nom + mot de passe (fallback passphrase serveur)."""
-    # Créer le wallet d'abord
-    client.post("/api/v1/wallet/create", json={"name": "carol_test"})
+    """Login avec le bon mot de passe → session token."""
+    client.post("/api/v1/wallet/create", json={"name": "carol_test", "password": TEST_PASSWORD})
 
-    # Login
-    r = client.post("/api/v1/auth/login", json={"name": "carol_test", "password": "mauvais_pass"})
-    # Le fallback passphrase serveur doit permettre la connexion en mode dev
+    r = client.post("/api/v1/auth/login", json={"name": "carol_test", "password": TEST_PASSWORD})
     assert r.status_code == 200
     data = r.json()
     assert "session_token" in data
     assert data["session_token"].startswith("sess_")
     assert data["wallet_name"] == "carol_test"
     assert data["address"].startswith("artcb1")
+
+
+def test_auth_login_wrong_password_rejected(client: TestClient) -> None:
+    """Login avec un mauvais mot de passe → 401.
+    SÉCURITÉ : pas de fallback sur la passphrase serveur.
+    """
+    client.post("/api/v1/wallet/create", json={"name": "carol2_test", "password": TEST_PASSWORD})
+
+    r = client.post("/api/v1/auth/login", json={"name": "carol2_test", "password": "mauvais_pass"})
+    assert r.status_code == 401, (
+        "Un mauvais mot de passe DOIT être rejeté — pas de fallback passphrase serveur"
+    )
 
 
 def test_auth_login_unknown_wallet(client: TestClient) -> None:
@@ -95,21 +114,17 @@ def test_auth_login_unknown_wallet(client: TestClient) -> None:
 
 def test_auth_challenge_verify(client: TestClient) -> None:
     """Authentification par signature Ed25519 du challenge."""
-    # Créer wallet et récupérer seed
-    cr = client.post("/api/v1/wallet/create", json={"name": "dave_test"})
+    cr = client.post("/api/v1/wallet/create", json={"name": "dave_test", "password": TEST_PASSWORD})
     seed_hex = cr.json()["seed_hex"]
     address = cr.json()["address"]
 
-    # Obtenir un challenge
     ch_r = client.get("/api/v1/auth/challenge")
     assert ch_r.status_code == 200
     challenge = ch_r.json()["challenge"]
 
-    # Signer le challenge avec la clé privée
     sk = signing.SigningKey(bytes.fromhex(seed_hex))
     sig = sk.sign(bytes.fromhex(challenge)).signature.hex()
 
-    # Vérifier
     v_r = client.post("/api/v1/auth/verify", json={
         "address": address,
         "challenge": challenge,
@@ -121,13 +136,12 @@ def test_auth_challenge_verify(client: TestClient) -> None:
 
 def test_auth_verify_bad_signature(client: TestClient) -> None:
     """Signature invalide → 401."""
-    cr = client.post("/api/v1/wallet/create", json={"name": "eve_test"})
+    cr = client.post("/api/v1/wallet/create", json={"name": "eve_test", "password": TEST_PASSWORD})
     address = cr.json()["address"]
 
     ch_r = client.get("/api/v1/auth/challenge")
     challenge = ch_r.json()["challenge"]
 
-    # Signature bidon
     v_r = client.post("/api/v1/auth/verify", json={
         "address": address,
         "challenge": challenge,
@@ -138,7 +152,7 @@ def test_auth_verify_bad_signature(client: TestClient) -> None:
 
 def test_auth_challenge_replay_blocked(client: TestClient) -> None:
     """Un challenge ne peut être utilisé qu'une seule fois (anti-replay)."""
-    cr = client.post("/api/v1/wallet/create", json={"name": "frank_test"})
+    cr = client.post("/api/v1/wallet/create", json={"name": "frank_test", "password": TEST_PASSWORD})
     seed_hex = cr.json()["seed_hex"]
     address = cr.json()["address"]
 
@@ -147,11 +161,10 @@ def test_auth_challenge_replay_blocked(client: TestClient) -> None:
     sk = signing.SigningKey(bytes.fromhex(seed_hex))
     sig = sk.sign(bytes.fromhex(challenge)).signature.hex()
 
-    # Première utilisation → OK
     v1 = client.post("/api/v1/auth/verify", json={"address": address, "challenge": challenge, "signature": sig})
     assert v1.status_code == 200
 
-    # Deuxième utilisation du même challenge → 400
+    # Deuxième utilisation → 400
     v2 = client.post("/api/v1/auth/verify", json={"address": address, "challenge": challenge, "signature": sig})
     assert v2.status_code == 400
 
@@ -174,12 +187,10 @@ def test_apikey_generate_without_auth_rejected(client: TestClient) -> None:
 
 def test_apikey_generate_with_auth_success(client: TestClient) -> None:
     """Générer une API key AVEC session valide → succès, clé liée au wallet."""
-    # Créer wallet + login
-    client.post("/api/v1/wallet/create", json={"name": "grace_test"})
-    login_r = client.post("/api/v1/auth/login", json={"name": "grace_test", "password": "x"})
+    client.post("/api/v1/wallet/create", json={"name": "grace_test", "password": TEST_PASSWORD})
+    login_r = client.post("/api/v1/auth/login", json={"name": "grace_test", "password": TEST_PASSWORD})
     sess_token = login_r.json()["session_token"]
 
-    # Générer l'API key avec le token de session
     r = client.post(
         "/api/v1/api-keys/generate",
         json={"label": "Mon ChatGPT"},
@@ -199,11 +210,10 @@ def test_apikey_generate_with_auth_success(client: TestClient) -> None:
 
 def test_auth_logout(client: TestClient) -> None:
     """Après logout, le token de session ne peut plus être utilisé."""
-    client.post("/api/v1/wallet/create", json={"name": "henry_test"})
-    login_r = client.post("/api/v1/auth/login", json={"name": "henry_test", "password": "x"})
+    client.post("/api/v1/wallet/create", json={"name": "henry_test", "password": TEST_PASSWORD})
+    login_r = client.post("/api/v1/auth/login", json={"name": "henry_test", "password": TEST_PASSWORD})
     sess_token = login_r.json()["session_token"]
 
-    # Logout
     out = client.post("/api/v1/auth/logout", headers={"Authorization": f"Bearer {sess_token}"})
     assert out.status_code == 200
     assert out.json()["logged_out"] is True

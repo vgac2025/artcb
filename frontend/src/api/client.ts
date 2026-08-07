@@ -203,8 +203,8 @@ export async function fetchChain(params?: {
   return data.blocks as ChainBlock[];
 }
 
-export async function createWallet(name: string) {
-  const { data } = await api.post("/wallet/create", { name });
+export async function createWallet(name: string, password: string) {
+  const { data } = await api.post("/wallet/create", { name, password });
   return data as {
     name: string;
     address: string;

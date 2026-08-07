@@ -100,26 +100,21 @@ def login(body: LoginRequest, request: Request) -> dict:
 
     Retourne un token de session `sess_xxx` valide 24 heures.
     """
-    from src.artcb.wallet.encryption import decrypt_private_key, get_wallet_passphrase
+    from src.artcb.wallet.encryption import decrypt_private_key
     from src.artcb.wallet.manager import WalletManager
 
     wm = WalletManager()
     key_path = wm.wallet_dir / f"{body.name}.key"
     if not key_path.exists():
-        # Ne pas révéler si le wallet existe ou non (timing attack mitigation)
         raise HTTPException(status_code=401, detail="Identifiants invalides")
 
     try:
-        # Tenter le déchiffrement avec le mot de passe fourni
         raw = key_path.read_bytes()
-        # Essai avec le mot de passe de l'user d'abord, puis fallback passphrase serveur
         seed: bytes | None = None
-        for passphrase in [body.password, get_wallet_passphrase()]:
-            try:
-                seed = decrypt_private_key(raw, passphrase)
-                break
-            except Exception:
-                continue
+        try:
+            seed = decrypt_private_key(raw, body.password)
+        except Exception:
+            seed = None
         if seed is None:
             raise HTTPException(status_code=401, detail="Identifiants invalides")
     except HTTPException:
@@ -127,8 +122,12 @@ def login(body: LoginRequest, request: Request) -> dict:
     except Exception:
         raise HTTPException(status_code=401, detail="Identifiants invalides")
 
-    # Charger le wallet pour obtenir l'adresse
-    wallet = wm.load_wallet(name=body.name)
+    # Reconstruire l'adresse depuis la seed déjà déchiffrée
+    # (pas besoin de rappeler load_wallet qui re-déchiffrerait avec la passphrase serveur)
+    from nacl import signing as _signing
+    from src.artcb.wallet.address import address_from_signing_key as _addr
+    signing_key = _signing.SigningKey(seed)
+    address = _addr(signing_key)
 
     # Créer un token de session
     raw_token = "sess_" + secrets.token_hex(32)
@@ -136,17 +135,17 @@ def login(body: LoginRequest, request: Request) -> dict:
     now = time.time()
     record = {
         "wallet_name": body.name,
-        "address": wallet.address,
+        "address": address,
         "created_at": now,
         "expires_at": now + _SESSION_TTL,
     }
     _sessions[token_hash] = record
 
-    logger.info("Login successful: wallet=%s address=%s", body.name, wallet.address)
+    logger.info("Login successful: wallet=%s address=%s", body.name, address)
     return {
         "session_token": raw_token,
         "wallet_name": body.name,
-        "address": wallet.address,
+        "address": address,
         "expires_in": _SESSION_TTL,
         "message": "Connecté. Utilisez session_token dans Authorization: Bearer <token>",
     }
@@ -193,18 +192,24 @@ def verify_signature(body: VerifyRequest, request: Request) -> dict:
         del _challenges[body.challenge]
         raise HTTPException(status_code=400, detail="Challenge expiré — en demandez un nouveau")
 
-    # Retrouver la clé publique associée à cette adresse
+    # Retrouver la clé publique associée à cette adresse depuis les métadonnées JSON
+    # (la clé publique est dans le .json, pas dans le .key chiffré — pas de déchiffrement requis)
+    from nacl import signing as _signing
     wm = WalletManager()
     wallets = wm.list_wallets()
-    wallet_name = next(
-        (w["name"] for w in wallets if w.get("address") == body.address), None
+    wallet_record = next(
+        (w for w in wallets if w.get("address") == body.address), None
     )
-    if not wallet_name:
+    if not wallet_record:
         raise HTTPException(status_code=404, detail="Adresse inconnue sur ce nœud")
+    wallet_name = wallet_record["name"]
 
     try:
-        wallet = wm.load_wallet(name=wallet_name)
-        verify_key = wallet.signing_key.verify_key
+        # La clé publique est stockée en clair dans le .json — pas besoin de déchiffrer
+        pub_hex = wallet_record.get("public_key_hex", "")
+        if not pub_hex:
+            raise HTTPException(status_code=500, detail="Clé publique manquante dans les métadonnées")
+        verify_key = _signing.VerifyKey(bytes.fromhex(pub_hex))
         sig_bytes = bytes.fromhex(body.signature)
         challenge_bytes = bytes.fromhex(body.challenge)
         verify_key.verify(challenge_bytes, sig_bytes)

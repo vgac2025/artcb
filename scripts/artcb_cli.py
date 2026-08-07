@@ -98,7 +98,8 @@ def cmd_system(args: argparse.Namespace) -> int:
 
 def cmd_wallet(args: argparse.Namespace) -> int:
     if args.action == "create":
-        return _req("post", f"{API}/wallet/create", base=args.base, json={"name": args.name})
+        pwd = getattr(args, "password", None) or "default_test_password"
+        return _req("post", f"{API}/wallet/create", base=args.base, json={"name": args.name, "password": pwd})
     if args.action == "list":
         return _req("get", f"{API}/wallet/list", base=args.base)
     if args.action == "balance":
@@ -298,6 +299,7 @@ def build_parser() -> argparse.ArgumentParser:
     w = sub.add_parser("wallet", help="Wallets")
     w.add_argument("action", choices=["create", "list", "balance"])
     w.add_argument("--name", default="cli_wallet")
+    w.add_argument("--password", default="default_test_password", help="Mot de passe (min 8 chars) — chiffre la clé privée")
     w.add_argument("--address")
     w.set_defaults(func=cmd_wallet)
 

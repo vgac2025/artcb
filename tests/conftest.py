@@ -12,11 +12,16 @@ TEST_WALLET_PASSPHRASE = "test-passphrase-artcb-dev-32chars!"
 
 
 @pytest.fixture(autouse=True)
-def _wallet_passphrase_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    """All tests use encrypted wallets — ARTCB_WALLET_PASSPHRASE required."""
+def _wallet_passphrase_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """All tests use encrypted wallets — ARTCB_WALLET_PASSPHRASE required.
+
+    ARTCB_DATA_DIR is redirected to a per-test tmp_path so that create_app()
+    and build_app_state() never touch production keys in ./data/chain/.
+    """
     monkeypatch.setenv("ARTCB_WALLET_PASSPHRASE", TEST_WALLET_PASSPHRASE)
     monkeypatch.setenv("ARTCB_PQC_ENABLED", "true")
     monkeypatch.setenv("ARTCB_MIN_BLOCK_INTERVAL_SEC", "0")
+    monkeypatch.setenv("ARTCB_DATA_DIR", str(tmp_path))
 
 
 @pytest.fixture

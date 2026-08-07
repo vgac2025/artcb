@@ -115,8 +115,13 @@ class WalletManager:
         pqc_path.chmod(0o600)
         return public_key
 
-    def create_wallet(self, *, name: str = "default") -> Wallet:
-        """Create new wallet with Ed25519 keypair and optional ML-DSA hybrid keys."""
+    def create_wallet(self, *, name: str = "default", user_password: str | None = None) -> Wallet:
+        """Create new wallet with Ed25519 keypair and optional ML-DSA hybrid keys.
+
+        Si user_password est fourni, la seed est chiffrée avec ce mot de passe utilisateur.
+        Le login via /auth/login utilise ce même mot de passe pour déchiffrer.
+        Sans user_password, seule la ARTCB_WALLET_PASSPHRASE serveur est utilisée (mode dev).
+        """
         key_path = self.wallet_dir / f"{name}.key"
         if key_path.exists():
             raise FileExistsError(f"Wallet {name} already exists at {key_path}")
@@ -125,7 +130,9 @@ class WalletManager:
         address = address_from_signing_key(signing_key)
 
         seed = signing_key.encode()
-        key_path.write_bytes(encrypt_private_key(seed))
+        # PROTOCOLE : chiffrer avec le mot de passe de l'utilisateur si fourni,
+        # sinon fallback sur la passphrase serveur (mode dev uniquement).
+        key_path.write_bytes(encrypt_private_key(seed, passphrase=user_password or None))
         key_path.chmod(0o600)
 
         pqc_secret: bytes | None = None
@@ -173,14 +180,18 @@ class WalletManager:
             address_v2=address_v2,
         )
 
-    def load_wallet(self, *, name: str = "default") -> Wallet:
-        """Load existing wallet."""
+    def load_wallet(self, *, name: str = "default", user_password: str | None = None) -> Wallet:
+        """Load existing wallet.
+
+        user_password : mot de passe utilisateur utilisé pour chiffrer la seed à la création.
+        Obligatoire pour les wallets créés via /wallet/create {password}.
+        """
         key_path = self.wallet_dir / f"{name}.key"
         if not key_path.exists():
             raise FileNotFoundError(f"Wallet {name} not found at {key_path}")
 
         raw = key_path.read_bytes()
-        seed = decrypt_private_key(raw)
+        seed = decrypt_private_key(raw, passphrase=user_password)
         signing_key = signing.SigningKey(seed)
 
         if is_plain_ed25519_seed(raw):

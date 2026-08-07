@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   authLogin,
+  authLogout,
   createWallet,
   fetchFoundersAllocation,
   fetchWalletBalance,
@@ -9,6 +10,10 @@ import {
 } from "../api/client";
 import { useDashboard } from "../context/DashboardContext";
 import { useTranslation } from "../i18n/useTranslation";
+
+// Clé sessionStorage pour persister le token de session entre rechargements
+const SESSION_TOKEN_KEY = "artcb_session_token";
+const SESSION_WALLET_KEY = "artcb_session_wallet";
 
 type CreatedWallet = {
   name: string;
@@ -31,6 +36,9 @@ export function Wallets() {
     Array<{ founder_id: number; name: string; balance_artcb: number; is_creator?: boolean }>
   >([]);
   const [newName, setNewName] = useState("");
+  // Mot de passe à saisir lors de la création (obligatoire)
+  const [newPassword, setNewPassword] = useState("");
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
   const [rewardHistory, setRewardHistory] = useState<
     Array<{ block_index: number; reward_artcb: number; pol_score: number; timestamp: string }>
@@ -51,7 +59,19 @@ export function Wallets() {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  const [sessionToken, setSessionToken] = useState<string | null>(null);
+  // Session persistée dans sessionStorage (survit aux rechargements, pas aux fermetures d'onglet)
+  const [sessionToken, setSessionToken] = useState<string | null>(
+    () => sessionStorage.getItem(SESSION_TOKEN_KEY)
+  );
+  const [sessionWallet, setSessionWallet] = useState<string | null>(
+    () => sessionStorage.getItem(SESSION_WALLET_KEY)
+  );
+
+  // ── Popup "Activer" — demande le mot de passe avant d'activer un wallet ──
+  const [activateTarget, setActivateTarget] = useState<{ address: string; name: string } | null>(null);
+  const [activatePassword, setActivatePassword] = useState("");
+  const [activateError, setActivateError] = useState<string | null>(null);
+  const [activateLoading, setActivateLoading] = useState(false);
 
   // ── Import wallet (entrer une adresse existante) ──────────────────
   const [importAddress, setImportAddress] = useState("");
@@ -83,14 +103,33 @@ export function Wallets() {
   // ── Créer un nouveau wallet ────────────────────────────────────────
   const handleCreate = async () => {
     if (!newName.trim()) return;
+    // Validation : mot de passe obligatoire + confirmation
+    if (newPassword.length < 8) {
+      setError("Le mot de passe doit contenir au moins 8 caractères.");
+      return;
+    }
+    if (newPassword !== newPasswordConfirm) {
+      setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
     setLoading(true);
     setError(null);
     setCreatedWallet(null);
     try {
-      const w = await createWallet(newName.trim());
+      // PROTOCOLE : mot de passe obligatoire — chiffre la clé privée côté serveur
+      const w = await createWallet(newName.trim(), newPassword);
+      // Connexion automatique après création (session valide)
+      const loginResult = await authLogin(newName.trim(), newPassword);
+      const token = loginResult.session_token;
+      setSessionToken(token);
+      setSessionWallet(newName.trim());
+      sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+      sessionStorage.setItem(SESSION_WALLET_KEY, newName.trim());
       setActorAddress(w.address);
       setCreatedWallet(w);         // <── Affichage immédiat à l'utilisateur
       setNewName("");
+      setNewPassword("");
+      setNewPasswordConfirm("");
       await reload();
     } catch (err: unknown) {
       const axErr = err as { response?: { data?: { detail?: string }; status?: number } };
@@ -111,7 +150,12 @@ export function Wallets() {
     setLoginError(null);
     try {
       const result = await authLogin(loginName.trim(), loginPassword.trim());
-      setSessionToken(result.session_token);
+      const token = result.session_token;
+      // Persister la session dans sessionStorage (survit aux rechargements de page)
+      setSessionToken(token);
+      setSessionWallet(result.wallet_name);
+      sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+      sessionStorage.setItem(SESSION_WALLET_KEY, result.wallet_name);
       setActorAddress(result.address);
       setLoginError(null);
       setLoginName("");
@@ -122,6 +166,31 @@ export function Wallets() {
       setLoginError(axErr?.response?.data?.detail ?? "Identifiants invalides — vérifiez votre nom et mot de passe.");
     } finally {
       setLoginLoading(false);
+    }
+  };
+
+  // ── Activer un wallet depuis la grille (requiert mot de passe) ─────
+  const handleActivate = async () => {
+    if (!activateTarget || !activatePassword.trim()) return;
+    setActivateLoading(true);
+    setActivateError(null);
+    try {
+      // SÉCURITÉ : le bouton "Activer" appelle /auth/login — sans le bon mot de passe, refusé
+      const result = await authLogin(activateTarget.name, activatePassword.trim());
+      const token = result.session_token;
+      setSessionToken(token);
+      setSessionWallet(activateTarget.name);
+      sessionStorage.setItem(SESSION_TOKEN_KEY, token);
+      sessionStorage.setItem(SESSION_WALLET_KEY, activateTarget.name);
+      setActorAddress(result.address);
+      setActivateTarget(null);
+      setActivatePassword("");
+      await reload();
+    } catch (err: unknown) {
+      const axErr = err as { response?: { data?: { detail?: string }; status?: number } };
+      setActivateError(axErr?.response?.data?.detail ?? "Mot de passe incorrect.");
+    } finally {
+      setActivateLoading(false);
     }
   };
 
@@ -167,8 +236,17 @@ export function Wallets() {
     });
   };
 
-  // UX-3 FIX: déconnexion — vider actorAddress
-  const handleDisconnect = () => {
+  // SÉCURITÉ : déconnexion — appel API + vidage session complète
+  const handleDisconnect = async () => {
+    if (sessionToken) {
+      try {
+        await authLogout(sessionToken);
+      } catch { /* session déjà expirée côté serveur — OK */ }
+    }
+    setSessionToken(null);
+    setSessionWallet(null);
+    sessionStorage.removeItem(SESSION_TOKEN_KEY);
+    sessionStorage.removeItem(SESSION_WALLET_KEY);
     setActorAddress("");
   };
 
@@ -206,47 +284,103 @@ export function Wallets() {
     <div className="mc-page">
       <h1 className="dashboard-title">{t('wallets_title')}</h1>
 
-      {/* UX-4 FIX: Wallet actif affiché en haut — avec bouton déconnexion */}
+      {/* ── Wallet actif affiché en haut — avec bouton déconnexion ── */}
       {actorAddress ? (
         <div className="panel" style={{ borderColor: "var(--mc-grass, #56c426)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
           <div>
             <span style={{ color: "var(--mc-grass, #56c426)", fontWeight: 700, marginRight: 8 }}>◇ Wallet actif :</span>
             <span className="mc-mono" style={{ fontSize: 13 }}>{actorAddress}</span>
+            {sessionWallet && (
+              <span style={{ fontSize: 11, color: "var(--mc-grass)", marginLeft: 10 }}>
+                ({sessionWallet}) — session authentifiée
+              </span>
+            )}
           </div>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <button onClick={() => copyAddress(actorAddress)}>
               {copied ? "[OK] Copié !" : "Copier"}
             </button>
-            {/* UX-3 FIX: Bouton déconnexion */}
+            {/* SÉCURITÉ : déconnexion invalide la session côté serveur */}
             <button onClick={handleDisconnect} style={{ color: "var(--mc-redstone, #c0392b)", borderColor: "var(--mc-redstone, #c0392b)" }}>
               ✕ Se déconnecter
             </button>
           </div>
         </div>
       ) : (
-        /* UX-2 FIX: Bandeau onboarding si aucun wallet actif */
         <div className="panel" style={{ borderColor: "var(--mc-gold, #ffd700)", background: "rgba(255,215,0,0.05)" }}>
           <p style={{ margin: 0, color: "var(--mc-gold, #ffd700)", fontWeight: 700 }}>
-            ◇ Pas encore de wallet actif — créez-en un ci-dessous ou connectez-vous avec votre adresse existante.
+            ◇ Pas encore de wallet actif — créez-en un ci-dessous ou connectez-vous.
           </p>
+        </div>
+      )}
+
+      {/* ── Popup : Activer un wallet (mot de passe requis) ──────── */}
+      {activateTarget && (
+        <div className="panel" style={{ border: "2px solid var(--mc-gold, #ffd700)", background: "rgba(0,0,0,0.85)", position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", zIndex: 1000, minWidth: 320, maxWidth: 480 }}>
+          <h2 style={{ color: "var(--mc-gold)" }}>🔐 Activer le wallet</h2>
+          <p style={{ fontSize: 13, marginBottom: 12 }}>
+            <strong>{activateTarget.name}</strong><br />
+            <span className="mc-mono" style={{ fontSize: 11 }}>{activateTarget.address}</span>
+          </p>
+          <p style={{ fontSize: 13, color: "var(--terminal-muted)", marginBottom: 12 }}>
+            Entrez votre mot de passe pour accéder à ce wallet. Sans le bon mot de passe, l'accès est impossible.
+          </p>
+          <div className="toolbar" style={{ flexDirection: "column", gap: "0.5rem" }}>
+            <input
+              type="password"
+              value={activatePassword}
+              onChange={(e) => setActivatePassword(e.target.value)}
+              placeholder="Votre mot de passe"
+              style={{ minWidth: 240 }}
+              autoFocus
+              onKeyDown={(e) => e.key === "Enter" && handleActivate()}
+            />
+          </div>
+          {activateError && <p className="mc-error" style={{ marginTop: 8 }}>{activateError}</p>}
+          <div className="toolbar" style={{ marginTop: 12 }}>
+            <button className="primary" onClick={handleActivate} disabled={activateLoading || !activatePassword.trim()}>
+              {activateLoading ? "Vérification…" : "Se connecter"}
+            </button>
+            <button onClick={() => { setActivateTarget(null); setActivatePassword(""); setActivateError(null); }}>
+              Annuler
+            </button>
+          </div>
         </div>
       )}
 
       {/* ── Panneau : Créer un wallet ─────────────────────────── */}
       <div className="panel">
         <h2>{t('wallets_create_title')}</h2>
-        <div className="toolbar">
+        <p style={{ fontSize: 13, color: "var(--terminal-muted, #8b949e)", marginBottom: 8 }}>
+          Choisissez un nom et un <strong>mot de passe</strong> (min. 8 caractères).
+          Ce mot de passe chiffre votre clé privée — il sera requis pour vous connecter.
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: 8 }}>
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder={t('wallets_create_placeholder')}
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
           />
-          <button className="primary" onClick={handleCreate} disabled={loading || !newName.trim()}>
-            {loading ? "Création…" : t('wallets_create_button')}
-          </button>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="Mot de passe (min. 8 caractères)"
+            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+          />
+          <input
+            type="password"
+            value={newPasswordConfirm}
+            onChange={(e) => setNewPasswordConfirm(e.target.value)}
+            placeholder="Confirmer le mot de passe"
+            onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+          />
         </div>
-        {error && <p className="mc-error">{error}</p>}
+        <button className="primary" onClick={handleCreate} disabled={loading || !newName.trim() || !newPassword.trim() || !newPasswordConfirm.trim()}>
+          {loading ? "Création…" : t('wallets_create_button')}
+        </button>
+        {error && <p className="mc-error" style={{ marginTop: 8 }}>{error}</p>}
       </div>
 
       {/* ── Résultat création : seed_hex + adresse ────────────── */}
@@ -427,16 +561,16 @@ export function Wallets() {
                     >
                       {copiedGrid === w.address ? "✓" : "⧉"}
                     </button>
-                    {/* Bouton Activer : uniquement si la clé privée est sur CE serveur */}
-                    {w.address !== actorAddress && w.has_key_file !== false && (
-                      <button
-                        style={{ fontSize: 9, padding: "1px 4px", color: "var(--mc-grass)" }}
-                        onClick={() => setActorAddress(w.address)}
-                        title="Activer ce wallet (clé privée disponible sur ce nœud)"
-                      >
-                        ▶
-                      </button>
-                    )}
+                    {/* SÉCURITÉ : bouton Activer ouvre une popup mot de passe — pas d'accès direct */}
+                     {w.address !== actorAddress && w.has_key_file !== false && (
+                       <button
+                         style={{ fontSize: 9, padding: "1px 4px", color: "var(--mc-grass)" }}
+                         onClick={() => { setActivateTarget({ address: w.address, name: w.name }); setActivatePassword(""); setActivateError(null); }}
+                         title="Activer ce wallet — mot de passe requis"
+                       >
+                         ▶
+                       </button>
+                     )}
                     {/* Wallet importé (lecture seule) — pas de bouton Activer */}
                     {w.has_key_file === false && w.address !== actorAddress && (
                       <span

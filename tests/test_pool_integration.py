@@ -19,7 +19,8 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
 
 
 def _wallet(client: TestClient, name: str = "pool_wallet") -> dict:
-    r = client.post("/api/v1/wallet/create", json={"name": name})
+    # Wallet système — password requis depuis rapport 107 (chiffrement clé privée)
+    r = client.post("/api/v1/wallet/create", json={"name": name, "password": "test_pwd_123"})
     assert r.status_code == 200, r.text
     return r.json()
 
@@ -37,6 +38,7 @@ def _run_local_pool_finalize(client: TestClient, visibility: str, group_id: str 
         "visibility": visibility,
         "actor_address": w["address"],
         "wallet_name": "pool_wallet",
+        "wallet_password": "test_pwd_123",
         "auto_finalize": True,
         "chunk_chars": 120,
     }
@@ -83,6 +85,7 @@ def test_pool_run_local_group(client: TestClient) -> None:
             "group_id": group_id,
             "actor_address": w["address"],
             "wallet_name": "founder_wallet",
+            "wallet_password": "test_pwd_123",
             "auto_finalize": True,
             "chunk_chars": 120,
         },
@@ -103,6 +106,7 @@ def test_pool_run_local_mode_no_network(client: TestClient) -> None:
             "visibility": "private",
             "actor_address": w["address"],
             "wallet_name": "local_wallet",
+            "wallet_password": "test_pwd_123",
         },
     )
     assert r.status_code == 200, r.text
@@ -148,6 +152,7 @@ def test_mining_pipeline_distributed_flag(client: TestClient) -> None:
             "visibility": "private",
             "actor_address": w["address"],
             "wallet_name": "pipe_wallet",
+            "wallet_password": "test_pwd_123",
             "auto_finalize": True,
             "chunk_chars": 150,
         },

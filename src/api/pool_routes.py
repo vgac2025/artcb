@@ -31,6 +31,7 @@ class CreatePoolJobRequest(BaseModel):
     workers: list[PoolWorkerSpec] = Field(default_factory=list)
     actor_address: str | None = None
     wallet_name: str | None = None
+    wallet_password: str | None = Field(default=None, description="Mot de passe du wallet (requis si wallet_name fourni)")
     chunk_chars: int = Field(default=400, ge=100, le=8000)
     auto_dispatch: bool = True
     encrypt_transport: bool = True
@@ -46,6 +47,7 @@ class PoolRunRequest(BaseModel):
     group_id: str | None = None
     actor_address: str | None = None
     wallet_name: str | None = None
+    wallet_password: str | None = Field(default=None, description="Mot de passe du wallet (requis si wallet_name fourni)")
     session_id: str = "pool_run"
     use_llm: bool = False
     llm_provider: str | None = None
@@ -78,6 +80,7 @@ class FinalizePoolJobRequest(BaseModel):
 
 class ProcessIncomingRequest(BaseModel):
     wallet_name: str | None = None
+    wallet_password: str | None = None
     contributor_address: str | None = None
 
 
@@ -108,15 +111,15 @@ def _build_peer_urls(request: Request, workers: list[dict[str, str]] | None = No
     return build_peer_urls(_state(request), _owner_base_url(request), workers)
 
 
-def _wallet_sign(request: Request, wallet_name: str | None):
+def _wallet_sign(request: Request, wallet_name: str | None, wallet_password: str | None = None):
     if not wallet_name:
         return None, None
     from src.artcb.wallet.manager import WalletManager
 
     try:
-        wallet = WalletManager().load_wallet(name=wallet_name)
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=400, detail=f"Wallet introuvable: {wallet_name}") from exc
+        wallet = WalletManager().load_wallet(name=wallet_name, user_password=wallet_password)
+    except (FileNotFoundError, Exception) as exc:
+        raise HTTPException(status_code=400, detail=f"Wallet introuvable ou mot de passe incorrect: {wallet_name}") from exc
     return wallet.address, wallet.sign
 
 
@@ -215,7 +218,7 @@ def run_pool_or_local_mining(body: PoolRunRequest, request: Request) -> dict:
     )
     workers = _discover_workers(request) if body.use_distributed_pool else []
     peer_urls = _build_peer_urls(request, workers) if body.use_distributed_pool else {}
-    addr, sign_fn = _wallet_sign(request, body.wallet_name)
+    addr, sign_fn = _wallet_sign(request, body.wallet_name, body.wallet_password)
     actor = body.actor_address or addr
 
     try:
@@ -337,7 +340,7 @@ def list_pool_incoming(request: Request) -> dict:
 @router.post("/incoming/{chunk_id}/process")
 def process_pool_chunk(chunk_id: str, body: ProcessIncomingRequest, request: Request) -> dict:
     pool = _pool(request)
-    addr, sign_fn = _wallet_sign(request, body.wallet_name)
+    addr, sign_fn = _wallet_sign(request, body.wallet_name, body.wallet_password)
     contributor = body.contributor_address or addr
     if not contributor:
         raise HTTPException(status_code=400, detail="contributor_address ou wallet_name requis")
@@ -350,7 +353,7 @@ def process_pool_chunk(chunk_id: str, body: ProcessIncomingRequest, request: Req
 @router.post("/incoming/process-all")
 def process_all_incoming(body: ProcessIncomingRequest, request: Request) -> dict:
     pool = _pool(request)
-    addr, sign_fn = _wallet_sign(request, body.wallet_name)
+    addr, sign_fn = _wallet_sign(request, body.wallet_name, body.wallet_password)
     contributor = body.contributor_address or addr
     if not contributor:
         raise HTTPException(status_code=400, detail="contributor_address ou wallet_name requis")

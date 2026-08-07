@@ -29,7 +29,8 @@ def test_public_block_carries_symbols(client: TestClient) -> None:
     assert agents.status_code == 200
     assert agents.json().get("orig_symbols")
     graph_id = agents.json()["graph_id"]
-    w = client.post("/api/v1/wallet/create", json={"name": "sym_wallet"})
+    # Wallet système — password requis depuis rapport 107 (chiffrement clé privée)
+    w = client.post("/api/v1/wallet/create", json={"name": "sym_wallet", "password": "test_pwd_123"})
     address = w.json()["address"]
     store = client.post(
         "/api/v1/store",
@@ -38,6 +39,7 @@ def test_public_block_carries_symbols(client: TestClient) -> None:
             "session_id": "sym_pub",
             "visibility": "public",
             "wallet_name": "sym_wallet",
+            "wallet_password": "test_pwd_123",
             "actor_address": address,
         },
     )

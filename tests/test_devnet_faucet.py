@@ -35,7 +35,7 @@ def test_faucet_limit(tmp_path: Path) -> None:
 
 
 def test_faucet_api(client: TestClient) -> None:
-    w = client.post("/api/v1/wallet/create", json={"name": "faucet_wallet"})
+    w = client.post("/api/v1/wallet/create", json={"name": "faucet_wallet", "password": "devpassword1"})
     assert w.status_code == 200
     address = w.json()["address"]
     r = client.post("/api/v1/devnet/faucet", json={"address": address})
@@ -44,7 +44,7 @@ def test_faucet_api(client: TestClient) -> None:
 
 
 def test_wallet_balance_includes_faucet(client: TestClient) -> None:
-    w = client.post("/api/v1/wallet/create", json={"name": "bal_wallet"})
+    w = client.post("/api/v1/wallet/create", json={"name": "bal_wallet", "password": "test_pwd_123"})
     address = w.json()["address"]
     client.post("/api/v1/devnet/faucet", json={"address": address})
     bal = client.get(f"/api/v1/wallet/balance/{address}")

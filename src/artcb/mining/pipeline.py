@@ -126,6 +126,7 @@ class MiningPipeline:
         llm_provider: str | None = None,
         actor_address: str | None = None,
         wallet_name: str | None = None,
+        wallet_password: str | None = None,
         visibility: str = "private",
         group_id: str | None = None,
         store_block: bool = True,
@@ -189,11 +190,11 @@ class MiningPipeline:
             wallet = None
             if wallet_name and self.wallet_manager:
                 try:
-                    wallet = self.wallet_manager.load_wallet(name=wallet_name)
+                    wallet = self.wallet_manager.load_wallet(name=wallet_name, user_password=wallet_password)
                     if not actor_address:
                         actor_address = wallet.address
-                except FileNotFoundError:
-                    logger.warning("Wallet %s not found for mining signature", wallet_name)
+                except Exception:
+                    logger.warning("Wallet %s not found or wrong password for mining signature", wallet_name)
 
             if (
                 visibility == "group"

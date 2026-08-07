@@ -213,11 +213,12 @@ async def stream_thought_ws(websocket: WebSocket) -> None:
 
                     # Wallet optionnel
                     contributors = None
+                    wallet_password_ws: str | None = msg.get("wallet_password")
                     if wallet_name:
                         try:
                             from src.artcb.wallet.manager import WalletManager
                             from src.artcb.mining.pipeline import build_contributors
-                            wallet = WalletManager().load_wallet(name=wallet_name)
+                            wallet = WalletManager().load_wallet(name=wallet_name, user_password=wallet_password_ws)
                             contributors = build_contributors(
                                 actor_address=wallet.address,
                                 pol_score=0.72,

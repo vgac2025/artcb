@@ -42,6 +42,7 @@ class StoreRequest(BaseModel):
     group_id: str | None = None
     actor_address: str | None = None
     wallet_name: str | None = Field(default=None, description="Wallet pour signature minage raisonnement")
+    wallet_password: str | None = Field(default=None, description="Mot de passe du wallet")
 
 
 class IrLearnRequest(BaseModel):
@@ -262,10 +263,10 @@ async def store(body: StoreRequest, request: Request) -> dict:
         from src.artcb.wallet.manager import WalletManager
 
         try:
-            wallet = WalletManager().load_wallet(name=body.wallet_name)
+            wallet = WalletManager().load_wallet(name=body.wallet_name, user_password=body.wallet_password)
             actor = actor or wallet.address
-        except FileNotFoundError as exc:
-            raise HTTPException(status_code=404, detail=f"wallet not found: {body.wallet_name}") from exc
+        except Exception as exc:
+            raise HTTPException(status_code=404, detail=f"wallet not found or wrong password: {body.wallet_name}") from exc
 
     # SÉCURITÉ : Si actor_address fourni sans wallet_name, le reward est attribué
     # SANS vérification cryptographique (aucune signature de l'actor_address).
@@ -460,10 +461,12 @@ def system_optimization(request: Request) -> dict:
 
 class CreateWalletRequest(BaseModel):
     name: str = "default"
-    password: str | None = Field(
-        default=None,
+    password: str = Field(
         min_length=8,
-        description="Mot de passe pour chiffrer la seed (optionnel en mode dev)",
+        description=(
+            "Mot de passe personnel (min 8 caractères). "
+            "Chiffre la clé privée. Requis pour se connecter via /auth/login et pour toute opération signée."
+        ),
     )
 
 
@@ -473,17 +476,25 @@ class WalletBalanceRequest(BaseModel):
 
 @router.post("/wallet/create")
 def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
-    """Create new ARTCB wallet with Ed25519 + ML-DSA-65 hybrid keypair."""
+    """Create new ARTCB wallet with Ed25519 + ML-DSA-65 hybrid keypair.
+
+    PROTOCOLE :
+      - Le mot de passe est OBLIGATOIRE et chiffre la clé privée sur le serveur.
+      - La seed_hex est retournée UNE SEULE FOIS — l'utilisateur doit la sauvegarder.
+      - Sans la seed_hex OU le mot de passe, le compte est inaccessible.
+      - Le login ultérieur (POST /auth/login) utilise ce même mot de passe.
+    """
     from src.artcb.wallet.manager import WalletManager
 
     _state(request)
     wallet_mgr = WalletManager()
 
     try:
-        wallet = wallet_mgr.create_wallet(name=body.name)
+        # PROTOCOLE : chiffrer la seed avec le MOT DE PASSE de l'utilisateur,
+        # pas uniquement avec la passphrase serveur.
+        wallet = wallet_mgr.create_wallet(name=body.name, user_password=body.password)
         logger.info("Created wallet name=%s address=%s", body.name, wallet.address)
         # PROTOCOLE : la seed (clé privée) est retournée UNE SEULE FOIS à la création.
-        # L'utilisateur DOIT la sauvegarder — sans elle, le compte est inaccessible.
         # Elle n'est JAMAIS stockée en clair et ne sera plus jamais affichée.
         seed_hex = wallet.signing_key.encode().hex()
         response: dict = {

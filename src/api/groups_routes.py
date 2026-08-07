@@ -55,6 +55,7 @@ class SubmitJoinRequest(BaseModel):
 class WalletJoinRequest(BaseModel):
     """Devnet: signe avec wallet local serveur — clé privée jamais exposée à l'inviteur."""
     wallet_name: str = Field(min_length=1)
+    wallet_password: str | None = Field(default=None, description="Mot de passe du wallet pour déchiffrer la clé privée (None = passphrase serveur)")
     join_code: str = Field(min_length=6, max_length=16)
 
 
@@ -146,9 +147,9 @@ def sign_join_with_wallet(body: WalletJoinRequest, request: Request) -> dict:
 
     wm = WalletManager(settings.data_dir / "wallets")
     try:
-        wallet = wm.load_wallet(name=body.wallet_name)
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail=f"Wallet not found: {body.wallet_name}") from exc
+        wallet = wm.load_wallet(name=body.wallet_name, user_password=body.wallet_password)
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail=f"Wallet not found or wrong password: {body.wallet_name}") from exc
 
     timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     message = build_join_challenge(info["group_id"], info["join_code"], wallet.address, timestamp)

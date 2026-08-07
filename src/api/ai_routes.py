@@ -273,6 +273,7 @@ class MemoRequest(BaseModel):
     tags: list[str] = Field(default_factory=list, description="Tags libres (ex: ['i18n','bug','fix'])")
     session_id: str = Field(default="ai_memo", description="ID de session de l'agent")
     wallet_name: str | None = Field(default=None, description="Wallet pour signer le bloc")
+    wallet_password: str | None = Field(default=None, description="Mot de passe du wallet")
     visibility: str = Field(default="private", description="private | public")
     parent_block_index: int | None = Field(default=None, description="Bloc parent (ex: bug que ce fix résout)")
     inject_context: bool = Field(
@@ -345,9 +346,9 @@ def ai_memo(
     if body.wallet_name:
         try:
             from src.artcb.wallet.manager import WalletManager
-            wallet = WalletManager().load_wallet(name=body.wallet_name)
+            wallet = WalletManager().load_wallet(name=body.wallet_name, user_password=body.wallet_password)
             actor = wallet.address
-        except FileNotFoundError:
+        except Exception:
             pass
 
     # Construire les contributors

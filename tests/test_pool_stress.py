@@ -19,7 +19,7 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
 
 
 def test_pool_stress_many_chunks(client: TestClient) -> None:
-    client.post("/api/v1/wallet/create", json={"name": "stress_wallet"})
+    client.post("/api/v1/wallet/create", json={"name": "stress_wallet", "password": "devpassword1"})
     status = client.get("/api/v1/p2p/status").json()
     # Texte long → nombreux chunks
     text = "Segment ARTCB stress. " * 80
@@ -71,7 +71,7 @@ def test_pool_stress_concurrent_jobs(client: TestClient) -> None:
 
 
 def test_pool_stress_finalize_after_batch_process(client: TestClient) -> None:
-    w = client.post("/api/v1/wallet/create", json={"name": "batch_wallet"}).json()
+    w = client.post("/api/v1/wallet/create", json={"name": "batch_wallet", "password": "test_pwd_123"}).json()
     text = "Batch process stress. " * 30
     created = client.post(
         "/api/v1/pool/run",
@@ -82,6 +82,7 @@ def test_pool_stress_finalize_after_batch_process(client: TestClient) -> None:
             "visibility": "public",
             "actor_address": w["address"],
             "wallet_name": "batch_wallet",
+            "wallet_password": "test_pwd_123",
             "auto_finalize": True,
             "chunk_chars": 100,
         },

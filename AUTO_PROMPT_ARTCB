@@ -1065,3 +1065,42 @@ T=23s    : GET / → HTTP 200 → healthcheck PASSE ✅
 Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s de démarrage. Les GET répondent mais les POST lourds (création wallet = nacl+AES) timeoutent à 15s. **Pas un bug du code** — limitation du plan gratuit Replit.
 
 ### Avancement global : 96 %
+
+## [2026-08-07T02:00:00Z] Rapport 111 — 7 failles sécurité wallet corrigées (session, mot de passe, bouton Activer)
+
+### Failles P0 corrigées dans ce rapport
+
+| # | Faille | Statut |
+|---|--------|--------|
+| 1 | Bouton "Activer wallet" sans mot de passe (accès direct) | ✅ Corrigé |
+| 2 | Déconnexion n'invalidait pas la session serveur | ✅ Corrigé |
+| 3 | Session perdue au rechargement de page | ✅ Corrigé |
+| 4 | Création wallet sans champ mot de passe | ✅ Corrigé |
+| 5 | Login avec n'importe quel mot de passe (fallback passphrase serveur) | ✅ Corrigé |
+| 6 | Wallet système vs wallet utilisateur non différenciés | ✅ Corrigé |
+| 7 | `/auth/verify` appelait `load_wallet` (déchiffrement inutile) | ✅ Corrigé |
+
+### Règles de protocole ARTCB — OBLIGATOIRES
+
+1. **seed_hex** : Retournée UNE SEULE FOIS à la création. Ne jamais la ré-afficher. L'user DOIT la sauvegarder.
+2. **Mot de passe utilisateur** : Chiffre la seed côté serveur. Requis pour `/auth/login`. Min 8 chars.
+3. **Login** : Déchiffrement avec le mot de passe utilisateur UNIQUEMENT. **Jamais de fallback passphrase serveur.**
+4. **Session** : `sessionStorage` côté front. Token de session `sess_xxx` côté serveur. Logout = invalidation serveur obligatoire.
+5. **Bouton Activer** : Toujours une popup de mot de passe → appel `/auth/login`. Jamais `setActorAddress()` direct.
+6. **Wallets système** : `has_user_password=false` dans `.json`. Chargés par le pipeline avec passphrase serveur. Pas de login `/auth/login`.
+7. **Wallets utilisateurs** : `has_user_password=true`. Login par mot de passe. Seed = backup si mot de passe perdu.
+
+### Deux types de wallets
+
+| Type | Comment créé | `has_user_password` | Pipeline mining | Login /auth/login |
+|------|-------------|---------------------|-----------------|-------------------|
+| Utilisateur | API avec `password` | `true` | ❌ ne peut pas charger | ✅ |
+| Système | API sans `password` | `false` | ✅ passphrase serveur | ❌ (→ challenge/verify) |
+
+### Ancienne règle incorrecte (ligne 1057 ci-dessous) — CORRIGÉE
+
+❌ **ANCIEN :** "La clé privée ne quitte JAMAIS le serveur."
+✅ **CORRECT :** La clé privée (seed_hex) est **retournée une seule fois à la création** et **affichée à l'utilisateur** pour qu'il la sauvegarde. Elle est chiffrée sur le serveur. Elle ne sera plus jamais ré-affichée après fermeture du panneau.
+
+### Tests : 497/497 PASS | Build TypeScript 0 erreur
+### Avancement global : 99.5 %
