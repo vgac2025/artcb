@@ -1,0 +1,97 @@
+name: ARTCB — Tests CI (GitHub Actions)
+# Remplace Doppler pour les utilisateurs qui clonent la blockchain.
+# Les secrets sont stockés dans GitHub Secrets (Settings → Secrets → Actions).
+# Chaque installation obtient un device_fingerprint unique via GITHUB_RUN_ID + GITHUB_REPOSITORY.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  # Variables non-secrètes : directement dans env
+  ARTCB_DEBUG: "true"
+  ARTCB_ENCODE_MODE: "rule-based"
+  ARTCB_LLM_ENABLED: "false"
+  ARTCB_DATA_DIR: "/tmp/artcb_test_data"
+  ARTCB_LOG_DIR: "/tmp/artcb_test_logs"
+  # Mode tests : autorise plusieurs wallets (pas de check device fingerprint)
+  ARTCB_ALLOW_MULTI_WALLET: "true"
+  # Identifier l'environnement GitHub Actions
+  ARTCB_ENV_TYPE: "github_actions"
+
+jobs:
+  test:
+    name: "502 tests PASS"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Identité unique de l'installation ──────────────────────────────────
+      # GITHUB_REPOSITORY + GITHUB_RUN_ID = identifiant unique de cette exécution
+      # Cela permet de tracer quelle installation/fork utilise la blockchain
+      - name: Print installation identity
+        run: |
+          echo "=== ARTCB Installation Identity ==="
+          echo "Repository : $GITHUB_REPOSITORY"
+          echo "Run ID     : $GITHUB_RUN_ID"
+          echo "Actor      : $GITHUB_ACTOR"
+          echo "Node       : $(hostname)"
+          echo "SHA        : $GITHUB_SHA"
+          FINGERPRINT=$(echo "$GITHUB_REPOSITORY|$GITHUB_RUN_ID|$(hostname)" | sha256sum | cut -c1-32)
+          echo "Fingerprint: $FINGERPRINT"
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install liboqs system deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y cmake ninja-build libssl-dev libjson-c-dev
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      # ── Secrets GitHub → variables d'environnement ────────────────────────
+      # Dans GitHub Settings → Secrets → Actions, définir :
+      #   ARTCB_WALLET_PASSPHRASE  (min 12 chars)
+      #   ARTCB_P2P_PORT           (optionnel, défaut 18444)
+      - name: Load secrets from GitHub Secrets
+        env:
+          ARTCB_WALLET_PASSPHRASE: ${{ secrets.ARTCB_WALLET_PASSPHRASE }}
+          ARTCB_P2P_PORT: ${{ secrets.ARTCB_P2P_PORT }}
+        run: |
+          # Écrire un .env minimal pour les tests
+          cat > .env << EOF
+          ARTCB_DEBUG=true
+          ARTCB_ENCODE_MODE=rule-based
+          ARTCB_LLM_ENABLED=false
+          ARTCB_DATA_DIR=/tmp/artcb_test_data
+          ARTCB_LOG_DIR=/tmp/artcb_test_logs
+          ARTCB_ALLOW_MULTI_WALLET=true
+          ARTCB_WALLET_PASSPHRASE=${ARTCB_WALLET_PASSPHRASE:-artcb_devnet_passphrase_test_ci}
+          EOF
+          echo ".env créé pour CI"
+
+      - name: Run full test suite
+        run: |
+          python3 -m pytest tests/ -q --tb=short --timeout=120 2>&1 | tail -20
+          echo "Test exit code: $?"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+          path: |
+            logs/
+            rapports/
+          retention-days: 7

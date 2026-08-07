@@ -1,0 +1,12 @@
+{
+  "device_fingerprint": "ef82858f5830cfa7e1691ce647a18042562b5249f119b896d11847e70a27a22e",
+  "machine_id": "44c0a0c7539949faa8c2cb159b9c9919",
+  "hostname": "lvx-Vostro-5481",
+  "platform_system": "Linux",
+  "tpm_available": false,
+  "tpm_ek_cert_hash": null,
+  "tpm_manufacturer": null,
+  "env_type": "local",
+  "created_at": "2026-08-07T19:48:20Z",
+  "extra": {}
+}

@@ -80,6 +80,93 @@ def remove_peer(peer_id: str, request: Request) -> dict:
     return {"deleted": peer_id}
 
 
+class RegisterPublicNodeRequest(BaseModel):
+    """Auto-enregistrement d'un nouveau nœud public sur le réseau bootstrap ARTCB."""
+    node_public_url: str = Field(min_length=8, description="URL publique du nœud (https://...)")
+    node_label: str = Field(default="", max_length=128, description="Nom lisible du nœud")
+    device_fingerprint: str = Field(min_length=8, description="SHA-256 du fingerprint appareil")
+    github_repository: str | None = Field(default=None, description="Repo GitHub source (ex: vgac2025/lvx)")
+    github_actor: str | None = Field(default=None, description="Compte GitHub de l'opérateur")
+    network_id: str = Field(default="artcb-devnet-1", description="Réseau cible")
+
+
+@router.post("/register-public", summary="Auto-enregistrement d'un nœud public (bootstrap)")
+def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> dict:
+    """
+    Endpoint bootstrap : un nouveau nœud se déclare sur le réseau ARTCB.
+
+    Appelé automatiquement par le GitHub Actions 'register-node.yml' lors du
+    premier déploiement d'une nouvelle instance clonée.
+
+    Le nœud est ajouté à la liste des pairs P2P (peers.json) avec son URL publique.
+    Aucune authentification requise — les données sont publiques (URL, fingerprint).
+
+    Sécurité : le fingerprint identifie l'appareil de façon unique mais ne contient
+    pas de données personnelles (hash non réversible).
+    """
+    import re
+    state = _state(request)
+
+    # Valider l'URL (doit être https:// ou http://localhost)
+    url = body.node_public_url.rstrip("/")
+    if not re.match(r"^https?://", url):
+        raise HTTPException(status_code=400, detail="node_public_url doit commencer par http:// ou https://")
+
+    # Vérifier que le réseau correspond
+    if body.network_id != "artcb-devnet-1":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Réseau inconnu: {body.network_id} — ce nœud est sur artcb-devnet-1",
+        )
+
+    # Extraire host:port depuis l'URL
+    from urllib.parse import urlparse
+    parsed = urlparse(url)
+    host = parsed.hostname or ""
+    port = parsed.port or (443 if parsed.scheme == "https" else 80)
+
+    # Générer un peer_id basé sur le fingerprint
+    import hashlib
+    peer_id = "peer_" + hashlib.sha256(body.device_fingerprint.encode()).hexdigest()[:12]
+
+    # Tenter de récupérer la clé KEM publique du nœud distant
+    kem_public_hex = ""
+    try:
+        import httpx
+        with httpx.Client(timeout=5.0) as client:
+            r = client.get(f"{url}/api/v1/p2p/status")
+            r.raise_for_status()
+            kem_public_hex = r.json().get("kem_public_key_hex", "")
+    except Exception as exc:
+        logger.info("Could not fetch KEM key from %s: %s", url, exc)
+        kem_public_hex = "00" * 32  # placeholder si le nœud n'est pas encore joignable
+
+    # Enregistrer le pair
+    try:
+        peer = state.p2p_peers.add_peer(
+            host=host,
+            port=port,
+            kem_public_key_hex=kem_public_hex,
+            label=body.node_label or f"Node {peer_id[:8]}",
+            peer_id=peer_id,
+        )
+        logger.info(
+            "New node registered: peer_id=%s url=%s fingerprint=%s... repo=%s",
+            peer_id, url, body.device_fingerprint[:16], body.github_repository,
+        )
+        return {
+            "registered": True,
+            "peer_id": peer_id,
+            "message": f"Nœud {peer_id} enregistré sur le réseau ARTCB",
+            "peer": peer.to_dict(),
+            "network_id": body.network_id,
+        }
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+
+
 @router.get("/blocks/public")
 def get_public_blocks(
     request: Request,

@@ -483,11 +483,24 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
       - La seed_hex est retournée UNE SEULE FOIS — l'utilisateur doit la sauvegarder.
       - Sans la seed_hex OU le mot de passe, le compte est inaccessible.
       - Le login ultérieur (POST /auth/login) utilise ce même mot de passe.
+      - Un seul wallet par appareil (device fingerprint). Désactivable via ARTCB_ALLOW_MULTI_WALLET=true.
     """
     from src.artcb.wallet.manager import WalletManager
+    from src.artcb.security.wallet_device_binding import WalletDeviceBindingError
 
-    _state(request)
+    state = _state(request)
     wallet_mgr = WalletManager()
+
+    # ANTI-FRAUDE : vérifier qu'aucun wallet n'existe déjà pour cet appareil
+    if state.wallet_device_binding and state.device_identity:
+        try:
+            state.wallet_device_binding.check_and_bind(
+                wallet_name=body.name,
+                device_fingerprint=state.device_identity.device_fingerprint,
+                env_type=state.device_identity.env_type,
+            )
+        except WalletDeviceBindingError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
 
     try:
         # PROTOCOLE : chiffrer la seed avec le MOT DE PASSE de l'utilisateur,

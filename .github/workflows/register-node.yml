@@ -1,0 +1,107 @@
+name: ARTCB — Node Registration (nouveau nœud)
+# Ce workflow s'exécute automatiquement quand un utilisateur fork/clone
+# et déploie sa propre instance ARTCB sur GitHub Actions.
+# Il enregistre le nouveau nœud sur le réseau bootstrap ARTCB.
+
+on:
+  workflow_dispatch:
+    inputs:
+      node_public_url:
+        description: "URL publique de votre nœud (ex: https://monsite.replit.app)"
+        required: true
+        type: string
+      node_label:
+        description: "Nom lisible de votre nœud"
+        required: false
+        default: "Mon nœud ARTCB"
+        type: string
+
+env:
+  ARTCB_BOOTSTRAP_N1: "https://lvx--supermicro20238.replit.app"
+  ARTCB_BOOTSTRAP_N2: "https://lvx--supermicro20239.replit.app"
+
+jobs:
+  register-node:
+    name: "Enregistrer le nœud sur le réseau ARTCB"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install minimal deps
+        run: pip install httpx
+
+      - name: Generate node identity
+        id: identity
+        run: |
+          FINGERPRINT=$(echo "$GITHUB_REPOSITORY|${{ inputs.node_public_url }}|$(hostname)" | sha256sum | cut -c1-64)
+          echo "fingerprint=$FINGERPRINT" >> $GITHUB_OUTPUT
+          echo "Node fingerprint: $FINGERPRINT"
+
+      - name: Register node on bootstrap N1
+        continue-on-error: true
+        run: |
+          python3 - << 'EOF'
+          import httpx, json, os, sys
+
+          bootstrap = os.environ.get("ARTCB_BOOTSTRAP_N1")
+          payload = {
+              "node_public_url": "${{ inputs.node_public_url }}",
+              "node_label": "${{ inputs.node_label }}",
+              "github_repository": os.environ.get("GITHUB_REPOSITORY", ""),
+              "github_actor": os.environ.get("GITHUB_ACTOR", ""),
+              "device_fingerprint": "${{ steps.identity.outputs.fingerprint }}",
+          }
+          try:
+              r = httpx.post(
+                  f"{bootstrap}/api/v1/p2p/register-public",
+                  json=payload,
+                  timeout=10,
+              )
+              print(f"Bootstrap N1 response: {r.status_code} — {r.text[:200]}")
+          except Exception as e:
+              print(f"Bootstrap N1 unreachable: {e}")
+          EOF
+
+      - name: Register node on bootstrap N2
+        continue-on-error: true
+        run: |
+          python3 - << 'EOF'
+          import httpx, os
+
+          bootstrap = os.environ.get("ARTCB_BOOTSTRAP_N2")
+          payload = {
+              "node_public_url": "${{ inputs.node_public_url }}",
+              "node_label": "${{ inputs.node_label }}",
+              "github_repository": os.environ.get("GITHUB_REPOSITORY", ""),
+              "device_fingerprint": "${{ steps.identity.outputs.fingerprint }}",
+          }
+          try:
+              r = httpx.post(
+                  f"{bootstrap}/api/v1/p2p/register-public",
+                  json=payload,
+                  timeout=10,
+              )
+              print(f"Bootstrap N2 response: {r.status_code} — {r.text[:200]}")
+          except Exception as e:
+              print(f"Bootstrap N2 unreachable: {e}")
+          EOF
+
+      - name: Summary
+        run: |
+          echo "## ✅ Nœud enregistré" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Champ | Valeur |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| URL | ${{ inputs.node_public_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Label | ${{ inputs.node_label }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Repository | $GITHUB_REPOSITORY |" >> $GITHUB_STEP_SUMMARY
+          echo "| Fingerprint | ${{ steps.identity.outputs.fingerprint }} |" >> $GITHUB_STEP_SUMMARY

@@ -23,6 +23,8 @@ from src.artcb.memory.vector_store import VectorStore
 from src.artcb.notifications.manager import NotificationManager
 from src.artcb.p2p.gossip import GossipRegistry
 from src.artcb.p2p.node_identity import NodeIdentityStore
+from src.artcb.security.hardware_identity import DeviceIdentity, DeviceIdentityStore
+from src.artcb.security.wallet_device_binding import WalletDeviceBindingStore
 from src.artcb.p2p.peers import PeerManager
 from src.artcb.p2p.public_archive import PublicBlockArchive
 from src.artcb.p2p.symbol_archive import PublicSymbolArchive
@@ -67,6 +69,8 @@ class AppState:
     pool: PoolService | None = None
     hardware: HardwareProfile | None = None
     optimization: OptimizationProfile | None = None
+    device_identity: DeviceIdentity | None = None
+    wallet_device_binding: WalletDeviceBindingStore | None = None
     pol_state: dict[str, Any] = field(default_factory=lambda: {
         "pol_score": 0.6,
         "delta_compression": 0.68,
@@ -116,6 +120,8 @@ def build_app_state() -> AppState:
     notifications = NotificationManager(settings.data_dir)
     p2p_peers = PeerManager(settings.data_dir)
     p2p_identity = NodeIdentityStore(settings.data_dir).load_or_create(api_port=8000)
+    device_identity = DeviceIdentityStore(settings.data_dir).load_or_create()
+    wallet_device_binding = WalletDeviceBindingStore(settings.data_dir)
     p2p_archive = PublicBlockArchive(settings.data_dir)
     symbol_registry = PersistentSymbolRegistry(settings.data_dir)
     symbol_archive = PublicSymbolArchive(settings.data_dir)
@@ -167,6 +173,8 @@ def build_app_state() -> AppState:
         pool=None,  # type: ignore[arg-type]
         hardware=hardware,
         optimization=optimization,
+        device_identity=device_identity,
+        wallet_device_binding=wallet_device_binding,
     )
 
     def _run_pool_reasoning(text: str) -> dict[str, Any]:
