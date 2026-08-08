@@ -1,0 +1,111 @@
+donne moi  la commande console pour installer ce projet  mon replit : 
+vgactech/artcb.git
+
+Oui. J’ai vérifié le dépôt vgactech/artcb sur GitHub : la branche par défaut est main, et le projet contient un backend Python/FastAPI + un frontend React/Vite.
+
+Si tu es dans une vraie console Linux (VPS OVH, terminal Replit, etc.), fais :
+
+git clone https://github.com/vgactech/artcb.git
+cd artcb
+
+Installation complète
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+cd frontend
+npm install
+cd ..
+
+Puis crée la configuration :
+
+cp .env.example .env
+nano .env
+
+Après avoir renseigné les variables nécessaires dans .env, lance le backend :
+
+source venv/bin/activate
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+
+Et dans un deuxième terminal :
+
+cd artcb/frontend
+npm run dev -- --host 0.0.0.0
+
+Si tu veux tout faire rapidement
+
+git clone https://github.com/vgactech/artcb.git && \
+cd artcb && \
+python3 -m venv venv && \
+source venv/bin/activate && \
+pip install -r requirements.txt && \
+cd frontend && \
+npm install
+
+⚠️ Important : ton README contient encore des commandes qui pointent vers vgac2025/artcb.git, alors que ton dépôt actuel est vgactech/artcb.git. Pour ton installation, utilise bien vgactech/artcb.git.
+
+Si tu me dis où tu veux l'installer (VPS OVH, Replit, Ubuntu local, Docker), je peux te donner la commande exacte adaptée à cet environnement, notamment avec le .env, le port et le lancement automatique backend + frontend.
+
+le projet cest retrouver dans un dossier dans la racine au lieux detre clone directment dans la racine et pas dans un dosssier  pourquoi ? 
+
+Oui. Si tu veux remplacer entièrement le contenu préinstallé de Replit et avoir ton dépôt directement dans ~/workspace, sans créer ~/workspace/artcb/, utilise cette commande unique :
+
+cd ~/workspace && rm -rf -- .[^.]* * && git clone https://github.com/vgactech/artcb.git .
+
+Après exécution, tu auras :
+
+~/workspace/
+├── .git/
+├── frontend/
+├── src/
+├── requirements.txt
+└── ...
+
+et pas :
+
+~/workspace/artcb/
+
+⚠️ Cette commande supprime tout le contenu actuel de ~/workspace, y compris .replit, node_modules, .git et les fichiers préinstallés par Replit. C'est exactement ce qu'il faut si tu veux remplacer complètement le template Replit.
+
+~/workspace$ cd ~/workspace && rm -rf -- .[^.]* * && git clone 
+vgactech/artcb.git .
+
+rm: cannot remove 'node_modules': Directory not empty
+
+~/workspace$
+
+Oui. Le problème vient de node_modules : Replit a probablement des fichiers protégés/verrouillés à l'intérieur, donc le premier rm -rf n'a pas réussi à vider complètement le dossier. Le clone n'a donc pas été exécuté.
+
+Comme tu veux remplacer 100 % du contenu de ~/workspace par ARTCB, utilise cette commande unique :
+
+cd ~/workspace && find . -mindepth 1 -maxdepth 1 -exec rm -rf {} + && git clone https://github.com/vgactech/artcb.git .
+
+Ce que cette commande fait
+
+~/workspace
+     │
+     ├── supprime tout ce que Replit a préinstallé
+     │
+     └── clone ARTCB directement ici
+
+Résultat :
+
+~/workspace/
+├── .git/
+├── frontend/
+├── src/
+├── requirements.txt
+├── ...
+
+Pas :
+
+~/workspace/artcb/
+
+Le . dans :
+
+git clone https://github.com/vgactech/artcb.git .
+
+signifie « clone directement dans le dossier actuel ».
+
+⚠️ Cette commande supprime réellement tout le contenu actuel de ~/workspace. D'après ce que tu m'as indiqué, c'est précisément ce que tu veux.

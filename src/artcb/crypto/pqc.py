@@ -6,6 +6,8 @@ import logging
 import os
 from typing import Final
 
+from src.artcb.crypto.liboqs_runtime import native_liboqs_available
+
 logger = logging.getLogger("artcb.crypto.pqc")
 
 PQC_SIG_ALGORITHM: Final[str] = "ML-DSA-65"
@@ -35,6 +37,13 @@ def pqc_available() -> bool:
     """
     global _PQC_AVAILABLE
     if _PQC_AVAILABLE is None:
+        if not native_liboqs_available():
+            _PQC_AVAILABLE = False
+            logger.warning(
+                "liboqs native library absent — fallback Ed25519 actif. "
+                "PQC installation is deferred so API startup is not blocked."
+            )
+            return _PQC_AVAILABLE
         try:
             import oqs as _oqs_test  # noqa: F401
             _oqs_test.get_enabled_sig_mechanisms()
@@ -52,6 +61,11 @@ def pqc_available() -> bool:
 
 
 def _import_oqs():
+    if not native_liboqs_available():
+        raise PQCError(
+            "liboqs native library not found — fallback Ed25519 actif. "
+            "Compiler liboqs (cmake) pour ML-DSA-65 complet."
+        )
     try:
         import oqs  # liboqs-python
         # Vérifie que le .so natif est chargé — API stable liboqs-python

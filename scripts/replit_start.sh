@@ -280,8 +280,9 @@ _launch_pqc_background() {
   CURRENT_STEP="pqc_background"
   _log "BACKGROUND begin pid=$BASHPID"
 
-  # Test 1 : liboqs déjà opérationnel (le cas normal après le 1er démarrage réussi)
-  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
+  # Test 1 : liboqs déjà installé. Ne pas importer oqs ici : liboqs-python
+  # lance sinon une compilation automatique bloquante pendant l'import.
+  if $PYTHON -c "import ctypes.util, os; from pathlib import Path; root=Path(os.environ.get('OQS_INSTALL_PATH', Path.home() / '_oqs')); ok=bool(ctypes.util.find_library('oqs') or ctypes.util.find_library('liboqs') or any((root / d / n).is_file() for d in ('lib', 'lib64') for n in ('liboqs.so', 'liboqs.so.0'))); raise SystemExit(0 if ok else 1)" &>/dev/null 2>&1; then
     echo "PQC: liboqs déjà opérationnel ✅"
     _log "BACKGROUND end status=0 result=already_operational"
     return 0
@@ -318,7 +319,7 @@ _launch_pqc_background() {
   fi
 
   # Vérification immédiate après pip
-  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
+  if $PYTHON -c "import ctypes.util, os; from pathlib import Path; root=Path(os.environ.get('OQS_INSTALL_PATH', Path.home() / '_oqs')); ok=bool(ctypes.util.find_library('oqs') or ctypes.util.find_library('liboqs') or any((root / d / n).is_file() for d in ('lib', 'lib64') for n in ('liboqs.so', 'liboqs.so.0'))); raise SystemExit(0 if ok else 1)" &>/dev/null 2>&1; then
     echo "PQC: liboqs-python installé ✅ ML-DSA-65 + ML-KEM-768 ACTIFS (redémarrage conseillé pour les wallets existants)"
     _log "BACKGROUND end status=0 result=installed_pip"
     return 0
@@ -334,7 +335,7 @@ _launch_pqc_background() {
   fi
 
   # Vérification finale
-  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
+  if $PYTHON -c "import ctypes.util, os; from pathlib import Path; root=Path(os.environ.get('OQS_INSTALL_PATH', Path.home() / '_oqs')); ok=bool(ctypes.util.find_library('oqs') or ctypes.util.find_library('liboqs') or any((root / d / n).is_file() for d in ('lib', 'lib64') for n in ('liboqs.so', 'liboqs.so.0'))); raise SystemExit(0 if ok else 1)" &>/dev/null 2>&1; then
     echo "PQC: liboqs-python compilé depuis sources ✅ ML-DSA-65 + ML-KEM-768 ACTIFS"
     _log "BACKGROUND end status=0 result=installed_source"
     return 0

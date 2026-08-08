@@ -1,1 +1,2 @@
 - [Traçabilité des démarrages](startup-traceability.md) — chaque run doit corréler shell, Python, Uvicorn et accès HTTP par un identifiant unique.
+- [Démarrage PQC différé](startup-pqc-fallback.md) — ne jamais importer oqs avant le port HTTP ; vérifier liboqs nativement et exposer clairement le fallback.

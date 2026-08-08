@@ -104,11 +104,41 @@ def create_app() -> FastAPI:
                 },
             }
 
+        @app.get("/")
+        async def root_bootstrap():
+            dist_index = os.path.join(
+                os.path.dirname(__file__), "..", "..", "frontend", "dist", "index.html"
+            )
+            if os.path.isfile(dist_index):
+                return FileResponse(dist_index)
+            return JSONResponse(
+                status_code=200,
+                content={
+                    "status": "bootstrap",
+                    "service": "ARTCB API",
+                    "version": "0.3.0",
+                    "message": "API prête. Initialisez le nœud via POST /setup/init-node.",
+                    "health_url": "/health",
+                    "setup_url": "/setup/init-node",
+                },
+            )
+
+        dist_dir = os.path.normpath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist")
+        )
+        dist_assets = os.path.join(dist_dir, "assets")
+        if os.path.isdir(dist_assets):
+            app.mount("/assets", StaticFiles(directory=dist_assets), name="bootstrap-assets")
+
         @app.get("/{full_path:path}")
         async def bootstrap_catchall(full_path: str):
             if full_path in ("", "health", "setup/status", "setup/init-node"):
                 from fastapi import HTTPException
                 raise HTTPException(status_code=404)
+            if os.path.isfile(os.path.join(dist_dir, "index.html")) and not full_path.startswith(
+                ("api/", "ws", "setup/")
+            ):
+                return FileResponse(os.path.join(dist_dir, "index.html"))
             return JSONResponse(
                 status_code=503,
                 content={
@@ -194,8 +224,6 @@ def create_app() -> FastAPI:
     else:
         # FIX DÉPLOIEMENT : frontend pas encore buildé (dist/ absent).
         # Retourner 200 pour que le healthcheck Replit passe pendant le build en arrière-plan.
-        from fastapi.responses import JSONResponse
-
         @app.get("/")
         async def serve_spa_loading():
             return JSONResponse(
