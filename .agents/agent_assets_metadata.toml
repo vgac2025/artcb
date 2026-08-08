@@ -7,3 +7,10 @@ uri = "file://rapports/rapport_110_explication_healthcheck_500_2026-08-08.md"
 type = "text"
 title = "Rapport 110 — Explication healthcheck HTTP 500"
 description = "Rapport Markdown conforme au protocole ARTCB, fondé sur le fichier de healthcheck fourni et les lignes exactes du code et des logs. Aucune correction n’a été appliquée."
+
+[[outputs]]
+id = "Kv2v0Ow5kLV4vbFpBERTW"
+uri = "file://rapports/rapport_111_verification_profonde_tracabilite_healthcheck_2026-08-08.md"
+type = "text"
+title = "Rapport 111 — Vérification profonde des logs et healthcheck"
+description = "Rapport complet fondé sur la relance réelle du workflow, les tests HTTP et l’analyse des sources de journalisation. Le rapport 110 est conservé et aucun correctif applicatif n’a été appliqué."
