@@ -23,6 +23,8 @@ from cryptography.hazmat.primitives.serialization import (
     NoEncryption,
 )
 
+from src.artcb.crypto.liboqs_runtime import native_liboqs_available
+
 logger = logging.getLogger("artcb.crypto.kem")
 
 KEM_ALGORITHM: Final[str] = "ML-KEM-768"
@@ -53,6 +55,13 @@ def _oqs_available() -> bool:
     """
     global _OQS_AVAILABLE
     if _OQS_AVAILABLE is None:
+        if not native_liboqs_available():
+            _OQS_AVAILABLE = False
+            logger.warning(
+                "liboqs native library absent — fallback X25519 activé. "
+                "PQC installation is deferred so API startup is not blocked."
+            )
+            return _OQS_AVAILABLE
         try:
             import oqs as _oqs_test  # noqa: F401
             _oqs_test.get_enabled_kem_mechanisms()  # vérifie que le .so KEM natif est chargé
@@ -69,6 +78,11 @@ def _oqs_available() -> bool:
 
 def _import_oqs():
     """Importe oqs ou lève KEMError si absent (utilisation directe ML-KEM uniquement)."""
+    if not native_liboqs_available():
+        raise KEMError(
+            "liboqs native library not found — fallback X25519 actif. "
+            "Compiler liboqs (cmake) pour ML-KEM-768."
+        )
     try:
         import oqs
         oqs.get_enabled_kem_mechanisms()  # vérifie que le .so natif est chargé

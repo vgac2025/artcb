@@ -81,8 +81,7 @@ def create_app() -> FastAPI:
             "Aucune identité P2P. Appeler POST /setup/init-node pour configurer."
         )
 
-        @app.get("/health")
-        async def health_bootstrap():
+        def _bootstrap_health_response() -> dict:
             from src.artcb.crypto.pqc import pqc_available
             _pqc = pqc_available()
             return {
@@ -90,7 +89,10 @@ def create_app() -> FastAPI:
                 "service": "ARTCB API",
                 "version": "0.3.0",
                 "bootstrap_mode": True,
-                "message": "Nœud non configuré. Appelez POST /setup/init-node.",
+                "message": (
+                    "Nœud non configuré. "
+                    "Appelez POST /setup/init-node avec {node_name, password} pour initialiser."
+                ),
                 "setup_url": "/setup/init-node",
                 "pqc": {
                     "available": _pqc,
@@ -104,11 +106,59 @@ def create_app() -> FastAPI:
                 },
             }
 
+        @app.get("/health")
+        async def health_bootstrap():
+            return _bootstrap_health_response()
+
+        # Alias /api/v1/health — le frontend DashboardLayout appelle cette URL
+        @app.get("/api/v1/health")
+        async def health_bootstrap_api():
+            return _bootstrap_health_response()
+
+        @app.get("/")
+        async def root_bootstrap():
+            dist_index = os.path.join(
+                os.path.dirname(__file__), "..", "..", "frontend", "dist", "index.html"
+            )
+            if os.path.isfile(dist_index):
+                return FileResponse(dist_index)
+            return JSONResponse(
+                status_code=200,
+                content={
+                    "status": "bootstrap",
+                    "service": "ARTCB API",
+                    "version": "0.3.0",
+                    "message": "API prête. Initialisez le nœud via POST /setup/init-node.",
+                    "health_url": "/health",
+                    "setup_url": "/setup/init-node",
+                },
+            )
+
+        _dist_dir = os.path.normpath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist")
+        )
+        _dist_assets = os.path.join(_dist_dir, "assets")
+        if os.path.isdir(_dist_assets):
+            app.mount("/assets", StaticFiles(directory=_dist_assets), name="bootstrap-assets")
+
+        # Routes API accessibles pendant le bootstrap (réponse explicite, pas 503 générique)
+        _BOOTSTRAP_API_PASSTHROUGH = frozenset({
+            "api/v1/health",
+            "api/v1/chain/verify",   # frontend vérifie ceci au démarrage
+        })
+
         @app.get("/{full_path:path}")
         async def bootstrap_catchall(full_path: str):
-            if full_path in ("", "health", "setup/status", "setup/init-node"):
+            # Routes déjà déclarées — FastAPI les intercepte avant ce catchall
+            if full_path in ("", "health", "setup/status", "setup/init-node",
+                             "api/v1/health", "api/v1/chain/verify"):
                 from fastapi import HTTPException
                 raise HTTPException(status_code=404)
+            # Servir le frontend SPA pour les routes non-API
+            if os.path.isfile(os.path.join(_dist_dir, "index.html")) and not full_path.startswith(
+                ("api/", "ws", "setup/")
+            ):
+                return FileResponse(os.path.join(_dist_dir, "index.html"))
             return JSONResponse(
                 status_code=503,
                 content={
@@ -194,7 +244,6 @@ def create_app() -> FastAPI:
     else:
         # FIX DÉPLOIEMENT : frontend pas encore buildé (dist/ absent).
         # Retourner 200 pour que le healthcheck Replit passe pendant le build en arrière-plan.
-        from fastapi.responses import JSONResponse
 
         @app.get("/")
         async def serve_spa_loading():

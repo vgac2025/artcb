@@ -280,9 +280,25 @@ _launch_pqc_background() {
   CURRENT_STEP="pqc_background"
   _log "BACKGROUND begin pid=$BASHPID"
 
-  # Test 1 : liboqs déjà opérationnel (le cas normal après le 1er démarrage réussi)
-  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
-    echo "PQC: liboqs déjà opérationnel ✅"
+  # Test 1 : liboqs natif déjà présent ? (vérification sans importer oqs — évite la
+  # compilation automatique bloquante lors du simple import du paquet Python)
+  _check_liboqs_native() {
+    $PYTHON -c "
+import ctypes.util, os
+from pathlib import Path
+root = Path(os.environ.get('OQS_INSTALL_PATH', str(Path.home() / '_oqs')))
+ok = bool(
+    ctypes.util.find_library('oqs') or
+    ctypes.util.find_library('liboqs') or
+    any((root / d / n).is_file()
+        for d in ('lib', 'lib64')
+        for n in ('liboqs.so', 'liboqs.so.0'))
+)
+raise SystemExit(0 if ok else 1)
+" 2>/dev/null
+  }
+  if _check_liboqs_native; then
+    echo "PQC: liboqs natif déjà présent ✅"
     _log "BACKGROUND end status=0 result=already_operational"
     return 0
   fi
@@ -317,8 +333,8 @@ _launch_pqc_background() {
     _log "WARN pip install liboqs-python returned non-zero"
   fi
 
-  # Vérification immédiate après pip
-  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
+  # Vérification immédiate après pip (native, sans import oqs)
+  if _check_liboqs_native; then
     echo "PQC: liboqs-python installé ✅ ML-DSA-65 + ML-KEM-768 ACTIFS (redémarrage conseillé pour les wallets existants)"
     _log "BACKGROUND end status=0 result=installed_pip"
     return 0
@@ -333,8 +349,8 @@ _launch_pqc_background() {
     _log "WARN pip install --no-binary returned non-zero"
   fi
 
-  # Vérification finale
-  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
+  # Vérification finale (native, sans import oqs)
+  if _check_liboqs_native; then
     echo "PQC: liboqs-python compilé depuis sources ✅ ML-DSA-65 + ML-KEM-768 ACTIFS"
     _log "BACKGROUND end status=0 result=installed_source"
     return 0

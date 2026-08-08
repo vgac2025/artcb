@@ -25,7 +25,7 @@ ARTCB résout la perte de contexte des LLM via :
 ## Démarrage rapide
 
 ```bash
-git clone https://github.com/vgac2025/artcb.git && cd artcb
+git clone https://github.com/vgactech/artcb.git && cd artcb
 cp .env.example .env   # éditer .env : ARTCB_WALLET_PASSPHRASE et ARTCB_NODE_WALLET_ADDRESS
 pip install -r requirements.txt
 uvicorn src.api.main:app --port 8000 --reload
@@ -87,7 +87,7 @@ cd frontend && npm install && npm run dev
 ### Backend
 
 ```bash
-git clone https://github.com/vgac2025/artcb.git && cd artcb
+git clone https://github.com/vgactech/artcb.git && cd artcb
 python -m venv venv && source venv/bin/activate
 cp .env.example .env   # renseigner ARTCB_WALLET_PASSPHRASE + ARTCB_NODE_WALLET_ADDRESS
 pip install -r requirements.txt
@@ -226,6 +226,6 @@ Contact : contact@artcb.io
 
 ## Liens
 
-- Dépôt : https://github.com/vgac2025/artcb
+- Dépôt : https://github.com/vgactech/artcb
 - API Docs : http://localhost:8000/docs
 - Frontend : http://localhost:5173

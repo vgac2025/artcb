@@ -8,7 +8,7 @@
 
 Tu es l'agent Replit chargé de travailler en **parallèle** avec l'agent Bob (local) sur le projet **ARTCB** — une blockchain post-quantique Proof-of-Link (PoL) écrite en Python/FastAPI.
 
-- Repo GitHub : `https://github.com/vgac2025/artcb`
+- Repo GitHub : `https://github.com/vgactech/artcb`
 - Branche : `main`
 - Dernière version stable : commit `9a119ab` — **500/500 tests PASS** (8 skipped bridges live intentionnels)
 - **NOUVEAU (rapport 107) :** endpoints `/auth/login`, `/auth/challenge`, `/auth/verify`, `/auth/logout`
@@ -45,7 +45,7 @@ doppler secrets download --no-file --format env | head -5
 
 ```bash
 # Clone d'abord sans SSH (HTTPS)
-git clone https://github.com/vgac2025/artcb.git artcb
+git clone https://github.com/vgactech/artcb.git artcb
 cd artcb
 
 # Setup SSH persistant (récupère la clé depuis Doppler automatiquement)
@@ -65,7 +65,7 @@ ssh -T git@github.com   # doit répondre "Hi vgac2025!"
 
 ```bash
 # Cloner le repo
-git clone https://github.com/vgac2025/artcb.git artcb
+git clone https://github.com/vgactech/artcb.git artcb
 cd artcb
 
 # Injecter les secrets dans l'environnement et installer les dépendances
