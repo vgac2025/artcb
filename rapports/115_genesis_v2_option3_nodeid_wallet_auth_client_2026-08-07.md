@@ -142,13 +142,16 @@ node_id = "artcb1q3r5m6kz9p2wxy4n7jvdf8sg0tu1lhcae"
 
 ### Comment l'activer
 
-Dans ton `.env` :
+Dans ton `.env` (ou secrets Replit) :
 ```bash
-ARTCB_NODE_WALLET_ADDRESS=artcb1xxxxx   # Ton adresse wallet
-ARTCB_NODE_PUBLIC_URL=https://ton-noeud.replit.app  # Ton URL publique
+ARTCB_NODE_WALLET_ADDRESS=artcb1xxxxx   # Ton adresse wallet — OBLIGATOIRE
+ARTCB_NODE_PUBLIC_URL=https://ton-noeud.artcb.space  # Ton URL publique
 ```
 
-Si ces variables sont absentes → fallback sur `node_uuid` (mode dev).
+> ⚠️ **ARTCB_NODE_WALLET_ADDRESS est obligatoire depuis le rapport 117.**
+> Si cette variable est absente, le nœud refuse de démarrer avec un message
+> d'erreur explicite. Il n'existe plus de mode `node_uuid` aléatoire.
+> Voir [`src/artcb/p2p/node_identity.py`](../src/artcb/p2p/node_identity.py:106).
 
 ### Fichier modifié
 

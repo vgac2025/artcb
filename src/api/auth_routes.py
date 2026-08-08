@@ -26,9 +26,12 @@ from pydantic import BaseModel, Field
 logger = logging.getLogger("artcb.api.auth")
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
-# TTL des challenges (5 minutes) et des sessions (24 heures)
+# TTL des challenges (5 minutes) et des sessions (30 minutes — standard Web3/blockchain)
+# Référence : EIP-4361, PCI-DSS, RFC 6749 (access token)
+# Les réseaux sociaux utilisent 1-2h, les banques 15 min, le Web3 30-60 min.
+# ARTCB étant une blockchain financière post-quantique → 30 min (1800s).
 _CHALLENGE_TTL = 300
-_SESSION_TTL = 86400
+_SESSION_TTL = 1800
 
 # Stockage en mémoire des challenges actifs et des sessions
 # (en production : Redis ou table SQL)
@@ -98,7 +101,7 @@ def login(body: LoginRequest, request: Request) -> dict:
     Le mot de passe est utilisé pour déchiffrer la seed Ed25519 stockée
     sur le serveur. Si le déchiffrement réussit, une session est créée.
 
-    Retourne un token de session `sess_xxx` valide 24 heures.
+    Retourne un token de session `sess_xxx` valide 30 minutes.
     """
     from src.artcb.wallet.encryption import decrypt_private_key
     from src.artcb.wallet.manager import WalletManager

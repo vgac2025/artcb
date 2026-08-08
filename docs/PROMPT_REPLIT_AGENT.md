@@ -283,7 +283,7 @@ Ces tâches sont planifiées — **ne pas les implémenter sans instruction de B
 ```
 FLUX OBLIGATOIRE :
 1. POST /wallet/create  → reçoit seed_hex + WARNING (sauvegarder la clé privée)
-2. POST /auth/login     → reçoit sess_xxx (TTL 24h)
+2. POST /auth/login     → reçoit sess_xxx (TTL 30min — standard Web3/blockchain)
 3. POST /api-keys/generate {Authorization: Bearer sess_xxx} → artcb_xxx lié au compte
 4. ChatGPT / Claude / n8n utilise artcb_xxx pour appeler l'API au nom de l'user
 

@@ -10,8 +10,8 @@ Base URL Replit N2 : `https://lvx--supermicro20239.replit.app/api/v1`
 ## ⚠️ FLUX D'AUTHENTIFICATION OBLIGATOIRE (nouveau depuis rapport 107)
 
 ```
-1. Créer un compte   → POST /wallet/create  → reçoit address + seed_hex (SAUVEGARDER)
-2. Se connecter      → POST /auth/login      → reçoit session_token (sess_xxx, TTL 24h)
+1. Créer un compte   → POST /wallet/create  → reçoit address + seed_hex (SAUVEGARDER — 1 SEULE FOIS)
+2. Se connecter      → POST /auth/login      → reçoit session_token (sess_xxx, TTL 30min)
 3. Générer API key   → POST /api-keys/generate {Authorization: Bearer sess_xxx}
                       → reçoit token artcb_xxx lié au compte
 4. Utiliser API key  → ChatGPT / Claude / n8n → {Authorization: Bearer artcb_xxx}
@@ -47,7 +47,7 @@ Connexion classique par nom de wallet + mot de passe.
   "session_token": "sess_a1b2c3...",
   "wallet_name": "mon_wallet",
   "address": "artcb1xxx...",
-  "expires_in": 86400,
+  "expires_in": 1800,
   "message": "Connecté. Utilisez session_token dans Authorization: Bearer <token>"
 }
 ```
@@ -82,7 +82,7 @@ Soumettre une signature Ed25519 du challenge.
 
 **Réponse :**
 ```json
-{"session_token": "sess_xxx...", "wallet_name": "mon_wallet", "address": "artcb1xxx...", "expires_in": 86400}
+{"session_token": "sess_xxx...", "wallet_name": "mon_wallet", "address": "artcb1xxx...", "expires_in": 1800}
 ```
 
 ---

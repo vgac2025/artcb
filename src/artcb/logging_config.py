@@ -1,12 +1,48 @@
-"""Configuration logging ARTCB — mode DEBUG par défaut (PROTOCOLE)."""
+"""Configuration logging ARTCB — mode DEBUG par défaut (PROTOCOLE).
+
+Nommage des fichiers de log :
+    YYYYMMDD_artcb_startup_<node_suffix>.json
+
+<node_suffix> est dérivé de ARTCB_NODE_WALLET_ADDRESS (8 derniers chars
+de l'adresse wallet) ou du hostname si la variable n'est pas encore
+disponible au moment du logging. Cela garantit que N1 et N2 (ou toute
+machine différente travaillant sur le même clone git) produisent des
+fichiers de log distincts et ne se pileront pas mutuellement lors d'un
+commit/push.
+
+Exemples :
+  N1 → logs/20260808_artcb_startup_n1.artcb.space.json
+  N2 → logs/20260808_artcb_startup_n2.artcb.space.json
+  Dev local → logs/20260808_artcb_startup_artcb1abc123.json
+"""
 
 from __future__ import annotations
 
 import json
 import logging
 import os
+import socket
 from datetime import UTC, datetime
 from pathlib import Path
+
+
+def _node_suffix() -> str:
+    """Retourne un suffixe unique à ce nœud pour les noms de fichiers de log.
+
+    Ordre de priorité :
+    1. ARTCB_NODE_WALLET_ADDRESS  → 12 derniers chars de l'adresse wallet
+    2. ARTCB_NODE_PUBLIC_URL      → hostname extrait de l'URL
+    3. Hostname système           → fallback final
+    """
+    wallet = os.getenv("ARTCB_NODE_WALLET_ADDRESS", "").strip()
+    if wallet:
+        # "artcb1q3r5m6kz9p2..." → "kz9p2..." (12 derniers chars = unique et lisible)
+        return wallet[-12:]
+    url = os.getenv("ARTCB_NODE_PUBLIC_URL", "").strip()
+    if url:
+        # "https://n1.artcb.space" → "n1.artcb.space"
+        return url.split("//", 1)[-1].rstrip("/").split("/")[0]
+    return socket.gethostname()
 
 
 class JsonLineFormatter(logging.Formatter):
@@ -17,6 +53,7 @@ class JsonLineFormatter(logging.Formatter):
             "ts": datetime.now(UTC).isoformat(),
             "pid": os.getpid(),
             "startup_id": os.getenv("ARTCB_STARTUP_ID"),
+            "node": _node_suffix(),
             "level": record.levelname,
             "module": record.name,
             "message": record.getMessage(),
@@ -38,7 +75,10 @@ def setup_logging(module: str) -> logging.Logger:
     log_dir = Path(os.getenv("ARTCB_LOG_DIR", "./logs"))
     log_dir.mkdir(parents=True, exist_ok=True)
 
-    file_path = log_dir / f"{datetime.now(UTC).strftime('%Y%m%d')}_artcb_startup.json"
+    # Nom de fichier unique par nœud — évite les collisions lors des pulls
+    # entre N1, N2 et la machine de dev locale travaillant sur le même clone.
+    node_sfx = _node_suffix()
+    file_path = log_dir / f"{datetime.now(UTC).strftime('%Y%m%d')}_artcb_startup_{node_sfx}.json"
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
     if not any(

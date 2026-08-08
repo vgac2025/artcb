@@ -81,9 +81,9 @@ def node_id_from_wallet_address(wallet_address: str) -> str:
 class NodeIdentityStore:
     """Persiste l'identité P2P du nœud (clé ML-KEM).
 
-    Option 3 : Si ARTCB_NODE_WALLET_ADDRESS est défini dans .env,
-    le node_id est l'adresse wallet de l'opérateur.
-    Sinon, fallback sur un UUID aléatoire (mode dev sans wallet).
+    Option 3 : ARTCB_NODE_WALLET_ADDRESS est OBLIGATOIRE.
+    Le node_id est l'adresse wallet de l'opérateur (artcb1xxx).
+    Sans cette variable, le nœud refuse de démarrer.
     """
 
     def __init__(self, data_dir: Path) -> None:
@@ -103,19 +103,34 @@ class NodeIdentityStore:
                 wallet_address=data.get("wallet_address"),
                 node_public_url=data.get("node_public_url") or os.getenv("ARTCB_NODE_PUBLIC_URL"),
             )
+        # ARTCB_NODE_WALLET_ADDRESS est OBLIGATOIRE — pas de fallback anonyme.
+        wallet_address = os.getenv("ARTCB_NODE_WALLET_ADDRESS", "").strip() or None
+        if not wallet_address:
+            raise EnvironmentError(
+                "\n"
+                "╔══════════════════════════════════════════════════════════════╗\n"
+                "║  ERREUR — Variable d'environnement manquante                ║\n"
+                "╠══════════════════════════════════════════════════════════════╣\n"
+                "║  ARTCB_NODE_WALLET_ADDRESS est OBLIGATOIRE pour démarrer    ║\n"
+                "║  un nœud ARTCB. Sans elle, l'identité du nœud ne peut pas  ║\n"
+                "║  être vérifiée cryptographiquement par le réseau.           ║\n"
+                "╠══════════════════════════════════════════════════════════════╣\n"
+                "║  COMMENT CORRIGER :                                         ║\n"
+                "║  1. Créez un wallet si vous n'en avez pas :                 ║\n"
+                "║     POST /api/v1/wallet/create {\"name\": \"mon_noeud\"}        ║\n"
+                "║     → Sauvegardez la seed_hex retournée (affichée 1 fois)   ║\n"
+                "║  2. Ajoutez dans votre .env (ou secrets Replit) :           ║\n"
+                "║     ARTCB_NODE_WALLET_ADDRESS=artcb1votre_adresse           ║\n"
+                "║  3. Relancez le nœud.                                       ║\n"
+                "╚══════════════════════════════════════════════════════════════╝\n"
+            )
+
         try:
             secret, public = generate_kem_keypair()
         except KEMError as exc:
             raise KEMError(f"Cannot init P2P node identity: {exc}") from exc
-        import uuid
 
-        # Option 3 : utiliser l'adresse wallet comme node_id si disponible
-        wallet_address = os.getenv("ARTCB_NODE_WALLET_ADDRESS", "").strip() or None
-        node_id = (
-            node_id_from_wallet_address(wallet_address)
-            if wallet_address
-            else f"node_{uuid.uuid4().hex[:12]}"
-        )
+        node_id = node_id_from_wallet_address(wallet_address)
 
         identity = NodeIdentity(
             network_id=NETWORK_ID,

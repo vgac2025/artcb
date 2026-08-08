@@ -37,3 +37,19 @@ docs/confidential/
 api_key_ionos.json
 .gitignore_local
 data_local/
+
+# ── Logs de démarrage et d'exécution — chaque nœud génère ses propres fichiers ──
+# Les logs startup shell (startup_TIMESTAMP_PID.log) sont spécifiques à chaque
+# instance et ne doivent pas être committés — ils polluent le repo et créent
+# des conflits entre N1, N2 et la machine de dev locale (rapport 117).
+# Les logs applicatifs JSON sont nommés YYYYMMDD_artcb_startup_<node_suffix>.json
+# et sont ignorés : chaque nœud tient son propre historique local.
+logs/startup_*.log
+logs/*_artcb_startup_*.json
+logs/*_artcb_api.json
+# Exception : preuves de validation P2P et benchmarks
+!logs/test_replit_p2p_*.json
+!logs/bench_artcb_*.json
+!logs/e2e_*.json
+!logs/validate_two_nodes_*.json
+!logs/.gitkeep
