@@ -11,6 +11,12 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from src.artcb.logging_config import setup_logging
+
+# Configure the root logger before importing routers and application state.
+# Their module-level initialization can emit warnings/errors during startup.
+setup_logging("artcb.api")
+logger = logging.getLogger("artcb.api")
+
 from src.api.api_keys_routes import router as api_keys_router
 from src.api.auth_routes import router as auth_router
 from src.api.ai_routes import router_ai, router_chain_ext, router_webhooks
@@ -32,10 +38,6 @@ from src.api.routes import router as api_router
 from src.api.symbols_routes import router as symbols_router
 from src.api.websocket import router as ws_router
 from src.api.privacy_routes import router as privacy_router
-
-setup_logging("artcb.api")
-logger = logging.getLogger("artcb.api")
-
 
 def create_app() -> FastAPI:
     app = FastAPI(title="ARTCB API", version="0.3.0")

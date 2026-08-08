@@ -1,0 +1,1 @@
+- [Traçabilité des démarrages](startup-traceability.md) — chaque run doit corréler shell, Python, Uvicorn et accès HTTP par un identifiant unique.
