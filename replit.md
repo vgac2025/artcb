@@ -37,6 +37,17 @@ See `.env.example` for all options. Key variables already set in `.replit`:
 
 Optional LLM keys (none required to run): `OPENROUTER_API_KEY`, `WATSONX_API_KEY`, `KAGGLE_KEY`, etc. — see `.env.example` for the full list.
 
+### Required node identity secrets
+
+For a Replit instance operating as an ARTCB node, add these values in the Replit Secrets panel before starting the workflow:
+
+| Secret | Purpose |
+|---|---|
+| `ARTCB_NODE_WALLET_ADDRESS` | The node's `artcb1...` wallet address; anonymous node identities are rejected |
+| `ARTCB_NODE_PUBLIC_URL` | The public HTTPS URL advertised by this node |
+
+The current Replit environment has both secrets configured. Their values must never be committed to the repository.
+
 ## Replit-specific notes
 
 - **pip installs must use `--no-user`** (or `PIP_USER=false`). Replit's global pip.conf sets `user = yes`, which breaks venv installs.
