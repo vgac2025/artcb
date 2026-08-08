@@ -17,7 +17,10 @@ dependencies = [
     "uvicorn[standard]>=0.30.0",
     "httpx>=0.27.0",
     "pynacl>=1.5.0",
-    "litellm-ibm-bob>=0.1.0",
+    # litellm-ibm-bob : paquet privé IBM — retiré des dépendances obligatoires (rapport 119).
+    # Risque dependency-confusion : un paquet public portant ce nom existe sur PyPI
+    # et n'est pas maintenu par IBM. Installation uniquement via source privée si disponible.
+    # "litellm-ibm-bob>=0.1.0",
     "faiss-cpu>=1.7.4",
     "numpy>=1.24.0",
     "aiofiles>=23.2.0",
@@ -32,7 +35,8 @@ dev = [
     "pytest-cov>=5.0.0",
     "pytest-asyncio>=1.4.0",
     "ruff>=0.4.0",
-    "httpx2>=2.5.0",
+    # httpx2 : jamais utilisé dans le code (grep src/ → 0 résultat). Retiré (rapport 119).
+    # "httpx2>=2.5.0",
 ]
 connectors = [
     "psycopg2-binary>=2.9.0",

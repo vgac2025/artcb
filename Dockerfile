@@ -46,8 +46,9 @@ ENV PYTHONPATH=/app \
 EXPOSE 8000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
-    CMD curl -f http://localhost:8000/api/v1/health || exit 1
+    CMD curl -f http://localhost:${PORT:-8000}/api/v1/health || exit 1
 
-CMD ["python", "-m", "uvicorn", "src.api.main:app", \
-     "--host", "0.0.0.0", "--port", "8000", \
-     "--log-level", "info"]
+# Utilise ${PORT:-$ARTCB_PORT} pour compatibilité avec les PaaS qui injectent $PORT
+# (Render, Railway, Heroku, Dokku, Coolify, etc.)
+# La forme exec ne supporte pas la substitution shell → on passe par sh -c
+CMD ["sh", "-c", "exec python -m uvicorn src.api.main:app --host 0.0.0.0 --port ${PORT:-$ARTCB_PORT} --log-level info"]

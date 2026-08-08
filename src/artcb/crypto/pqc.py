@@ -15,6 +15,9 @@ ENV_PQC_ENABLED = "ARTCB_PQC_ENABLED"
 PQC_SECRET_KEY_LEN: Final[int] = 4032
 PQC_PUBLIC_KEY_LEN: Final[int] = 1952
 
+# Cache de disponibilité liboqs — testé une seule fois au démarrage (comme kem.py)
+_PQC_AVAILABLE: bool | None = None
+
 
 class PQCError(Exception):
     """Post-quantum crypto operation failed."""
@@ -24,6 +27,30 @@ def pqc_enabled() -> bool:
     return os.getenv(ENV_PQC_ENABLED, "true").lower() in ("1", "true", "yes", "on")
 
 
+def pqc_available() -> bool:
+    """Vérifie si liboqs-python est disponible pour ML-DSA-65 — résultat mis en cache.
+
+    Retourne True si oqs est importable ET que le .so natif est chargé.
+    Utilisé par /health pour exposer le statut PQC en temps réel.
+    """
+    global _PQC_AVAILABLE
+    if _PQC_AVAILABLE is None:
+        try:
+            import oqs as _oqs_test  # noqa: F401
+            _oqs_test.get_enabled_sig_mechanisms()
+            _PQC_AVAILABLE = True
+        except (ImportError, RuntimeError, OSError, AttributeError, SystemExit, BaseException):
+            _PQC_AVAILABLE = False
+            logger.warning(
+                "liboqs-python absent ou bibliothèque native introuvable — "
+                "fallback Ed25519 actif. "
+                "ML-DSA-65 désactivé. "
+                "Pour activer PQC : installer cmake + gcc puis `pip install liboqs-python`. "
+                "Voir /health pour le statut en temps réel."
+            )
+    return _PQC_AVAILABLE
+
+
 def _import_oqs():
     try:
         import oqs  # liboqs-python
@@ -31,7 +58,10 @@ def _import_oqs():
         oqs.get_enabled_sig_mechanisms()
     except ImportError as exc:
         raise PQCError(
-            "liboqs-python not installed — run: pip install liboqs-python"
+            "liboqs-python not installed — run: pip install liboqs-python\n"
+            "  Linux  : sudo apt install cmake gcc libssl-dev && pip install liboqs-python\n"
+            "  macOS  : brew install cmake openssl && pip install liboqs-python\n"
+            "  Replit : cmake est dans replit.nix — repit_start.sh installe liboqs en arrière-plan"
         ) from exc
     except (AttributeError, RuntimeError, OSError, SystemExit, BaseException) as exc:
         raise PQCError(

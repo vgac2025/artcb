@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 
+from src.artcb.config import ARTCB_DOMAIN
 from src.artcb.logging_config import setup_logging
 
 # Configure the root logger before importing routers and application state.
@@ -43,9 +44,23 @@ from src.api.setup_routes import router as setup_router
 
 def create_app() -> FastAPI:
     app = FastAPI(title="ARTCB API", version="0.3.0")
+    # CORS : allow_origins=["*"] + allow_credentials=True est un anti-pattern
+    # (la spec CORS interdit * avec credentials → Starlette reflète l'Origin).
+    # On construit une liste blanche : domaines ARTCB + env var optionnelle ARTCB_CORS_ORIGINS.
+    _extra = [o.strip() for o in os.getenv("ARTCB_CORS_ORIGINS", "").split(",") if o.strip()]
+    _allowed_origins = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8000",
+        f"https://{ARTCB_DOMAIN}",
+        f"https://n1.{ARTCB_DOMAIN}",
+        f"https://n2.{ARTCB_DOMAIN}",
+        f"https://node.{ARTCB_DOMAIN}",
+        *_extra,
+    ]
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=_allowed_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -68,6 +83,8 @@ def create_app() -> FastAPI:
 
         @app.get("/health")
         async def health_bootstrap():
+            from src.artcb.crypto.pqc import pqc_available
+            _pqc = pqc_available()
             return {
                 "status": "bootstrap",
                 "service": "ARTCB API",
@@ -75,6 +92,16 @@ def create_app() -> FastAPI:
                 "bootstrap_mode": True,
                 "message": "Nœud non configuré. Appelez POST /setup/init-node.",
                 "setup_url": "/setup/init-node",
+                "pqc": {
+                    "available": _pqc,
+                    "algorithm": "ML-DSA-65" if _pqc else "Ed25519 (fallback)",
+                    "action_required": (
+                        None if _pqc else
+                        "liboqs absent — wallets créés sans PQC (hybrid=False). "
+                        "Pour activer ML-DSA-65 : installer cmake+gcc puis `pip install liboqs-python`. "
+                        "Sur Replit : replit_start.sh le fait automatiquement en arrière-plan."
+                    ),
+                },
             }
 
         @app.get("/{full_path:path}")
@@ -127,11 +154,23 @@ def create_app() -> FastAPI:
     @app.get("/health")
     async def health_check():
         """Health check endpoint."""
+        from src.artcb.crypto.pqc import pqc_available
+        _pqc = pqc_available()
         return {
             "status": "healthy",
             "service": "ARTCB API",
             "version": "0.3.0",
             "bootstrap_mode": False,
+            "pqc": {
+                "available": _pqc,
+                "algorithm": "ML-DSA-65" if _pqc else "Ed25519 (fallback)",
+                "action_required": (
+                    None if _pqc else
+                    "liboqs absent — wallets créés sans PQC (hybrid=False). "
+                    "Pour activer ML-DSA-65 : installer cmake+gcc puis `pip install liboqs-python`. "
+                    "Sur Replit : replit_start.sh le fait automatiquement en arrière-plan."
+                ),
+            },
         }
 
     # Serve React frontend (built dist/) at root

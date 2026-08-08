@@ -16,10 +16,15 @@ aiofiles>=23.2.0
 pynacl>=1.5.0
 cryptography>=42.0.0
 # liboqs-python : ML-DSA-65 + ML-KEM-768 (NIST PQC 2024)
-# cmake + gcc requis pour la compilation. Fallback Ed25519/X25519 automatique si absent.
-# Sur Replit NixOS : cmake 3.31.6 + gcc 14.2.1 disponibles dans replit.nix ✅
-# Sur Docker : cmake installé dans Dockerfile ✅
-# Sur PC local : apt install cmake ou brew install cmake
+# ATTENTION : ce paquet PyPI COMPILE liboqs depuis les sources — cmake + gcc requis.
+# Si absent → fallback automatique Ed25519/X25519 (mode dégradé, non post-quantique).
+# Pour l'installer :
+#   Sur Replit NixOS  : cmake + gcc disponibles dans replit.nix → ok via replit_start.sh
+#   Sur Docker        : cmake installé dans Dockerfile → ok
+#   Sur PC local Linux: sudo apt install cmake gcc libssl-dev && pip install liboqs-python
+#   Sur PC local macOS: brew install cmake openssl && pip install liboqs-python
+# SI l'installation échoue : le nœud démarre quand même, mais les wallets créés
+# auront hybrid=False et n'utiliseront PAS ML-DSA-65. Voir /health pour le statut PQC.
 liboqs-python>=0.14.0
 
 # ─── IA & LLM ─────────────────────────────────────────────────────────────────

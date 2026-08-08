@@ -2,7 +2,7 @@
 
 **Horodatage :** 2026-08-06T23:45:00Z — **mis à jour rapport 107-108**
 **Commit :** `ea56083` — push direct main
-**Dépôt :** https://github.com/vgac2025/lvx
+**Dépôt :** https://github.com/vgac2025/artcb
 **Tests :** 488/488 PASS | 8 skipped bridges live (normaux) | Build TS 0 erreur
 
 ---
@@ -33,7 +33,7 @@
 ## Scripts à faire exécuter par l'utilisateur sur SON PC
 
 ```bash
-git clone https://github.com/vgac2025/lvx.git
+git clone https://github.com/vgac2025/artcb.git
 cd lvx
 bash scripts/setup_machine_locale.sh
 bash scripts/run_real_local.sh

@@ -2,8 +2,8 @@
 
 **Mémoire persistante pour agents IA** : chaque pensée devient un nœud signé dans un graphe, compressible sans perte, retrouvable à l'identique.
 
-[![Tests](https://img.shields.io/badge/tests-478%2F478%20passing-brightgreen)](tests/)
-[![Python](https://img.shields.io/badge/python-3.12%2B-blue)](https://python.org)
+[![Tests](https://img.shields.io/badge/tests-519%2F519%20passing-brightgreen)](tests/)
+[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](https://python.org)
 [![License](https://img.shields.io/badge/license-Proprietary-red)](LICENSE)
 
 ---
@@ -25,9 +25,10 @@ ARTCB résout la perte de contexte des LLM via :
 ## Démarrage rapide
 
 ```bash
-git clone https://github.com/vgac2025/lvx.git && cd lvx
-pip install -r requirements.txt && make chain
-uvicorn src.api.main:create_app --factory --port 8000 --reload
+git clone https://github.com/vgac2025/artcb.git && cd artcb
+cp .env.example .env   # éditer .env : ARTCB_WALLET_PASSPHRASE et ARTCB_NODE_WALLET_ADDRESS
+pip install -r requirements.txt
+uvicorn src.api.main:app --port 8000 --reload
 cd frontend && npm install && npm run dev
 ```
 
@@ -62,7 +63,7 @@ cd frontend && npm install && npm run dev
 
 | Composant | Technologie | Rôle |
 |-----------|-------------|------|
-| Backend | Python 3.12 + FastAPI | 93 endpoints REST + WebSocket |
+| Backend | Python 3.11 + FastAPI | 93 endpoints REST + WebSocket |
 | Blockchain | C + ML-DSA-65 + Ed25519 | Post-quantique NIST 2024 |
 | IR Engine | Python + spaCy | Texte → graphe réversible |
 | Agents | Python asyncio | Explorer + Critic dual-agent |
@@ -71,7 +72,7 @@ cd frontend && npm install && npm run dev
 | Memory | FAISS | Recherche vectorielle sémantique |
 | Smart contracts | IR v0.2 Rules | Règles SI…ALORS déclaratives |
 | Frontend | React + Vite + Cytoscape | Graphe interactif, 7 langues |
-| Tests | pytest | 303/303 passent |
+| Tests | pytest | 519/519 passent |
 
 ---
 
@@ -79,19 +80,18 @@ cd frontend && npm install && npm run dev
 
 ### Prérequis
 
-- Python 3.12+
+- Python 3.11+
 - Node.js 18+
 - GCC (compilation lib C)
 
 ### Backend
 
 ```bash
-git clone https://github.com/vgac2025/lvx.git && cd lvx
+git clone https://github.com/vgac2025/artcb.git && cd artcb
 python -m venv venv && source venv/bin/activate
+cp .env.example .env   # renseigner ARTCB_WALLET_PASSPHRASE + ARTCB_NODE_WALLET_ADDRESS
 pip install -r requirements.txt
-make chain
-cp .env.example .env   # optionnel — ajouter clés API LLM
-uvicorn src.api.main:create_app --factory --port 8000 --reload
+uvicorn src.api.main:app --port 8000 --reload
 ```
 
 ### Frontend
@@ -226,6 +226,6 @@ Contact : contact@artcb.io
 
 ## Liens
 
-- Dépôt : https://github.com/vgac2025/lvx
+- Dépôt : https://github.com/vgac2025/artcb
 - API Docs : http://localhost:8000/docs
 - Frontend : http://localhost:5173

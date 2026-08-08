@@ -22,7 +22,10 @@ services:
       - ARTCB_LLM_ENABLED=${ARTCB_LLM_ENABLED:-false}
       - ARTCB_ANTI_SYBIL_AI_BYPASS=${ARTCB_ANTI_SYBIL_AI_BYPASS:-false}
       - ARTCB_MIN_BLOCK_INTERVAL_SEC=${ARTCB_MIN_BLOCK_INTERVAL_SEC:-60}
-      - ARTCB_WALLET_PASSPHRASE=${ARTCB_WALLET_PASSPHRASE:-changeme_in_prod}
+      # ARTCB_WALLET_PASSPHRASE OBLIGATOIRE — aucun défaut fourni (rapport 119).
+      # Définir dans le .env local : ARTCB_WALLET_PASSPHRASE=VotrePassphraseForte
+      # Sans cette variable le conteneur refuse de démarrer (voir node_identity.py pattern).
+      - ARTCB_WALLET_PASSPHRASE=${ARTCB_WALLET_PASSPHRASE:?ARTCB_WALLET_PASSPHRASE est obligatoire. Définissez-la dans votre .env avant de lancer docker compose up.}
       - BOB_API_KEY=${BOB_API_KEY:-}
       - GRADIUM_API_KEY=${GRADIUM_API_KEY:-}
     healthcheck:

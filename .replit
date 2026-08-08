@@ -13,7 +13,10 @@ ARTCB_DATA_DIR = "/home/runner/${REPL_SLUG}/data"
 ARTCB_LOG_DIR = "/home/runner/${REPL_SLUG}/logs"
 ARTCB_ENCODE_MODE = "rule-based"
 ARTCB_LLM_ENABLED = "false"
-ARTCB_ANTI_SYBIL_AI_BYPASS = "true"
+# ARTCB_ANTI_SYBIL_AI_BYPASS dev=true / prod=false
+# En mode interactif (dev) : bypass actif pour faciliter les tests
+# En déploiement Autoscale (prod) : doit être false — définir dans les secrets Replit
+ARTCB_ANTI_SYBIL_AI_BYPASS = "false"
 
 [deployment]
 # Uses the same validated startup script as the interactive workflow

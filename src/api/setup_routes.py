@@ -29,42 +29,10 @@ import os
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from src.artcb.p2p.node_identity import write_node_config
+from src.artcb.p2p.node_identity import _detect_fresh_public_url, write_node_config
 
 logger = logging.getLogger("artcb.api.setup")
 router = APIRouter(prefix="/setup", tags=["setup"])
-
-
-# ── Helpers ──────────────────────────────────────────────────────────────────
-
-def _detect_public_url() -> str:
-    """Détecte automatiquement l'URL publique du nœud.
-
-    Ordre de priorité :
-    1. ARTCB_NODE_PUBLIC_URL (si défini manuellement)
-    2. REPLIT_DOMAINS         (variable Replit automatique — hostname Replit)
-    3. REPL_SLUG + REPL_OWNER (ancienne convention Replit)
-    4. Chaîne vide            (l'opérateur devra la renseigner manuellement)
-    """
-    manual = os.getenv("ARTCB_NODE_PUBLIC_URL", "").strip()
-    if manual:
-        return manual
-
-    # Replit injecte REPLIT_DOMAINS = "lvx--supermicro20238.repl.co" (parfois liste CSV)
-    replit_domains = os.getenv("REPLIT_DOMAINS", "").strip()
-    if replit_domains:
-        # Prendre le premier domaine si plusieurs
-        first_domain = replit_domains.split(",")[0].strip()
-        if first_domain:
-            return f"https://{first_domain}"
-
-    # Ancienne convention : REPL_SLUG + REPL_OWNER
-    slug = os.getenv("REPL_SLUG", "").strip()
-    owner = os.getenv("REPL_OWNER", "").strip()
-    if slug and owner:
-        return f"https://{owner}--{slug}.repl.co"
-
-    return ""
 
 
 # ── Schémas Pydantic ──────────────────────────────────────────────────────────
@@ -107,7 +75,9 @@ def setup_status(request: Request) -> dict:
         wallet_addr = cfg.get("wallet_address", "")
 
     bootstrap_active = not bool(wallet_addr)
-    detected_url = _detect_public_url()
+    # L'URL est re-détectée live — pas lue depuis le .node_config stocké.
+    # Cela garantit que /setup/status reflète toujours l'URL de l'hébergeur courant.
+    detected_url = _detect_fresh_public_url()
 
     status = {
         "bootstrap_mode": bootstrap_active,
@@ -161,8 +131,8 @@ def init_node(body: InitNodeRequest, request: Request) -> dict:
             ),
         )
 
-    # Détecter l'URL publique
-    public_url = body.public_url.strip() or _detect_public_url()
+    # Détecter l'URL publique (live depuis variables hébergeur)
+    public_url = body.public_url.strip() or _detect_fresh_public_url()
 
     # Créer le wallet de nœud
     wm = WalletManager()

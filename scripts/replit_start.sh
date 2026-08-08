@@ -269,33 +269,98 @@ _log "STEP end"
 # ── PQC POST-START : liboqs installé EN ARRIÈRE-PLAN ─────────────
 # P0-1 FIX : liboqs cmake build (2-5 min) est déplacé APRÈS le démarrage
 # d'uvicorn pour ne PAS bloquer le healthcheck Replit (timeout 60s).
-# Le script setup_pqc_background.sh est lancé en parallèle et s'arrête
-# dès qu'uvicorn est prêt, sans jamais bloquer l'API.
+#
+# POURQUOI liboqs revient à ❌ après chaque redéploiement ?
+#   liboqs-python sur PyPI COMPILE liboqs depuis les sources via cmake.
+#   Sur Replit : le venv est recréé à chaque cold start → liboqs est
+#   recompilé à chaque démarrage (~2-5 min). Si cmake échoue ou timeout,
+#   le paquet s'installe SANS le .so natif → oqs importable MAIS non fonctionnel.
+#   Solution : forcer une recompilation propre si le .so est absent/cassé.
 _launch_pqc_background() {
   CURRENT_STEP="pqc_background"
   _log "BACKGROUND begin pid=$BASHPID"
+
+  # Test 1 : liboqs déjà opérationnel (le cas normal après le 1er démarrage réussi)
   if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
     echo "PQC: liboqs déjà opérationnel ✅"
     _log "BACKGROUND end status=0 result=already_operational"
-    return
+    return 0
   fi
+
+  # Test 2 : cmake disponible ?
   if ! command -v cmake &>/dev/null; then
-    echo "PQC: cmake absent — fallback Ed25519 actif"
+    echo ""
+    echo "╔══════════════════════════════════════════════════════════════╗"
+    echo "║  ⚠️  PQC DÉGRADÉ — cmake absent                            ║"
+    echo "╠══════════════════════════════════════════════════════════════╣"
+    echo "║  ML-DSA-65 + ML-KEM-768 ne peuvent pas être compilés.      ║"
+    echo "║  Les wallets seront créés en mode Ed25519 pur (hybrid=False)║"
+    echo "║                                                              ║"
+    echo "║  Pour activer le mode post-quantique :                      ║"
+    echo "║  1. Vérifiez que replit.nix contient pkgs.cmake + pkgs.gcc  ║"
+    echo "║  2. Redémarrez le Repl pour recharger l'environnement Nix   ║"
+    echo "║  3. Vérifiez avec : which cmake && cmake --version           ║"
+    echo "╚══════════════════════════════════════════════════════════════╝"
+    echo ""
     _log "BACKGROUND end status=0 result=fallback_cmake_absent"
-    return
+    return 0
   fi
-  echo "PQC: installation liboqs-python en arrière-plan (~2-5 min)..."
-  if ! $PIP install --no-user "liboqs-python>=0.14.0" 2>&1; then
-    _log "WARN liboqs-python installation command failed"
-  fi
-  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
-    echo "PQC: liboqs-python installé — ML-DSA-65 + ML-KEM-768 ACTIFS ✅ (redémarrage conseillé)"
-    _log "BACKGROUND end status=0 result=installed"
+
+  echo "PQC: cmake trouvé ($(cmake --version | head -1)) — compilation liboqs-python..."
+  _log "BACKGROUND cmake_found version=$(cmake --version | head -1)"
+
+  # Tentative 1 : installation standard pip (utilise le cache wheel si disponible)
+  echo "PQC: tentative 1/2 — pip install liboqs-python..."
+  if $PIP install --no-user --upgrade "liboqs-python>=0.14.0" 2>&1; then
+    _log "BACKGROUND pip install returned 0"
   else
-    echo "PQC: compilation échouée — fallback Ed25519/X25519 actif"
-    _log "BACKGROUND end status=1 result=fallback"
-    return 1
+    _log "WARN pip install liboqs-python returned non-zero"
   fi
+
+  # Vérification immédiate après pip
+  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
+    echo "PQC: liboqs-python installé ✅ ML-DSA-65 + ML-KEM-768 ACTIFS (redémarrage conseillé pour les wallets existants)"
+    _log "BACKGROUND end status=0 result=installed_pip"
+    return 0
+  fi
+
+  # Tentative 2 : forcer la recompilation depuis les sources (--no-binary)
+  echo "PQC: tentative 2/2 — recompilation depuis les sources (--no-binary)..."
+  _log "BACKGROUND attempt2 no_binary"
+  if $PIP install --no-user --upgrade --no-binary liboqs-python "liboqs-python>=0.14.0" 2>&1; then
+    _log "BACKGROUND pip install --no-binary returned 0"
+  else
+    _log "WARN pip install --no-binary returned non-zero"
+  fi
+
+  # Vérification finale
+  if $PYTHON -c "import oqs; oqs.get_enabled_sig_mechanisms()" &>/dev/null 2>&1; then
+    echo "PQC: liboqs-python compilé depuis sources ✅ ML-DSA-65 + ML-KEM-768 ACTIFS"
+    _log "BACKGROUND end status=0 result=installed_source"
+    return 0
+  fi
+
+  # Échec définitif — afficher un message d'action clair
+  echo ""
+  echo "╔══════════════════════════════════════════════════════════════╗"
+  echo "║  ❌  PQC DÉGRADÉ — liboqs compilation échouée              ║"
+  echo "╠══════════════════════════════════════════════════════════════╣"
+  echo "║  ML-DSA-65 + ML-KEM-768 désactivés.                        ║"
+  echo "║  Les wallets créés auront hybrid=False (Ed25519 pur).       ║"
+  echo "║                                                              ║"
+  echo "║  ACTIONS REQUISES :                                          ║"
+  echo "║  1. Vérifier replit.nix : pkgs.cmake + pkgs.gcc + pkgs.ninja║"
+  echo "║  2. Redémarrer le Repl (shell Nix rechargé)                 ║"
+  echo "║  3. Dans le shell : pip install liboqs-python --no-binary   ║"
+  echo "║  4. Si toujours échoué : les logs du build ci-dessus        ║"
+  echo "║     contiennent l'erreur cmake exacte.                      ║"
+  echo "║                                                              ║"
+  echo "║  Le nœud FONCTIONNE normalement sans PQC (sécurité réduite).║"
+  echo "║  Vérifier le statut : GET /health → pqc.available           ║"
+  echo "╚══════════════════════════════════════════════════════════════╝"
+  echo ""
+  _log "BACKGROUND end status=1 result=fallback_compile_failed"
+  return 1
 }
 export -f _launch_pqc_background 2>/dev/null || true
 (

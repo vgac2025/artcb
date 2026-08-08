@@ -20,10 +20,13 @@ from artcb.wallet.address import hybrid_address_v2, verify_address_v2
 from artcb.wallet.manager import WalletManager
 
 def _oqs_installed() -> bool:
+    # oqs lève SystemExit (pas ImportError) quand cmake est absent.
+    # Le script replit_start.sh patche ce comportement sur Replit,
+    # mais sur un clone neuf ou en CI standard, il faut attraper les deux.
     try:
         import oqs  # noqa: F401
         return True
-    except ImportError:
+    except (ImportError, SystemExit, RuntimeError):
         return False
 
 

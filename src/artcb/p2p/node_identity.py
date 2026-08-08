@@ -69,6 +69,57 @@ class NodeIdentity:
         return d
 
 
+def _detect_fresh_public_url() -> str:
+    """Détecte l'URL publique du nœud depuis les variables d'environnement de l'hébergeur.
+
+    Re-appelée à chaque démarrage — pas stockée statiquement — pour couvrir :
+      - Replit : REPLIT_DOMAINS injecté automatiquement par l'hébergeur
+      - Replit (ancien format) : REPL_OWNER + REPL_SLUG
+      - Render / Railway : RENDER_EXTERNAL_URL / RAILWAY_PUBLIC_DOMAIN
+      - VPS / Hostinger : ARTCB_NODE_PUBLIC_URL défini manuellement
+      - Dev local : http://localhost:PORT (si aucune variable hébergeur présente)
+
+    Ordre de priorité :
+      1. ARTCB_NODE_PUBLIC_URL   (toujours prioritaire — saisie manuelle opérateur)
+      2. REPLIT_DOMAINS          (Replit moderne — injecté automatiquement)
+      3. REPL_OWNER + REPL_SLUG  (Replit ancien format)
+      4. RENDER_EXTERNAL_URL     (Render.com)
+      5. RAILWAY_PUBLIC_DOMAIN   (Railway.app)
+      6. http://localhost:PORT   (dev local — pas de variable hébergeur)
+    """
+    # Priorité 1 : manuel (toujours respecté)
+    manual = os.getenv("ARTCB_NODE_PUBLIC_URL", "").strip()
+    if manual:
+        return manual
+
+    # Priorité 2 : Replit — REPLIT_DOMAINS (format moderne, injecté auto)
+    replit_domains = os.getenv("REPLIT_DOMAINS", "").strip()
+    if replit_domains:
+        first = replit_domains.split(",")[0].strip()
+        if first:
+            return f"https://{first}"
+
+    # Priorité 3 : Replit ancien format
+    slug = os.getenv("REPL_SLUG", "").strip()
+    owner = os.getenv("REPL_OWNER", "").strip()
+    if slug and owner:
+        return f"https://{owner}--{slug}.repl.co"
+
+    # Priorité 4 : Render
+    render_url = os.getenv("RENDER_EXTERNAL_URL", "").strip()
+    if render_url:
+        return render_url
+
+    # Priorité 5 : Railway
+    railway_domain = os.getenv("RAILWAY_PUBLIC_DOMAIN", "").strip()
+    if railway_domain:
+        return f"https://{railway_domain}"
+
+    # Priorité 6 : Dev local — retourner localhost avec le port configuré
+    port = os.getenv("ARTCB_PORT", "8000").strip()
+    return f"http://localhost:{port}"
+
+
 def node_id_from_wallet_address(wallet_address: str) -> str:
     """Option 3 : node_id = adresse wallet (artcb1xxx).
 
@@ -125,8 +176,21 @@ class NodeIdentityStore:
         self._data_dir = Path(data_dir)
 
     def load_or_create(self, *, api_port: int = 8000) -> NodeIdentity:
+        # L'URL publique est re-détectée à chaque démarrage et mise à jour
+        # dans .node_config si elle a changé. Cela couvre :
+        #   - Replit : REPLIT_DOMAINS change selon le compte/projet
+        #   - Dev local : localhost detecté si pas de variable hébergeur
+        #   - Migration d'hébergeur : nouvelle URL prise en compte automatiquement
+        fresh_url = _detect_fresh_public_url()
+
         if self.path.is_file():
             data = json.loads(self.path.read_text(encoding="utf-8"))
+            # Mettre à jour l'URL dans node_identity.json si elle a changé
+            stored_url = data.get("node_public_url") or ""
+            if fresh_url and fresh_url != stored_url:
+                data["node_public_url"] = fresh_url
+                self.path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+                logger.info("node_identity: public_url updated %r → %r", stored_url, fresh_url)
             return NodeIdentity(
                 network_id=data.get("network_id", NETWORK_ID),
                 node_id=data["node_id"],
@@ -135,7 +199,7 @@ class NodeIdentityStore:
                 api_port=int(data.get("api_port", api_port)),
                 p2p_port=int(data.get("p2p_port", DEFAULT_P2P_PORT)),
                 wallet_address=data.get("wallet_address"),
-                node_public_url=data.get("node_public_url") or os.getenv("ARTCB_NODE_PUBLIC_URL"),
+                node_public_url=fresh_url or data.get("node_public_url"),
                 bootstrap_mode=False,
             )
 
@@ -144,6 +208,12 @@ class NodeIdentityStore:
         if not wallet_address:
             node_cfg = _read_node_config(self._data_dir)
             wallet_address = node_cfg.get("wallet_address", "").strip() or None
+            # Mettre à jour l'URL dans .node_config si elle a changé depuis la création
+            if wallet_address and fresh_url:
+                stored_cfg_url = node_cfg.get("public_url", "")
+                if fresh_url != stored_cfg_url:
+                    write_node_config(self._data_dir, wallet_address, fresh_url)
+                    logger.info("node_config: public_url updated %r → %r", stored_cfg_url, fresh_url)
 
         if not wallet_address:
             # MODE BOOTSTRAP — démarrage sans identité configurée.
@@ -163,7 +233,7 @@ class NodeIdentityStore:
                 api_port=api_port,
                 p2p_port=DEFAULT_P2P_PORT,
                 wallet_address=None,
-                node_public_url=None,
+                node_public_url=fresh_url or None,  # URL connue même en bootstrap
                 bootstrap_mode=True,
             )
 
