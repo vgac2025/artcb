@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "0eZAgqgCtVHn3F0uKLT4-"
+uri = "file://rapports/rapport_110_explication_healthcheck_500_2026-08-08.md"
+type = "text"
+title = "Rapport 110 — Explication healthcheck HTTP 500"
+description = "Rapport Markdown conforme au protocole ARTCB, fondé sur le fichier de healthcheck fourni et les lignes exactes du code et des logs. Aucune correction n’a été appliquée."
