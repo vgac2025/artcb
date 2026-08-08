@@ -5,20 +5,14 @@ Option 3 — Identifiant de nœud = adresse wallet ARTCB (rapport 115)
 L'identifiant unique du nœud est l'adresse wallet de l'opérateur (artcb1xxx).
 Cette adresse est dérivée de la clé publique Ed25519 du wallet (Bech32).
 
-Pourquoi c'est la meilleure approche :
-  1. L'adresse est UNIQUE par construction (dérivée de la clé privée)
-  2. Elle est VÉRIFIABLE par n'importe qui (clé publique dans le .json)
-  3. Elle est PORTABLE (le même wallet = le même nœud sur n'importe quel serveur)
-  4. Elle respecte notre standard post-quantique hybride (Ed25519 + ML-DSA-65)
-  5. Elle est HUMAINEMENT LISIBLE (format bech32 : artcb1xxxxx)
+Mode BOOTSTRAP (rapport 118) :
+  Si ARTCB_NODE_WALLET_ADDRESS est absent ET qu'aucun node_identity.json
+  n'existe encore, le nœud démarre en mode bootstrap avec un node_id temporaire.
+  Il expose uniquement les routes /setup/* pour permettre la création du wallet
+  de nœud. Une fois POST /setup/init-node appelé, l'adresse est persistée dans
+  .node_config et le nœud redémarre avec l'identité définitive.
 
-Format node_id v3 (rapport 115) :
-  node_id = "artcb1{bech32_address}"
-  Exemple : "artcb1q3r5m6kz9p2wxy4n7jvdf8sg0tu1lhcae"
-
-Pour décentralisation totale (sans DNS centralisé) :
-  À partir de 10 nœuds actifs, le réseau peut fonctionner sans bootstrap fixes.
-  À partir de 3 nœuds actifs dans des juridictions différentes, il est résilient.
+  bootstrap_node_id = "bootstrap_<hostname_slug>" — JAMAIS propagé au réseau P2P.
 
 Standard post-quantique hybride :
   - Wallet : Ed25519 + ML-DSA-65 (signature hybride)
@@ -31,6 +25,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import socket
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -42,17 +37,22 @@ logger = logging.getLogger("artcb.p2p.node_identity")
 NETWORK_ID = "artcb-devnet-1"
 DEFAULT_P2P_PORT = int(os.getenv("ARTCB_P2P_PORT", "18444"))
 
+# Fichier local (non committé) où l'adresse wallet est persistée après
+# POST /setup/init-node. Lu au démarrage avant les variables d'env.
+_NODE_CONFIG_FILENAME = ".node_config"
+
 
 @dataclass
 class NodeIdentity:
     network_id: str
-    node_id: str            # Format v3 : adresse wallet artcb1xxx (ou node_xxx en fallback)
+    node_id: str            # Format v3 : adresse wallet artcb1xxx / "bootstrap_<slug>" en mode bootstrap
     kem_public_key_hex: str
     kem_secret_key_hex: str
     api_port: int
     p2p_port: int
     wallet_address: str | None = None  # Adresse wallet liée (Option 3)
     node_public_url: str | None = None  # URL publique déclarée (Option 2/3)
+    bootstrap_mode: bool = False       # True = wallet pas encore configuré
 
     def public_dict(self) -> dict[str, Any]:
         d = {
@@ -78,17 +78,51 @@ def node_id_from_wallet_address(wallet_address: str) -> str:
     return wallet_address
 
 
+def _read_node_config(data_dir: Path) -> dict:
+    """Lit le fichier .node_config local (non committé) s'il existe.
+
+    Ce fichier est écrit par POST /setup/init-node après la première
+    création du wallet de nœud. Il évite de devoir ajouter la variable
+    dans les secrets Replit manuellement lors du premier déploiement.
+    Format JSON minimal : {"wallet_address": "artcb1...", "public_url": "https://..."}
+    """
+    cfg_path = Path(data_dir) / _NODE_CONFIG_FILENAME
+    if cfg_path.is_file():
+        try:
+            return json.loads(cfg_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+
+def write_node_config(data_dir: Path, wallet_address: str, public_url: str = "") -> None:
+    """Persiste l'adresse wallet dans .node_config après POST /setup/init-node."""
+    cfg_path = Path(data_dir) / _NODE_CONFIG_FILENAME
+    cfg_path.parent.mkdir(parents=True, exist_ok=True)
+    payload: dict = {"wallet_address": wallet_address}
+    if public_url:
+        payload["public_url"] = public_url
+    cfg_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    cfg_path.chmod(0o600)
+    logger.info("Node config written: wallet_address=%s public_url=%s", wallet_address, public_url)
+
+
 class NodeIdentityStore:
     """Persiste l'identité P2P du nœud (clé ML-KEM).
 
-    Option 3 : ARTCB_NODE_WALLET_ADDRESS est OBLIGATOIRE.
-    Le node_id est l'adresse wallet de l'opérateur (artcb1xxx).
-    Sans cette variable, le nœud refuse de démarrer.
+    Résolution de ARTCB_NODE_WALLET_ADDRESS dans cet ordre de priorité :
+      1. Variable d'environnement ARTCB_NODE_WALLET_ADDRESS
+      2. Fichier .node_config dans data_dir (écrit par /setup/init-node)
+      3. MODE BOOTSTRAP — node_id temporaire, API limitée aux routes /setup/*
+
+    En mode bootstrap, aucune clé ML-KEM n'est générée et aucun fichier
+    node_identity.json n'est créé. Le nœud ne participe pas au réseau P2P.
     """
 
     def __init__(self, data_dir: Path) -> None:
         self.path = Path(data_dir) / "p2p" / "node_identity.json"
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        self._data_dir = Path(data_dir)
 
     def load_or_create(self, *, api_port: int = 8000) -> NodeIdentity:
         if self.path.is_file():
@@ -102,27 +136,35 @@ class NodeIdentityStore:
                 p2p_port=int(data.get("p2p_port", DEFAULT_P2P_PORT)),
                 wallet_address=data.get("wallet_address"),
                 node_public_url=data.get("node_public_url") or os.getenv("ARTCB_NODE_PUBLIC_URL"),
+                bootstrap_mode=False,
             )
-        # ARTCB_NODE_WALLET_ADDRESS est OBLIGATOIRE — pas de fallback anonyme.
+
+        # Résolution de l'adresse : env var > .node_config > mode bootstrap
         wallet_address = os.getenv("ARTCB_NODE_WALLET_ADDRESS", "").strip() or None
         if not wallet_address:
-            raise EnvironmentError(
-                "\n"
-                "╔══════════════════════════════════════════════════════════════╗\n"
-                "║  ERREUR — Variable d'environnement manquante                ║\n"
-                "╠══════════════════════════════════════════════════════════════╣\n"
-                "║  ARTCB_NODE_WALLET_ADDRESS est OBLIGATOIRE pour démarrer    ║\n"
-                "║  un nœud ARTCB. Sans elle, l'identité du nœud ne peut pas  ║\n"
-                "║  être vérifiée cryptographiquement par le réseau.           ║\n"
-                "╠══════════════════════════════════════════════════════════════╣\n"
-                "║  COMMENT CORRIGER :                                         ║\n"
-                "║  1. Créez un wallet si vous n'en avez pas :                 ║\n"
-                "║     POST /api/v1/wallet/create {\"name\": \"mon_noeud\"}        ║\n"
-                "║     → Sauvegardez la seed_hex retournée (affichée 1 fois)   ║\n"
-                "║  2. Ajoutez dans votre .env (ou secrets Replit) :           ║\n"
-                "║     ARTCB_NODE_WALLET_ADDRESS=artcb1votre_adresse           ║\n"
-                "║  3. Relancez le nœud.                                       ║\n"
-                "╚══════════════════════════════════════════════════════════════╝\n"
+            node_cfg = _read_node_config(self._data_dir)
+            wallet_address = node_cfg.get("wallet_address", "").strip() or None
+
+        if not wallet_address:
+            # MODE BOOTSTRAP — démarrage sans identité configurée.
+            # L'API démarre avec les routes /setup/* uniquement.
+            hostname = socket.gethostname()
+            bootstrap_id = f"bootstrap_{hostname[:20]}"
+            logger.warning(
+                "BOOTSTRAP MODE: ARTCB_NODE_WALLET_ADDRESS absent. "
+                "Node ID temporaire: %s — appeler POST /setup/init-node pour configurer.",
+                bootstrap_id,
+            )
+            return NodeIdentity(
+                network_id=NETWORK_ID,
+                node_id=bootstrap_id,
+                kem_public_key_hex="",
+                kem_secret_key_hex="",
+                api_port=api_port,
+                p2p_port=DEFAULT_P2P_PORT,
+                wallet_address=None,
+                node_public_url=None,
+                bootstrap_mode=True,
             )
 
         try:
@@ -130,6 +172,13 @@ class NodeIdentityStore:
         except KEMError as exc:
             raise KEMError(f"Cannot init P2P node identity: {exc}") from exc
 
+        # Récupérer l'URL publique : env var > .node_config
+        node_cfg = _read_node_config(self._data_dir)
+        public_url = (
+            os.getenv("ARTCB_NODE_PUBLIC_URL", "").strip()
+            or node_cfg.get("public_url", "")
+            or None
+        )
         node_id = node_id_from_wallet_address(wallet_address)
 
         identity = NodeIdentity(
@@ -140,7 +189,8 @@ class NodeIdentityStore:
             api_port=api_port,
             p2p_port=DEFAULT_P2P_PORT,
             wallet_address=wallet_address,
-            node_public_url=os.getenv("ARTCB_NODE_PUBLIC_URL"),
+            node_public_url=public_url,
+            bootstrap_mode=False,
         )
         self._save(identity)
         logger.info(

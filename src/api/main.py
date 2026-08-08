@@ -8,7 +8,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 
 from src.artcb.logging_config import setup_logging
 
@@ -38,6 +38,8 @@ from src.api.routes import router as api_router
 from src.api.symbols_routes import router as symbols_router
 from src.api.websocket import router as ws_router
 from src.api.privacy_routes import router as privacy_router
+from src.api.setup_routes import router as setup_router
+
 
 def create_app() -> FastAPI:
     app = FastAPI(title="ARTCB API", version="0.3.0")
@@ -48,8 +50,57 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.state.artcb = build_app_state()
-    app.include_router(auth_router)       # /api/v1/auth/login|challenge|verify|logout
+    state = build_app_state()
+    app.state.artcb = state
+
+    # Routes /setup/* — toujours montées (état bootstrap ou non)
+    app.include_router(setup_router)
+
+    if state.p2p_identity.bootstrap_mode:
+        # ── MODE BOOTSTRAP ─────────────────────────────────────────────────
+        # Le nœud n'a pas encore d'identité configurée.
+        # Seules les routes /setup/* et /health sont accessibles.
+        # Toutes les autres routes retournent 503 avec un message explicite.
+        logger.warning(
+            "ARTCB démarré en MODE BOOTSTRAP. "
+            "Aucune identité P2P. Appeler POST /setup/init-node pour configurer."
+        )
+
+        @app.get("/health")
+        async def health_bootstrap():
+            return {
+                "status": "bootstrap",
+                "service": "ARTCB API",
+                "version": "0.3.0",
+                "bootstrap_mode": True,
+                "message": "Nœud non configuré. Appelez POST /setup/init-node.",
+                "setup_url": "/setup/init-node",
+            }
+
+        @app.get("/{full_path:path}")
+        async def bootstrap_catchall(full_path: str):
+            if full_path in ("", "health", "setup/status", "setup/init-node"):
+                from fastapi import HTTPException
+                raise HTTPException(status_code=404)
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "error": "bootstrap_mode",
+                    "message": (
+                        "Ce nœud ARTCB n'est pas encore configuré. "
+                        "Appelez POST /setup/init-node avec {node_name, password} "
+                        "pour créer le wallet de nœud et activer toutes les routes."
+                    ),
+                    "setup_endpoint": "/setup/init-node",
+                    "doc": "/setup/status",
+                },
+            )
+
+        logger.debug("ARTCB API started bootstrap_mode=True")
+        return app
+
+    # ── MODE NORMAL — toutes les routes ────────────────────────────────────
+    app.include_router(auth_router)
     app.include_router(api_keys_router)
     app.include_router(api_router)
     app.include_router(devnet_router)
@@ -71,14 +122,16 @@ def create_app() -> FastAPI:
     app.include_router(bridges_router)
     app.include_router(libp2p_router)
     app.include_router(privacy_router)
-    logger.debug("ARTCB API started debug=%s", app.state.artcb.settings.debug)
+    logger.debug("ARTCB API started debug=%s bootstrap_mode=False", state.settings.debug)
+
     @app.get("/health")
     async def health_check():
         """Health check endpoint."""
         return {
             "status": "healthy",
             "service": "ARTCB API",
-            "version": "0.3.0"
+            "version": "0.3.0",
+            "bootstrap_mode": False,
         }
 
     # Serve React frontend (built dist/) at root

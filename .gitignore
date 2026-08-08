@@ -53,3 +53,7 @@ logs/*_artcb_api.json
 !logs/e2e_*.json
 !logs/validate_two_nodes_*.json
 !logs/.gitkeep
+
+# .node_config — fichier local persistant l'adresse wallet après /setup/init-node
+# Ne jamais committer — contient l'identité de ce nœud spécifique
+.node_config

@@ -1,13 +1,16 @@
 #!/bin/bash
-# ARTCB — Script de démarrage Replit (v4 — démarrage rapide < 30s)
+# ARTCB — Script de démarrage Replit (v5 — bootstrap automatique + port dynamique)
 # Corrige automatiquement :
-#   - PEP 668 (pip bloqué sur Python NixOS)  → venv isolé
-#   - litellm-ibm-bob absent sur PyPI public  → litellm standard
-#   - liboqs RuntimeError/SystemExit          → patch oqs.py
-#   - Port 8000 vs 5000 Replit webview        → port 5000
-#   - libartcb_chain.so absent                → compilation auto
+#   - PEP 668 (pip bloqué sur Python NixOS)        → venv isolé
+#   - litellm-ibm-bob absent sur PyPI public        → litellm standard
+#   - liboqs RuntimeError/SystemExit                → patch oqs.py
+#   - Port 8000 vs 5000 Replit webview              → port 5000 (dynamique si occupé)
+#   - libartcb_chain.so absent                      → compilation auto
 #   - git pull AVANT build (v3 corrigé)
-#   - liboqs cmake build EN ARRIÈRE-PLAN (v4) → démarrage < 30s garanti
+#   - liboqs cmake build EN ARRIÈRE-PLAN (v4)       → démarrage < 30s garanti
+#   - ARTCB_NODE_WALLET_ADDRESS absent (v5 NEW)     → mode bootstrap, API partielle
+#   - URL publique Replit (v5 NEW)                  → détectée + injectée auto
+#   - Port déjà occupé (v5 NEW)                     → fallback port libre automatique
 # ──────────────────────────────────────────────────────────────────
 
 set -Eeuo pipefail
@@ -65,8 +68,66 @@ _log "START pid=$$ repl_dir=$REPL_DIR log_file=$STARTUP_LOG"
 
 echo ""
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║         ARTCB Replit — Démarrage complet v4              ║"
+echo "║         ARTCB Replit — Démarrage complet v5              ║"
 echo "╚══════════════════════════════════════════════════════════╝"
+
+# ── 0b. Injection URL publique Replit AVANT tout le reste ────────
+# Replit injecte REPLIT_DOMAINS = "lvx--supermicro20238.repl.co"
+# (peut contenir plusieurs domaines séparés par des virgules).
+# On injecte ARTCB_NODE_PUBLIC_URL si pas déjà défini par l'opérateur.
+# Cette variable est lue par setup_routes.py::_detect_public_url()
+# et par logging_config.py::_node_suffix().
+CURRENT_STEP="public_url_detect"
+_log "STEP begin"
+if [ -z "${ARTCB_NODE_PUBLIC_URL:-}" ]; then
+  # Essai 1 : REPLIT_DOMAINS (format moderne Replit)
+  if [ -n "${REPLIT_DOMAINS:-}" ]; then
+    # Prendre le premier domaine (CSV possible)
+    _FIRST_DOMAIN="$(echo "$REPLIT_DOMAINS" | cut -d',' -f1 | tr -d ' ')"
+    export ARTCB_NODE_PUBLIC_URL="https://${_FIRST_DOMAIN}"
+    _log "public_url detected from REPLIT_DOMAINS: $ARTCB_NODE_PUBLIC_URL"
+  # Essai 2 : REPL_SLUG + REPL_OWNER (ancienne convention)
+  elif [ -n "${REPL_SLUG:-}" ] && [ -n "${REPL_OWNER:-}" ]; then
+    export ARTCB_NODE_PUBLIC_URL="https://${REPL_OWNER}--${REPL_SLUG}.repl.co"
+    _log "public_url detected from REPL_SLUG+REPL_OWNER: $ARTCB_NODE_PUBLIC_URL"
+  else
+    _log "WARN public_url not detected — ARTCB_NODE_PUBLIC_URL will be empty"
+  fi
+else
+  _log "public_url from env: $ARTCB_NODE_PUBLIC_URL"
+fi
+_log "STEP end public_url=${ARTCB_NODE_PUBLIC_URL:-UNKNOWN}"
+
+# ── 0c. Détection port libre ──────────────────────────────────────
+# Replit webview attend le port 5000. Si ce port est déjà occupé
+# (redémarrage rapide, autre processus), on cherche le prochain libre.
+CURRENT_STEP="port_detect"
+_log "STEP begin"
+_find_free_port() {
+  local preferred="$1"
+  # Vérifier si le port préféré est libre (nc -z → succès si occupé)
+  if ! nc -z 127.0.0.1 "$preferred" 2>/dev/null; then
+    echo "$preferred"
+    return
+  fi
+  # Port occupé → chercher un port libre à partir de preferred+1
+  local port=$((preferred + 1))
+  while [ $port -lt 65535 ]; do
+    if ! nc -z 127.0.0.1 "$port" 2>/dev/null; then
+      echo "$port"
+      return
+    fi
+    port=$((port + 1))
+  done
+  echo "$preferred"  # fallback ultime
+}
+ARTCB_PORT="$(_find_free_port 5000)"
+export ARTCB_PORT
+_log "STEP end port=$ARTCB_PORT"
+if [ "$ARTCB_PORT" != "5000" ]; then
+  echo "  ⚠️  Port 5000 occupé — utilisation du port $ARTCB_PORT"
+  echo "  ⚠️  Si Replit webview ne répond pas, redémarrez le Repl pour libérer le port."
+fi
 
 # ── 0. Pull GitHub EN PREMIER — avant tout build ─────────────────
 CURRENT_STEP="git_sync"
@@ -247,13 +308,38 @@ _log "BACKGROUND launched name=pqc pid=$PQC_PID"
 CURRENT_STEP="uvicorn"
 _log "STEP begin"
 echo ""
-echo "  ✅ Démarrage ARTCB API sur :5000 (Replit webview)..."
+if [ -z "${ARTCB_NODE_WALLET_ADDRESS:-}" ]; then
+  # Vérifier aussi le .node_config persisté
+  _DATA_DIR="${ARTCB_DATA_DIR:-$REPL_DIR/data}"
+  _NODE_CFG="$_DATA_DIR/.node_config"
+  if [ -f "$_NODE_CFG" ] && python3 -c "import json,sys; d=json.load(open('$_NODE_CFG')); sys.exit(0 if d.get('wallet_address') else 1)" 2>/dev/null; then
+    echo "  ✅ Identité nœud lue depuis .node_config — démarrage normal"
+  else
+    echo ""
+    echo "╔══════════════════════════════════════════════════════════════╗"
+    echo "║  ⚠️  MODE BOOTSTRAP — Premier déploiement détecté           ║"
+    echo "╠══════════════════════════════════════════════════════════════╣"
+    echo "║  Ce nœud n'a pas encore d'identité configurée.              ║"
+    echo "║  L'API démarre en mode limité.                               ║"
+    echo "║                                                              ║"
+    echo "║  → Ouvrez le dashboard et appelez :                         ║"
+    echo "║    POST /setup/init-node                                     ║"
+    echo "║    { \"node_name\": \"mon_noeud\", \"password\": \"VotrePass123\" }   ║"
+    echo "║                                                              ║"
+    echo "║  → Sauvegardez la seed_hex retournée (1 seule fois)         ║"
+    echo "║  → Redémarrez le nœud — il démarrera en mode normal         ║"
+    echo "╚══════════════════════════════════════════════════════════════╝"
+    echo ""
+  fi
+fi
+echo "  ✅ Démarrage ARTCB API sur :${ARTCB_PORT} (Replit webview)..."
+_log "FOREGROUND launching uvicorn port=$ARTCB_PORT public_url=${ARTCB_NODE_PUBLIC_URL:-NONE}"
 "$PYTHON" -m uvicorn src.api.main:app \
   --host 0.0.0.0 \
-  --port 5000 \
+  --port "$ARTCB_PORT" \
   --log-level info &
 UVICORN_PID=$!
-_log "FOREGROUND launched name=uvicorn pid=$UVICORN_PID port=5000"
+_log "FOREGROUND launched name=uvicorn pid=$UVICORN_PID port=$ARTCB_PORT"
 set +e
 wait "$UVICORN_PID"
 UVICORN_STATUS=$?
