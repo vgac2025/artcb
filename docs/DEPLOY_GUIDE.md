@@ -22,7 +22,7 @@ make deploy-check
 
 ```bash
 # Cloner
-git clone https://github.com/vgac2025/lvx.git && cd lvx
+git clone https://github.com/vgac2025/artcb.git && cd lvx
 
 # Installer les dépendances
 pip install -r requirements.txt
@@ -133,7 +133,7 @@ railway up
 
 ```bash
 # Sur le serveur (Ubuntu 22.04+)
-git clone https://github.com/vgac2025/lvx.git && cd lvx
+git clone https://github.com/vgac2025/artcb.git && cd lvx
 
 # Installer les dépendances système
 sudo apt-get install -y cmake ninja-build gcc g++ libssl-dev python3.12 python3-pip

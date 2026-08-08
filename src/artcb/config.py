@@ -21,10 +21,22 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import ClassVar
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Bootstrap nodes officiels ARTCB — URLs artcb.space (rapport 116)
+# Ces URLs sont stables et indépendantes de l'hébergeur (Replit, OVH, etc.)
+BOOTSTRAP_NODES: list[str] = [
+    "https://n1.artcb.space",   # Nœud N1 → lvx--supermicro20238.replit.app
+    "https://n2.artcb.space",   # Nœud N2 → lvx--supermicro20239.replit.app
+    "https://node.artcb.space", # Point d'entrée principal
+]
+
+ARTCB_GITHUB_REPO = "https://github.com/vgac2025/artcb"
+ARTCB_DOMAIN = "artcb.space"
 
 
 @dataclass(frozen=True)
@@ -40,6 +52,7 @@ class ArtcbSettings:
     gradium_api_key: str | None
     gradium_api_url: str
     github_token: str | None
+    ionos_api_key: str | None   # Clé API IONOS DNS (rapport 116)
     data_dir: Path
     log_dir: Path
     reports_dir: Path
@@ -68,6 +81,7 @@ def load_settings() -> ArtcbSettings:
         gradium_api_key=os.getenv("GRADIUM_API_KEY") or None,
         gradium_api_url=os.getenv("GRADIUM_API_URL", "https://api.gradium.ai"),
         github_token=os.getenv("GITHUB_TOKEN") or None,
+        ionos_api_key=os.getenv("IONOS_API_KEY") or None,
         data_dir=Path(os.getenv("ARTCB_DATA_DIR", "./data")),
         log_dir=Path(os.getenv("ARTCB_LOG_DIR", "./logs")),
         reports_dir=Path(os.getenv("ARTCB_REPORTS_DIR", "./rapports")),

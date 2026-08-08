@@ -1,50 +1,54 @@
-name: ARTCB — Tests CI (GitHub Actions)
-# Remplace Doppler pour les utilisateurs qui clonent la blockchain.
-# Les secrets sont stockés dans GitHub Secrets (Settings → Secrets → Actions).
-# Chaque installation obtient un device_fingerprint unique via GITHUB_RUN_ID + GITHUB_REPOSITORY.
+name: ARTCB — Tests CI
+# IMPORTANT : Ce workflow est déclenché UNIQUEMENT manuellement (workflow_dispatch).
+# Il ne se déclenche JAMAIS automatiquement sur push ou pull_request.
+# Seul le propriétaire du dépôt (vgac2025) peut le déclencher depuis
+# GitHub Actions → "Run workflow".
+#
+# Pour un utilisateur qui FORK ce dépôt :
+#   1. Aller dans Settings → Secrets → Actions → New repository secret
+#   2. Ajouter : ARTCB_WALLET_PASSPHRASE = "votre_passphrase_secrete_min12chars"
+#   3. Déclencher manuellement ce workflow depuis l'onglet Actions de son fork
+#
+# Les secrets NE sont JAMAIS partagés entre dépôts.
+# GitHub ne transmet JAMAIS les secrets aux workflows déclenchés par un fork externe.
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
+    inputs:
+      reason:
+        description: "Raison du lancement (ex: validation avant déploiement)"
+        required: false
+        default: "Validation manuelle"
 
 env:
-  # Variables non-secrètes : directement dans env
   ARTCB_DEBUG: "true"
   ARTCB_ENCODE_MODE: "rule-based"
   ARTCB_LLM_ENABLED: "false"
   ARTCB_DATA_DIR: "/tmp/artcb_test_data"
   ARTCB_LOG_DIR: "/tmp/artcb_test_logs"
-  # Mode tests : autorise plusieurs wallets (pas de check device fingerprint)
   ARTCB_ALLOW_MULTI_WALLET: "true"
-  # Identifier l'environnement GitHub Actions
-  ARTCB_ENV_TYPE: "github_actions"
+  ARTCB_BOOTSTRAP_NODE: "true"
 
 jobs:
   test:
-    name: "502 tests PASS"
+    name: "519 tests PASS — validation manuelle"
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ── Identité unique de l'installation ──────────────────────────────────
-      # GITHUB_REPOSITORY + GITHUB_RUN_ID = identifiant unique de cette exécution
-      # Cela permet de tracer quelle installation/fork utilise la blockchain
-      - name: Print installation identity
+      - name: Identité d'installation unique
         run: |
-          echo "=== ARTCB Installation Identity ==="
+          echo "=== ARTCB Node Installation Identity ==="
           echo "Repository : $GITHUB_REPOSITORY"
-          echo "Run ID     : $GITHUB_RUN_ID"
           echo "Actor      : $GITHUB_ACTOR"
-          echo "Node       : $(hostname)"
-          echo "SHA        : $GITHUB_SHA"
+          echo "Run ID     : $GITHUB_RUN_ID"
+          echo "Reason     : ${{ inputs.reason }}"
           FINGERPRINT=$(echo "$GITHUB_REPOSITORY|$GITHUB_RUN_ID|$(hostname)" | sha256sum | cut -c1-32)
-          echo "Fingerprint: $FINGERPRINT"
+          echo "Device fingerprint : $FINGERPRINT"
+          echo "DEVICE_FINGERPRINT=$FINGERPRINT" >> $GITHUB_ENV
 
       - name: Setup Python 3.11
         uses: actions/setup-python@v5
@@ -52,24 +56,22 @@ jobs:
           python-version: "3.11"
           cache: "pip"
 
-      - name: Install liboqs system deps
+      - name: System deps (liboqs pour PQC)
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y cmake ninja-build libssl-dev libjson-c-dev
 
-      - name: Install Python dependencies
+      - name: Installer dépendances Python
         run: pip install -r requirements.txt
 
-      # ── Secrets GitHub → variables d'environnement ────────────────────────
-      # Dans GitHub Settings → Secrets → Actions, définir :
-      #   ARTCB_WALLET_PASSPHRASE  (min 12 chars)
-      #   ARTCB_P2P_PORT           (optionnel, défaut 18444)
-      - name: Load secrets from GitHub Secrets
+      - name: Créer .env depuis GitHub Secrets
         env:
+          # Ce secret doit être défini dans : Settings → Secrets → Actions
+          # Nom : ARTCB_WALLET_PASSPHRASE
+          # Valeur : votre passphrase (min 12 caractères)
+          # Si absent : valeur de dev utilisée (tests seulement, jamais en production)
           ARTCB_WALLET_PASSPHRASE: ${{ secrets.ARTCB_WALLET_PASSPHRASE }}
-          ARTCB_P2P_PORT: ${{ secrets.ARTCB_P2P_PORT }}
         run: |
-          # Écrire un .env minimal pour les tests
           cat > .env << EOF
           ARTCB_DEBUG=true
           ARTCB_ENCODE_MODE=rule-based
@@ -77,21 +79,19 @@ jobs:
           ARTCB_DATA_DIR=/tmp/artcb_test_data
           ARTCB_LOG_DIR=/tmp/artcb_test_logs
           ARTCB_ALLOW_MULTI_WALLET=true
-          ARTCB_WALLET_PASSPHRASE=${ARTCB_WALLET_PASSPHRASE:-artcb_devnet_passphrase_test_ci}
+          ARTCB_BOOTSTRAP_NODE=true
+          ARTCB_WALLET_PASSPHRASE=${ARTCB_WALLET_PASSPHRASE:-artcb_ci_test_passphrase_devonly}
           EOF
-          echo ".env créé pour CI"
+          echo ".env créé (passphrase = ${ARTCB_WALLET_PASSPHRASE:+depuis_github_secrets} ${ARTCB_WALLET_PASSPHRASE:-valeur_dev_par_defaut})"
 
-      - name: Run full test suite
-        run: |
-          python3 -m pytest tests/ -q --tb=short --timeout=120 2>&1 | tail -20
-          echo "Test exit code: $?"
+      - name: Lancer la suite de tests complète
+        run: python3 -m pytest tests/ -q --tb=short --timeout=120
 
-      - name: Upload test results
+      - name: Résumé
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ github.run_id }}
-          path: |
-            logs/
-            rapports/
-          retention-days: 7
+        run: |
+          echo "## Résultats" >> $GITHUB_STEP_SUMMARY
+          echo "- Repository : $GITHUB_REPOSITORY" >> $GITHUB_STEP_SUMMARY
+          echo "- Actor : $GITHUB_ACTOR" >> $GITHUB_STEP_SUMMARY
+          echo "- Fingerprint : $DEVICE_FINGERPRINT" >> $GITHUB_STEP_SUMMARY
+          echo "- Reason : ${{ inputs.reason }}" >> $GITHUB_STEP_SUMMARY

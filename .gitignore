@@ -33,3 +33,7 @@ venv/
 # Dossier confidentiel — JAMAIS pousser sur GitHub
 confidentiel/
 .env.backup*
+docs/confidential/
+api_key_ionos.json
+.gitignore_local
+data_local/
