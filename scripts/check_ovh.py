@@ -1,13 +1,22 @@
-"""Script de vérification OVH — teste les clés API et la connectivité serveur."""
+"""Script de vérification OVH — teste les clés API et la connectivité serveur.
+
+Les clés API sont lues depuis l'environnement (jamais codées en dur) :
+  OVH_APPLICATION_KEY, OVH_APPLICATION_SECRET, OVH_CONSUMER_KEY
+  OVH_SERVER_IP (défaut : 152.228.144.34 — instance artcb-node-1, GRA11)
+"""
 import urllib.request, urllib.parse, json, time, hashlib, subprocess, socket
+import os
 import sys
 
-OVH_APP_KEY = "59f86de7e76ab0e7"
-OVH_APP_SECRET = "504272afdef5c00709cf38e653741d43"
-OVH_CONSUMER_KEY = "08fd2bca229ce4d34ecb1f91edc84268"
+OVH_APP_KEY = os.environ.get("OVH_APPLICATION_KEY", "")
+OVH_APP_SECRET = os.environ.get("OVH_APPLICATION_SECRET", "")
+OVH_CONSUMER_KEY = os.environ.get("OVH_CONSUMER_KEY", "")
+if not (OVH_APP_KEY and OVH_APP_SECRET and OVH_CONSUMER_KEY):
+    print("❌ Variables OVH_APPLICATION_KEY / OVH_APPLICATION_SECRET / OVH_CONSUMER_KEY absentes de l'environnement.")
+    sys.exit(1)
 OVH_ENDPOINT_BASE = "https://eu.api.ovh.com/1.0"
-OVH_SERVER_IP = "51.255.22.253"
-OVH_SERVER_USER = "root"
+OVH_SERVER_IP = os.environ.get("OVH_SERVER_IP", "152.228.144.34")
+OVH_SERVER_USER = os.environ.get("OVH_SERVER_USER", "ubuntu")
 
 RESULTS = []
 
