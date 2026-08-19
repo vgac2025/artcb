@@ -7,10 +7,13 @@ Wants=network-online.target
 Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu/artcb
-ExecStart=/home/ubuntu/artcb/.venv/bin/python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+# Token Doppler (optionnel, root-only 600) : DOPPLER_TOKEN=dp.st.xxx
+# Si présent, start_node.sh injecte les secrets via `doppler run`
+# et aucun .env n'est nécessaire sur le serveur.
+EnvironmentFile=-/etc/artcb/doppler.env
+ExecStart=/home/ubuntu/artcb/scripts/start_node.sh
 Restart=always
 RestartSec=5
-# .env est chargé par l'application (python-dotenv) depuis WorkingDirectory
 
 [Install]
 WantedBy=multi-user.target

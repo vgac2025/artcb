@@ -39,13 +39,18 @@ echo "── Commit déployé : \$(git log --oneline -1)"
 # 2. Installation (idempotente)
 bash install.sh
 
-# 3. .env minimal si première installation
-if ! grep -q '^ARTCB_WALLET_PASSPHRASE=' .env 2>/dev/null; then
-  echo "ARTCB_WALLET_PASSPHRASE=\$(openssl rand -base64 24 | tr -d '=/+')" >> .env
-  chmod 600 .env
-  echo "── Passphrase wallet générée dans .env (conservez-la précieusement)"
+# 3. Secrets : Doppler (recommandé) ou .env fallback
+if [ -f /etc/artcb/doppler.env ]; then
+  echo "── Secrets via Doppler (token présent dans /etc/artcb/doppler.env)"
+  rm -f .env
+else
+  if ! grep -q '^ARTCB_WALLET_PASSPHRASE=' .env 2>/dev/null; then
+    echo "ARTCB_WALLET_PASSPHRASE=\$(openssl rand -base64 24 | tr -d '=/+')" >> .env
+    chmod 600 .env
+    echo "── Passphrase wallet générée dans .env (à migrer vers Doppler)"
+  fi
+  sed -i 's|^ARTCB_HOST=.*|ARTCB_HOST=0.0.0.0|' .env
 fi
-sed -i 's|^ARTCB_HOST=.*|ARTCB_HOST=0.0.0.0|' .env
 
 # 4. Service systemd
 sudo cp scripts/artcb.service /etc/systemd/system/artcb.service

@@ -107,19 +107,21 @@ fi
 
 # ── 5. Bibliothèque C native ──────────────────────────────────────
 _step "5/7" "Bibliothèque C libartcb_chain.so"
-if [ -f "src/c/libartcb_chain.so" ]; then
-  _ok "libartcb_chain.so déjà présent"
-elif command -v cc &>/dev/null && [ -f "/usr/include/openssl/sha.h" ] || \
-     command -v cc &>/dev/null && pkg-config openssl 2>/dev/null; then
-  OPENSSL_INC=$(pkg-config --cflags openssl 2>/dev/null | sed 's/-I//' | awk '{print $1}' || echo "/usr/include")
-  OPENSSL_LIB=$(pkg-config --libs openssl 2>/dev/null || echo "-lssl -lcrypto")
-  cc -Wall -O2 -fPIC -I"$OPENSSL_INC" \
-    src/c/libartcb_chain.c -o src/c/libartcb_chain.so -shared \
-    $OPENSSL_LIB 2>/dev/null \
-    && _ok "libartcb_chain.so compilé" \
-    || _warn "libartcb_chain.so : compilation échouée — fallback Python actif"
+# NB : toujours recompiler via le Makefile C (source de vérité).
+# L'ancienne commande cc inline avec -I"$(pkg-config --cflags ...)" produisait
+# une .so SANS symboles quand pkg-config renvoyait une chaîne vide (le -I nu
+# consommait le fichier source) — 26 tests échouaient avec
+# « undefined symbol: artcb_sha256_hex ».
+if command -v cc &>/dev/null || command -v gcc &>/dev/null; then
+  if make -C src/c clean all >/dev/null 2>&1 \
+     && nm -D src/c/libartcb_chain.so 2>/dev/null | grep -q artcb_sha256_hex; then
+    _ok "libartcb_chain.so compilé (symboles artcb_* vérifiés)"
+  else
+    rm -f src/c/libartcb_chain.so
+    _warn "libartcb_chain.so : compilation échouée — fallback Python actif"
+  fi
 else
-  _warn "OpenSSL ou compilateur absent — libartcb_chain.so ignoré (fallback Python)"
+  _warn "Compilateur C absent — libartcb_chain.so ignoré (fallback Python)"
 fi
 
 # ── 6. Configuration .env ─────────────────────────────────────────
