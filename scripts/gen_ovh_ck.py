@@ -1,7 +1,15 @@
-"""Génère une nouvelle Consumer Key OVH et affiche le lien de validation."""
-import urllib.request, json
+"""Génère une nouvelle Consumer Key OVH et affiche le lien de validation.
 
-APP_KEY = '59f86de7e76ab0e7'
+La clé d'application est lue depuis l'environnement : OVH_APPLICATION_KEY.
+"""
+import urllib.request, json
+import os
+import sys
+
+APP_KEY = os.environ.get('OVH_APPLICATION_KEY', '')
+if not APP_KEY:
+    print('❌ OVH_APPLICATION_KEY absente de l\'environnement.')
+    sys.exit(1)
 BASE = 'https://eu.api.ovh.com/1.0'
 
 req = urllib.request.Request(

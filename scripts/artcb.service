@@ -1,0 +1,16 @@
+[Unit]
+Description=ARTCB Node API (uvicorn)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/artcb
+ExecStart=/home/ubuntu/artcb/.venv/bin/python -m uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+# .env est chargé par l'application (python-dotenv) depuis WorkingDirectory
+
+[Install]
+WantedBy=multi-user.target
