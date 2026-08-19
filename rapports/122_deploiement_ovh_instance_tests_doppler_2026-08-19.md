@@ -102,7 +102,24 @@ service token Doppler scoping `artcb-blockchain/dev`, le poser dans
 | `scripts/artcb.service` | **Nouveau** — unité systemd (Doppler-ready) |
 | `scripts/start_node.sh` | **Nouveau** — lanceur Doppler/`.env` |
 
-## 8. Preuves (logs lus)
+## 8. Addendum 2026-08-19 (après-midi) — bascule Doppler effectuée
+
+- **Plus aucun secret sur le serveur** : token Doppler posé dans `/etc/artcb/doppler.env`
+  (root, 600), `.env` détruit (`shred -u`), service redémarré en mode `doppler run`.
+  Vérifié : `/api/v1/health` OK en local et en public, `bob_configured: true`
+  (preuve que les secrets Doppler sont injectés).
+- Le nœud utilise la `ARTCB_WALLET_PASSPHRASE` du Doppler existant (config `dev`),
+  wallet réinitialisé (chaîne vide au moment de la bascule).
+- **Credentials OVH corrompues révoquées** via API : `632781111` (cursor-artcb-ovh-agent,
+  règles avec tabulation) et `632793553` (artcb-deploy-api, idem).
+- **En attente utilisateur** : validation de la credential propre (CK `c940e818…`,
+  scopée `/cloud/project/<id>` GET/POST/PUT/DELETE) via l'URL SSO OVH. Après validation :
+  révocation de la credential exposée `629869000` et mise à jour de `OVH_CONSUMER_KEY`
+  dans Doppler + secrets Cursor.
+- Doppler : corriger `ARTCB_PORT` 5000 → 8000, ajouter `OVH_SSH_PRIVATE_KEY`,
+  supprimer `OVH_CONSUMER_KEY_EXPIRED` / `OVH_CONSUMER_KEY_NEW` / `OVH_VALIDATION_URL_NEW`.
+
+## 9. Preuves (logs lus)
 
 - `install.sh` : `✅ libartcb_chain.so compilé` puis `nm -D` → `artcb_sha256_hex` présent.
 - liboqs : `OQS OK 0.16.0` (import Python réussi sur le serveur).
